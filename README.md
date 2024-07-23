@@ -1,3 +1,5 @@
 # interface-autotest-pytest
 
-interface-autotest-pytest 测试组测试专用
+interface-autotest-pytest 
+
+自动化测试项目
