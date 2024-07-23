@@ -1,0 +1,7 @@
+mysql:
+  zjly:
+    host: 192.168.1.192
+    port: 3306
+    username: xjd
+    password: NSaDKTGEeAqxox31OmD7hQzhQ1
+    db_name: finance_router

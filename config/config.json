@@ -1,0 +1,10 @@
+{
+  "test_files": [
+    "/Users/mac/PycharmProjects/pythonProject1/testcase/test_zc/test_zcCaseManage.py",
+    "/Users/mac/PycharmProjects/pythonProject1/testcase/test_pp_zx/test_zx.py"
+  ],
+  "report_dir": "./report/result",
+  "allure_cmd": "allure",
+  "dingtalk_webhook": "https://oapi.dingtalk.com/robot/send?access_token=6adbeb163e9423b35a29f512c8e6e2918ffbd654ddebf83a505f50d8f1043545",
+  "summary_file": "/Users/mac/PycharmProjects/pythonProject1/config/allure-report/widgets/summary.json"
+}
