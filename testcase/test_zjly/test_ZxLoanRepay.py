@@ -342,9 +342,9 @@ def test_zx_loan_success():
         # 7.还款计划查询返回数据解密
         hkjh_decry = encrypt_decrypt().param_decrys_by_channel(hkjh_resp, 'zhenXing')
         logging.info(f"解密后的还款计划查询数据为：======{hkjh_decry}")
-    #
-    # with allure.step("断言绑卡信息表"):
-    #     banding_card_success_assert(bk_no, banding_card_assert_data)
-    #
-    # with allure.step("断言授信订单表"):
-    #     loan_success_assert(loan_sqe_no, loan_success_assert_data)
+
+    with allure.step("断言绑卡信息表"):
+        banding_card_success_assert(bk_no, banding_card_assert_data)
+
+    with allure.step("断言授信订单表"):
+        loan_success_assert(loan_sqe_no, loan_success_assert_data)
