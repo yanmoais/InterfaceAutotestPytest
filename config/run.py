@@ -1,6 +1,6 @@
 import os
 import json
-import requests
+from common.Base_API import Base_Api
 from multiprocessing import Process, Event
 import time
 from config.testconfig import BASE_DIR
@@ -74,7 +74,7 @@ def send_to_dingtalk(text):
             "content": text
         }
     }
-    response = requests.post(url=DINGTALK_WEBHOOK_URL, headers=headers, json=data)
+    response = Base_Api().post_dingk(DINGTALK_WEBHOOK_URL, data, headers)
     print(f"钉钉消息发送结果：{response.text}")
 
 
@@ -82,8 +82,8 @@ if __name__ == '__main__':
     # 测试文件路径列表（请根据实际情况修改）
     test_files = [
         # f"{BASE_DIR}/testcase/test_zc/test_zcCaseManage.py",
-        f"{BASE_DIR}/testcase/test_zjly/test_JmxLoanRepay.py"
-        # f"{BASE_DIR}/testcase/test_zjly/test_ZyLoanRepay.py",
+        # f"{BASE_DIR}/testcase/test_zjly/test_JmxLoanRepay.py",
+        f"{BASE_DIR}/testcase/test_zjly/test_ZyLoanRepay.py"
         # f"{BASE_DIR}/testcase/test_zjly/test_HaiXiaLoanRepay.py"
     ]
 

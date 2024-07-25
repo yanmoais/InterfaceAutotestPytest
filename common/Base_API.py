@@ -38,6 +38,14 @@ class Base_Api:
             self.logging.error(f"请求接口异常，异常原因{traceback.format_exc(10)}")
             return False, e
 
+    def post_dingk(self, uri, param_data, headers):
+        try:
+            response = self.req.post(url=uri, json=param_data, headers=headers)
+            return response.json()
+        except Exception as e:
+            self.logging.error(f"请求接口异常，异常原因{traceback.format_exc(10)}")
+            return False, e
+
 
 if __name__ == '__main__':
     ss = Base_Api()

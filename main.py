@@ -2,6 +2,9 @@ import schedule
 import time
 import subprocess
 from config.Base_Env import BASE_DIR
+from apscheduler.schedulers.blocking import BlockingScheduler
+import subprocess
+import datetime
 
 
 def run_script():
@@ -9,14 +12,11 @@ def run_script():
     subprocess.run(["python", f"{BASE_DIR}/config/run.py"])
 
 
-# 每天的特定时间执行
-schedule.every().day.at("11:01").do(run_script)
+# 创建一个BlockingScheduler实例
+scheduler = BlockingScheduler()
 
-# 每小时执行
-# schedule.every().hour.do(run_script)
+# 添加一个cron类型的定时任务，比如每天下午3点15分执行
+scheduler.add_job(run_script, 'cron', hour=9, minute=35)
 
-# 每隔一段时间执行一次
-# schedule.every(10).minutes.do(run_script)
-while True:
-    schedule.run_pending()
-    time.sleep(1)
+# 启动调度器
+scheduler.start()

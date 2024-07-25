@@ -120,6 +120,14 @@ def get_phone_mum():
     return get_fake().phone_number()
 
 
+def get_new_cy_phone_mum():
+    data = get_fake().phone_number()
+    if data.endswith("4"):
+        return int(data) + 1
+    else:
+        return data
+
+
 # 获取随机custid
 def get_cust_id():
     num = str("ZL" + str(int(time.time() * 100)))
@@ -153,6 +161,15 @@ def get_ccb_num():
         timestamp_part = str(int(time.time() * 1000)).zfill(1)
         data = "621700" + timestamp_part
         if data.endswith(('0', '1', '9')):
+            return data  # 返回找到的数据
+
+
+# 获取随机建设银行卡号
+def get_new_cy_ccb_num():
+    while True:
+        timestamp_part = str(int(time.time() * 1000)).zfill(1)
+        data = "621700" + timestamp_part
+        if data.endswith(('7', '8', '9')):
             return data  # 返回找到的数据
 
 
@@ -210,5 +227,5 @@ def get_zx_user_id_no():
 
 if __name__ == '__main__':
     SS = 3132629891191734403
-    SsS = get_now_time()
+    SsS = get_new_cy_ccb_num()
     print(SsS)
