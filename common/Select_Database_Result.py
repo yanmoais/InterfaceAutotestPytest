@@ -33,7 +33,7 @@ class Select_Sql_Result(Mysql):
 
 
 if __name__ == '__main__':
-    bk_id = "ZLTEST1721377980959"
+    bk_id = "BK1721899360477"
     db = Select_Sql_Result()
-    datas = db.select_api_loan_amt_log_result(bk_id)
+    datas = db.select_api_binding_bank_card_result(bk_id)
     print(datas)

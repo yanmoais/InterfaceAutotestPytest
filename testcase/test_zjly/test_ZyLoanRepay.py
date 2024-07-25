@@ -63,7 +63,7 @@ def test_zhongyuan_credit_success():
         # 2.授信状态查询请求
         loop_result().loop_sxcx_result(sxzt_encry,'zhongYuanTqh')
 
-    with allure.step("授信状态断言"):
+    with allure.step("授信成功断言"):
         loan_success_assert(loan_sqe_no, credit_success_assert_data)
 
 
