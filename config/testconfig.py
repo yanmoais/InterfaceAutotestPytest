@@ -12,8 +12,9 @@ config={"tendata-datax-clean":"http://xclean.tendata.net/",
         "test_url_gws":"http://139.196.159.138:8083",
         "test_url_ifs":"http://139.196.147.194:8086",
         "test_url_host":"http://testhost.zhonglishuke.com:9303",
-        "test_gz_host":"http://192.168.1.187:8088",
-        "test_zfpt_host":"http://192.168.1.187:8199"
+        "test_zjly_host":"http://192.168.1.187:8088",
+        "test_zfpt_host":"http://192.168.1.187:8199",
+        "test_api_host":"http://192.168.1.167:8801"
         }
 
 config_cookies={
@@ -24,7 +25,7 @@ config_cookies={
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 if __name__ == '__main__':
-    print(BASE_DIR)
+    print(config['test_api_host'])
 
 
 # http://192.168.1.237:8083/doc.html#/default/%E5%B9%BF%E5%B7%9E%E6%8E%A5%E5%8F%A3/compensationApplyUsingPOST

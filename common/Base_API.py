@@ -24,8 +24,10 @@ class Base_Api:
         self.req = requests
         if ENV == 'zfpt':
             self.uri = config['test_zfpt_host']
+        elif ENV == 'api':
+            self.uri = config['test_api_host']
         else:
-            self.uri = config['test_gz_host']
+            self.uri = config['test_zjly_host']
         self.headers = {"Content-Type": "application/json"}
         self.logging = Logger().init_logger()
 

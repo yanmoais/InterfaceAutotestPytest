@@ -6,6 +6,8 @@
 """
     此文件自动化案例为各个资金方授信-借款-还款流程
 """
+import pytest
+
 from testdata.assert_data.banding_assert_data import *
 from testdata.assert_data.loan_assert_data import *
 from testdata.assert_data.loan_credit_amt_assert_data import credit_amt_query_success_data
@@ -19,6 +21,7 @@ import allure
 
 
 # 振兴资金方授信成功
+@pytest.mark.run(order=1)
 @allure.epic("振兴资方")
 @allure.feature("授信模块")
 @allure.title("授信成功")
@@ -69,6 +72,7 @@ def test_zx_credit_success():
 
 
 # 振兴资金方额度查询成功
+@pytest.mark.run(order=2)
 @allure.epic("振兴资方")
 @allure.feature("授信模块")
 @allure.title("额度查询成功")
@@ -167,6 +171,7 @@ def test_zx_credit_amt_query_success():
 
 
 # 振兴资金方绑卡成功
+@pytest.mark.run(order=3)
 @allure.epic("振兴资方")
 @allure.feature("授信模块")
 @allure.title("绑卡成功")
@@ -241,6 +246,7 @@ def test_zx_binding_card_success():
         banding_card_success_assert(bk_no, banding_card_assert_data)
 
 
+@pytest.mark.run(order=4)
 @allure.epic("振兴资方")
 @allure.feature("授信模块")
 @allure.story("振兴资方授信放款案例")

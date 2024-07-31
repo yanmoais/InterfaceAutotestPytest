@@ -160,7 +160,7 @@ def get_ccb_num():
     while True:
         timestamp_part = str(int(time.time() * 1000)).zfill(1)
         data = "621700" + timestamp_part
-        if data.endswith(('0', '1', '9')):
+        if data.endswith(('0', '1', '9', '5')):
             return data  # 返回找到的数据
 
 
@@ -226,6 +226,6 @@ def get_zx_user_id_no():
 
 
 if __name__ == '__main__':
-    SS = 3132629891191734403
-    SsS = get_new_cy_ccb_num()
+    SS = "11010119770323288X"
+    SsS = get_ccb_num()
     print(SsS)
