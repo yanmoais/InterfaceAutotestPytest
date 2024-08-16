@@ -10,7 +10,7 @@ import hashlib
 
 class encrypt_decrypt(Base_Api):
     def __init__(self):
-        super().__init__(ENV="api")
+        super().__init__()
         self.dubbo_api = Base_Api()
         self.now_time = get_time_stand()
         self.logging = Logger().init_logger()
@@ -73,22 +73,8 @@ class encrypt_decrypt(Base_Api):
         # 返回
         return md5_hash
 
-        # api加密请求数据
-
-    def api_param_encry(self, request_data, channel_id="RS"):
-        apis = f"/rsDecrypt/encrypt?channelId={channel_id}"
-        try:
-            # 需要将数据再次格式化成带转义符并且去除空格
-            data = json_dumps_format(request_data)
-            logging.info(f"需要加密的数据为：======{data}")
-            self.logging.info(f"开始加密请求数据==========,{data}")
-            encry_data = self.dubbo_api.post(apis, request_data)
-            return encry_data
-        except Exception as e:
-            self.logging.info(f"请求数据加密异常=======，异常信息：{e}")
-
 
 if __name__ == '__main__':
     ss = encrypt_decrypt()
-    resp = ss.api_param_encry("15915370864")
-    print(resp)
+    data = "13812331774"
+    print(ss.param_encry_by_md5(data))

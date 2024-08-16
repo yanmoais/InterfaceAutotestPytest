@@ -35,7 +35,6 @@ def test_haixia_credit_success():
         mobile_no = get_phone_mum()
         acct_no = get_ccb_num()
         custid = get_cust_id()
-        loan_no = get_loan_no()
         bank_name = "福建海峡银行股份有限公司"
         loan_amt = "2000"
         reqPeriods = "12"
@@ -51,7 +50,7 @@ def test_haixia_credit_success():
     # 每次请求前需要进行加密，得到的返回结果需要传给下游接口时候需要解密出来，下次使用又需要加密
     with allure.step("发起授信"):
         # 1.授信申请加密
-        sx_need_encry_data = {'apiKey': 'HX_TEST', 'params':json_dumps_cn({"birthday":birthday,"loanNo":loan_no,"guaranteeInfo":{"guarOdIntRate":"0.00022037","guarRate":"0.079333","guarTime":"12","guarAmt":"237.96"},"nation":"汉","loanseqno":loan_sqe_no,"idNo":id_no,"merchantName":"大商户","monthlySalary":"1000","idExpireDate":"2037-11-30","merchantId":"69355551222","companyPhone":"02061959111","childrenNum":"2","custId":custid,"fromChannel":"01","regAddress":{"area":"440106","address":"广东省广州市天河区冼村街道珠江东路11号","province":"440000","city":"440100"},"liveAddress":{"area":"440106","address":"广东省广州市天河区冼村街道珠江东路11号","province":"440000","city":"440100"},"applyDt":"2024-09-04","emergencyContact":[{"relation":"01","mobileNo":"18197269653","name":"毛不易"},{"relation":"02","mobileNo":"18197269659","name":"李文忠"}],"idStartDate":"2017-11-30","signOffice":"罗定市公安局","mobileNo":mobile_no,"userName":user_name,"fileIDs":"5ff341cdeeed46d98f8cc599a4c72c401718942716298,b368245bc9b24ddeae9116ba2a22e12b1688608942043,e6e60b02818642118986b9be415ad0f71688616059531,bc5cfb353801470d9ce96eaff7f9e9581688621835451,562d6907777740f48511cc21977ffe811688621899067,b42f1234c98846079570799d87a94c671688714949013,1b9d43f6dee840dcbb2f7358c87ff6f11689059737364","occupationInfo":{"companyAddInfo":{"area":"440106","address":"广东省广州市天河区冼村街道珠江东路11号","province":"440000","city":"440100"},"profession":"0","companyPhone":"02035949111","companyName":"测试科技有限公司","industry":"A","position":"01"},"loanInfo":{"priceAcc":"0.2395","loanFreq":"1M","rateType":"1","loanType":"PZ","reqPeriods":reqPeriods,"reqAmount":loan_amt,"dueDayOpt":"1","custDayRate":"0.2395","reqPurpose":"1"},"maxDegree":"10","accInfoList":[{"acctKind":"01","acctTyp":"01","acctBankCode":"0102","bankName":bank_name,"acctNo":acct_no,"acctName":user_name,"idNo":id_no,"acctPhone":mobile_no,"phoneBelongAddr":"云浮"},{"acctKind":"02","acctTyp":"01","acctBankCode":"0102","bankName":"福建海峡银行股份有限公司","acctNo":acct_no,"acctName":user_name,"idNo":id_no,"acctPhone":mobile_no,"phoneBelongAddr":"云浮"}],"maritalStatus":"10"}), 'requestNo': req_no}
+        sx_need_encry_data = {'apiKey': 'HX_TEST', 'params':json_dumps_cn({"birthday":birthday,"guaranteeInfo":{"guarOdIntRate":"0.00022037","guarRate":"0.079333","guarTime":"12","guarAmt":"237.96"},"nation":"汉","loanseqno":loan_sqe_no,"idNo":id_no,"merchantName":"大商户","monthlySalary":"1000","idExpireDate":"2037-11-30","merchantId":"69355551222","companyPhone":"02061959111","childrenNum":"2","custId":custid,"fromChannel":"01","regAddress":{"area":"440106","address":"广东省广州市天河区冼村街道珠江东路11号","province":"440000","city":"440100"},"liveAddress":{"area":"440106","address":"广东省广州市天河区冼村街道珠江东路11号","province":"440000","city":"440100"},"applyDt":"2024-09-04","emergencyContact":[{"relation":"01","mobileNo":"18197269653","name":"毛不易"},{"relation":"02","mobileNo":"18197269659","name":"李文忠"}],"idStartDate":"2017-11-30","signOffice":"罗定市公安局","mobileNo":mobile_no,"userName":user_name,"fileIDs":"5ff341cdeeed46d98f8cc599a4c72c401718942716298,b368245bc9b24ddeae9116ba2a22e12b1688608942043,e6e60b02818642118986b9be415ad0f71688616059531,bc5cfb353801470d9ce96eaff7f9e9581688621835451,562d6907777740f48511cc21977ffe811688621899067,b42f1234c98846079570799d87a94c671688714949013,1b9d43f6dee840dcbb2f7358c87ff6f11689059737364","occupationInfo":{"companyAddInfo":{"area":"440106","address":"广东省广州市天河区冼村街道珠江东路11号","province":"440000","city":"440100"},"profession":"0","companyPhone":"02035949111","companyName":"测试科技有限公司","industry":"A","position":"01"},"loanInfo":{"priceAcc":"0.2395","loanFreq":"1M","rateType":"1","loanType":"PZ","reqPeriods":reqPeriods,"reqAmount":loan_amt,"dueDayOpt":"1","custDayRate":"0.2395","reqPurpose":"1"},"maxDegree":"10","accInfoList":[{"acctKind":"01","acctTyp":"01","acctBankCode":"0102","bankName":bank_name,"acctNo":acct_no,"acctName":user_name,"idNo":id_no,"acctPhone":mobile_no,"phoneBelongAddr":"云浮"},{"acctKind":"02","acctTyp":"01","acctBankCode":"0102","bankName":"福建海峡银行股份有限公司","acctNo":acct_no,"acctName":user_name,"idNo":id_no,"acctPhone":mobile_no,"phoneBelongAddr":"云浮"}],"maritalStatus":"10"}), 'requestNo': req_no}
         # 加密数据
         sx_encry_data = encrypt_decrypt().param_encry_by_channel(sx_need_encry_data, 'haiXia')
         print("加密的数据是==================", sx_encry_data)
@@ -103,7 +102,7 @@ def test_haixia_credit_amt_query_success():
     # 每次请求前需要进行加密，得到的返回结果需要传给下游接口时候需要解密出来，下次使用又需要加密
     with allure.step("发起授信"):
         # 1.授信申请加密
-        sx_need_encry_data = {'apiKey': 'HX_TEST', 'params':json_dumps_cn({"birthday":birthday,"loanNo":loan_no,"guaranteeInfo":{"guarOdIntRate":"0.00022037","guarRate":"0.079333","guarTime":"12","guarAmt":"237.96"},"nation":"汉","loanseqno":loan_sqe_no,"idNo":id_no,"merchantName":"大商户","monthlySalary":"1000","idExpireDate":"2037-11-30","merchantId":"69355551222","companyPhone":"02061959111","childrenNum":"2","custId":custid,"fromChannel":"01","regAddress":{"area":"440106","address":"广东省广州市天河区冼村街道珠江东路11号","province":"440000","city":"440100"},"liveAddress":{"area":"440106","address":"广东省广州市天河区冼村街道珠江东路11号","province":"440000","city":"440100"},"applyDt":"2024-09-04","emergencyContact":[{"relation":"01","mobileNo":"18197269653","name":"毛不易"},{"relation":"02","mobileNo":"18197269659","name":"李文忠"}],"idStartDate":"2017-11-30","signOffice":"罗定市公安局","mobileNo":mobile_no,"userName":user_name,"fileIDs":"5ff341cdeeed46d98f8cc599a4c72c401718942716298,b368245bc9b24ddeae9116ba2a22e12b1688608942043,e6e60b02818642118986b9be415ad0f71688616059531,bc5cfb353801470d9ce96eaff7f9e9581688621835451,562d6907777740f48511cc21977ffe811688621899067,b42f1234c98846079570799d87a94c671688714949013,1b9d43f6dee840dcbb2f7358c87ff6f11689059737364","occupationInfo":{"companyAddInfo":{"area":"440106","address":"广东省广州市天河区冼村街道珠江东路11号","province":"440000","city":"440100"},"profession":"0","companyPhone":"02035949111","companyName":"测试科技有限公司","industry":"A","position":"01"},"loanInfo":{"priceAcc":"0.2395","loanFreq":"1M","rateType":"1","loanType":"PZ","reqPeriods":reqPeriods,"reqAmount":loan_amt,"dueDayOpt":"1","custDayRate":"0.2395","reqPurpose":"1"},"maxDegree":"10","accInfoList":[{"acctKind":"01","acctTyp":"01","acctBankCode":"0102","bankName":bank_name,"acctNo":acct_no,"acctName":user_name,"idNo":id_no,"acctPhone":mobile_no,"phoneBelongAddr":"云浮"},{"acctKind":"02","acctTyp":"01","acctBankCode":"0102","bankName":"福建海峡银行股份有限公司","acctNo":acct_no,"acctName":user_name,"idNo":id_no,"acctPhone":mobile_no,"phoneBelongAddr":"云浮"}],"maritalStatus":"10"}), 'requestNo': req_no}
+        sx_need_encry_data = {'apiKey': 'HX_TEST', 'params':json_dumps_cn({"birthday":birthday,"guaranteeInfo":{"guarOdIntRate":"0.00022037","guarRate":"0.079333","guarTime":"12","guarAmt":"237.96"},"nation":"汉","loanseqno":loan_sqe_no,"idNo":id_no,"merchantName":"大商户","monthlySalary":"1000","idExpireDate":"2037-11-30","merchantId":"69355551222","companyPhone":"02061959111","childrenNum":"2","custId":custid,"fromChannel":"01","regAddress":{"area":"440106","address":"广东省广州市天河区冼村街道珠江东路11号","province":"440000","city":"440100"},"liveAddress":{"area":"440106","address":"广东省广州市天河区冼村街道珠江东路11号","province":"440000","city":"440100"},"applyDt":"2024-09-04","emergencyContact":[{"relation":"01","mobileNo":"18197269653","name":"毛不易"},{"relation":"02","mobileNo":"18197269659","name":"李文忠"}],"idStartDate":"2017-11-30","signOffice":"罗定市公安局","mobileNo":mobile_no,"userName":user_name,"fileIDs":"5ff341cdeeed46d98f8cc599a4c72c401718942716298,b368245bc9b24ddeae9116ba2a22e12b1688608942043,e6e60b02818642118986b9be415ad0f71688616059531,bc5cfb353801470d9ce96eaff7f9e9581688621835451,562d6907777740f48511cc21977ffe811688621899067,b42f1234c98846079570799d87a94c671688714949013,1b9d43f6dee840dcbb2f7358c87ff6f11689059737364","occupationInfo":{"companyAddInfo":{"area":"440106","address":"广东省广州市天河区冼村街道珠江东路11号","province":"440000","city":"440100"},"profession":"0","companyPhone":"02035949111","companyName":"测试科技有限公司","industry":"A","position":"01"},"loanInfo":{"priceAcc":"0.2395","loanFreq":"1M","rateType":"1","loanType":"PZ","reqPeriods":reqPeriods,"reqAmount":loan_amt,"dueDayOpt":"1","custDayRate":"0.2395","reqPurpose":"1"},"maxDegree":"10","accInfoList":[{"acctKind":"01","acctTyp":"01","acctBankCode":"0102","bankName":bank_name,"acctNo":acct_no,"acctName":user_name,"idNo":id_no,"acctPhone":mobile_no,"phoneBelongAddr":"云浮"},{"acctKind":"02","acctTyp":"01","acctBankCode":"0102","bankName":"福建海峡银行股份有限公司","acctNo":acct_no,"acctName":user_name,"idNo":id_no,"acctPhone":mobile_no,"phoneBelongAddr":"云浮"}],"maritalStatus":"10"}), 'requestNo': req_no}
         # 加密数据
         sx_encry_data = encrypt_decrypt().param_encry_by_channel(sx_need_encry_data, 'haiXia')
         print("加密的数据是==================", sx_encry_data)
@@ -162,10 +161,11 @@ def test_haixia_loan_success():
         mobile_no = get_phone_mum()
         acct_no = get_ccb_num()
         custid = get_cust_id()
-        loan_no = get_loan_no()
         bank_name = "福建海峡银行股份有限公司"
+        # bank_name = "工商银行"
         loan_amt = "2000"
         reqPeriods = "12"
+        repay_no = get_repay_no()
 
         loan_sqe_no = get_req_seq_no()
         req_no = get_req_no()
@@ -178,7 +178,7 @@ def test_haixia_loan_success():
     # 每次请求前需要进行加密，得到的返回结果需要传给下游接口时候需要解密出来，下次使用又需要加密
     with allure.step("发起授信"):
         # 1.授信申请加密
-        sx_need_encry_data = {'apiKey': 'HX_TEST', 'params':json_dumps_cn({"birthday":birthday,"loanNo":loan_no,"guaranteeInfo":{"guarOdIntRate":"0.00022037","guarRate":"0.079333","guarTime":"12","guarAmt":"237.96"},"nation":"汉","loanseqno":loan_sqe_no,"idNo":id_no,"merchantName":"大商户","monthlySalary":"1000","idExpireDate":"2037-11-30","merchantId":"69355551222","companyPhone":"02061959111","childrenNum":"2","custId":custid,"fromChannel":"01","regAddress":{"area":"440106","address":"广东省广州市天河区冼村街道珠江东路11号","province":"440000","city":"440100"},"liveAddress":{"area":"440106","address":"广东省广州市天河区冼村街道珠江东路11号","province":"440000","city":"440100"},"applyDt":"2024-09-04","emergencyContact":[{"relation":"01","mobileNo":"18197269653","name":"毛不易"},{"relation":"02","mobileNo":"18197269659","name":"李文忠"}],"idStartDate":"2017-11-30","signOffice":"罗定市公安局","mobileNo":mobile_no,"userName":user_name,"fileIDs":"5ff341cdeeed46d98f8cc599a4c72c401718942716298,b368245bc9b24ddeae9116ba2a22e12b1688608942043,e6e60b02818642118986b9be415ad0f71688616059531,bc5cfb353801470d9ce96eaff7f9e9581688621835451,562d6907777740f48511cc21977ffe811688621899067,b42f1234c98846079570799d87a94c671688714949013,1b9d43f6dee840dcbb2f7358c87ff6f11689059737364","occupationInfo":{"companyAddInfo":{"area":"440106","address":"广东省广州市天河区冼村街道珠江东路11号","province":"440000","city":"440100"},"profession":"0","companyPhone":"02035949111","companyName":"测试科技有限公司","industry":"A","position":"01"},"loanInfo":{"priceAcc":"0.2395","loanFreq":"1M","rateType":"1","loanType":"PZ","reqPeriods":reqPeriods,"reqAmount":loan_amt,"dueDayOpt":"1","custDayRate":"0.2395","reqPurpose":"1"},"maxDegree":"10","accInfoList":[{"acctKind":"01","acctTyp":"01","acctBankCode":"0102","bankName":bank_name,"acctNo":acct_no,"acctName":user_name,"idNo":id_no,"acctPhone":mobile_no,"phoneBelongAddr":"云浮"},{"acctKind":"02","acctTyp":"01","acctBankCode":"0102","bankName":"福建海峡银行股份有限公司","acctNo":acct_no,"acctName":user_name,"idNo":id_no,"acctPhone":mobile_no,"phoneBelongAddr":"云浮"}],"maritalStatus":"10"}), 'requestNo': req_no}
+        sx_need_encry_data = {'apiKey': 'HX_TEST', 'params':json_dumps_cn({"birthday":birthday,"guaranteeInfo":{"guarOdIntRate":"0.00022037","guarRate":"0.079333","guarTime":"12","guarAmt":"237.96"},"nation":"汉","loanseqno":loan_sqe_no,"idNo":id_no,"merchantName":"大商户","monthlySalary":"1000","idExpireDate":"2037-11-30","merchantId":"69355551222","companyPhone":"02061959111","childrenNum":"2","custId":custid,"fromChannel":"01","regAddress":{"area":"440106","address":"广东省广州市天河区冼村街道珠江东路11号","province":"440000","city":"440100"},"liveAddress":{"area":"440106","address":"广东省广州市天河区冼村街道珠江东路11号","province":"440000","city":"440100"},"applyDt":"2024-09-04","emergencyContact":[{"relation":"01","mobileNo":"18197269653","name":"毛不易"},{"relation":"02","mobileNo":"18197269659","name":"李文忠"}],"idStartDate":"2017-11-30","signOffice":"罗定市公安局","mobileNo":mobile_no,"userName":user_name,"fileIDs":"5ff341cdeeed46d98f8cc599a4c72c401718942716298,b368245bc9b24ddeae9116ba2a22e12b1688608942043,e6e60b02818642118986b9be415ad0f71688616059531,bc5cfb353801470d9ce96eaff7f9e9581688621835451,562d6907777740f48511cc21977ffe811688621899067,b42f1234c98846079570799d87a94c671688714949013,1b9d43f6dee840dcbb2f7358c87ff6f11689059737364","occupationInfo":{"companyAddInfo":{"area":"440106","address":"广东省广州市天河区冼村街道珠江东路11号","province":"440000","city":"440100"},"profession":"0","companyPhone":"02035949111","companyName":"测试科技有限公司","industry":"A","position":"01"},"loanInfo":{"priceAcc":"0.2395","loanFreq":"1M","rateType":"1","loanType":"PZ","reqPeriods":reqPeriods,"reqAmount":loan_amt,"dueDayOpt":"1","custDayRate":"0.2395","reqPurpose":"1"},"maxDegree":"10","accInfoList":[{"acctKind":"01","acctTyp":"01","acctBankCode":"0102","bankName":bank_name,"acctNo":acct_no,"acctName":user_name,"idNo":id_no,"acctPhone":mobile_no,"phoneBelongAddr":"云浮"},{"acctKind":"02","acctTyp":"01","acctBankCode":"0102","bankName":bank_name,"acctNo":acct_no,"acctName":user_name,"idNo":id_no,"acctPhone":mobile_no,"phoneBelongAddr":"云浮"}],"maritalStatus":"10"}), 'requestNo': req_no}
         # 加密数据
         sx_encry_data = encrypt_decrypt().param_encry_by_channel(sx_need_encry_data, 'haiXia')
         print("加密的数据是==================", sx_encry_data)
@@ -222,6 +222,9 @@ def test_haixia_loan_success():
         # 6.放款状态查询请求
         loop_result().loop_fkcx_result(fkzt_encry, 'haiXia')
 
+
+
+
     with allure.step("还款计划查询"):
         # 放款成功后需要再次调用一下还款计划接口，落库更新
         # 7.还款计划查询加密
@@ -238,3 +241,54 @@ def test_haixia_loan_success():
 
     with allure.step("放款成功断言"):
         loan_success_assert(loan_sqe_no, loan_success_assert_data)
+
+    # hk_loan_seq_no = "ZLTEST1723015219125"
+    # with allure.step("还款试算"):
+    #     # 8.还款试算加密
+    #     # 05 代偿
+    #     hkss_encry_data = {"apiKey": "HX_TEST","params":json_dumps_cn({"loanseqno":hk_loan_seq_no,"type":"01","period":"1"}),"requestNo":req_no}
+    #     # hkss_encry_data = {"apiKey": "HX_TEST","params":json_dumps_cn({"loanseqno":hk_loan_seq_no,"type":"01","period":"1,2,3,4,5,6,7,8,9,10,11,12"}),"requestNo":req_no}
+    #     # 需要将数据再次格式化成带转义符并且去除空格
+    #     data = json_dumps_format(hkss_encry_data)
+    #     logging.info(f"需要加密的还款试算数据为：======{data}")
+    #     hkss_encry = encrypt_decrypt().param_encry_by_channel(data, 'haiXia')
+    #     logging.info(f"加密后的还款试算数据为：======{hkss_encry}")
+    #     # 8.还款试算请求
+    #     hkss_resp = core_zjly_api().test_calculation_repayment_before(hkss_encry)
+    #     # 8.还款试算返回数据解密
+    #     hkss_decry = encrypt_decrypt().param_decrys_by_channel(hkss_resp, 'haiXia')
+    #     total_amt = hkss_decry["totalAmt"]
+    #     due_amt = hkss_decry["psRemPrcp"]
+    #     due_int = hkss_decry["odPrcpAmt"]
+    #     overdueFee = hkss_decry["overdueFee"]
+    #     logging.info(f"当前需要还款的总金额为：======{total_amt},当前期到期本金：======{due_amt},当前期到期利息：======{due_int},当前期到期罚息：======{overdueFee}")
+    #     logging.info(f"解密后的还款试算返回数据为：======{hkss_decry}")
+    #
+    # with allure.step("还款申请"):
+    #     # 9.还款申请加密-逾期还款
+    #     hk_encry_data = {"apiKey":"HX_TEST","params":json_dumps_cn({"loanseqno":hk_loan_seq_no,"payseqno":repay_no,"type":"01","repay_type":"01","period":"1","repaymentCode":"","isCompensatory":"N","paymInd":"Y","mobileNo":mobile_no,"bankCardNum":acct_no,"bankName":bank_name,"payChannel":"BF","pay_amt":total_amt,"paid_prcp_amt":due_amt,"paid_int_amt":due_int,"paid_od_int_amt":overdueFee,"paid_guarantee_fee_amt":"0.00","paid_late_fee_amt":"0.00","paid_oth_fee_amt":"0.00","paid_pre_repay_fee_amt":"0.00","reduction_amt":"0.00","reduction_prcp_amt":"0.00","reduction_int_amt":"0.00","reduction_od_int_amt":"0.00","reduction_guarantee_fee_amt":"0.00","reduction_late_fee_amt":"0.00","reduction_oth_fee_amt":"0.00","reduction_pre_repay_fee_amt":"0.00"}),"requestNo":req_no}
+    #     # hk_encry_data = {"apiKey":"HX_TEST","params":json_dumps_cn({"loanseqno":hk_loan_seq_no,"payseqno":repay_no,"type":"01","repay_type":"01","period":"2","repaymentCode":"","isCompensatory":"N","paymInd":"Y","mobileNo":mobile_no,"bankCardNum":acct_no,"bankName":bank_name,"payChannel":"BF","pay_amt":"495.01","paid_prcp_amt":"372.89","paid_int_amt":"99.79","paid_od_int_amt":"22.33","paid_guarantee_fee_amt":"0.00","paid_late_fee_amt":"0.00","paid_oth_fee_amt":"0.00","paid_pre_repay_fee_amt":"0.00","reduction_amt":"0.00","reduction_prcp_amt":"0.00","reduction_int_amt":"0.00","reduction_od_int_amt":"0.00","reduction_guarantee_fee_amt":"0.00","reduction_late_fee_amt":"0.00","reduction_oth_fee_amt":"0.00","reduction_pre_repay_fee_amt":"0.00"}),"requestNo":req_no}
+    #
+    #     # 需要将数据再次格式化成带转义符并且去除空格
+    #     data = json_dumps_format(hk_encry_data)
+    #     logging.info(f"需要加密的还款申请数据为：======{data}")
+    #     tqjq_encry = encrypt_decrypt().param_encry_by_channel(data,'haiXia')
+    #     logging.info(f"加密后的还款申请数据为：======{tqjq_encry}")
+    #     # 9.数据库修改还款计划应还日期为到期/逾期
+    #     # 9.还款申请请求
+    #     hksq_resp = core_zjly_api().test_apply_repayment(tqjq_encry)
+    #     # 9.还款申请返回数据解密
+    #     hksq_decry = encrypt_decrypt().param_decrys_by_channel(hksq_resp,'haiXia')
+    #     logging.info(f"解密后的还款申请返回数据为：======{hksq_decry}")
+    #
+    # with allure.step("还款状态查询"):
+    #     # 10.还款状态查询加密
+    #     hkzt_encry_data = {"apiKey":"HX_TEST","params":json_dumps_cn({"payseqno":repay_no}),"requestNo":req_no}
+    #     # hkzt_encry_data = {"apiKey": "HX_TEST", "params": json_dumps_cn({"payseqno": "HK17204943"}), "requestNo": req_no}
+    #     # 需要将数据再次格式化成带转义符并且去除空格
+    #     data = json_dumps_format(hkzt_encry_data)
+    #     logging.info(f"需要加密的还款状态数据为：======{data}")
+    #     hkzt_encry = encrypt_decrypt().param_encry_by_channel(data,'haiXia')
+    #     logging.info(f"加密后的还款状态数据为：======{hkzt_encry}")
+    #     # 10.轮询还款状态查询申请
+    #     loop_result().loop_hkcx_result(hkzt_encry,'haiXia')

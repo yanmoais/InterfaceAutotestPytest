@@ -31,6 +31,7 @@ def test_zhongyuan_loan_success():
         bank_name = "中国建设银行"
         loan_amt = "2000"
         reqPeriods = "12"
+        current_date = get_now_time()
 
         loan_sqe_no = get_req_seq_no()
         req_no = get_req_no()
@@ -40,7 +41,7 @@ def test_zhongyuan_loan_success():
 
     with allure.step("发起授信/客户信息同步"):
         # 1.授信申请加密
-        sx_need_encry_data = {'apiKey': 'RLTEST', 'params':json_dumps_cn({"birthday":birthday,"applyDt":"2024-07-04","maxDegree":"10","maritalStatus":"10","idStartDate":"2007-11-30","signOffice":"罗定市公安局","mobileNo":mobile_no,"gender":"F","userName":user_name,"loanseqno":loan_sqe_no,"idNo":id_no,"idExpireDate":"2027-11-30","custId":custid,"fromChannel":"01","fileIDs":"7e6805ebfe0249378606a1e850ee885f1721199780152,7d016122a2134fbd994d04d117af07cf1721199781053,ea447b60987d41f0960f97deb63d80e41721199781436,de312c09d6f848a8a6f43d398ad11f201721197553666,acc7abac5f2f4b2588a86591c022d7901721199782367,05ec52b444de4095aac6ec7cbdf2a2651720677232773,575746cbe0f34423ad39399cea47b0221721127852605,d9979e88511e4810bf6b20224d3aed691721127784243,1813472749965021184,1813461184641503232","regAddress":{"area":"440106","address":"广东省广州市天河区冼村街道珠江东路11号","province":"440000","city":"440100"},"liveAddress":{"area":"440106","address":"广东省广州市天河区冼村街道珠江东路11号","province":"440000","city":"440100"},"emergencyContact":[{"relation":"01","mobileNo":"18197269653","name":"毛不易"},{"relation":"02","mobileNo":"18197269659","name":"李文忠"}],"guaranteeInfo":{"guarOdIntRate":"0.00022037","guarRate":"0.079333","guarTime":"12","guarAmt":"237.96"},"occupationInfo":{"companyAddInfo":{"area":"440106","address":"广东省广州市天河区冼村街道珠江东路11号","province":"440000","city":"440100"},"profession":"0","companyPhone":"02035949111","companyName":"测试科技有限公司","industry":"A","position":"01"},"loanInfo":{"priceAcc":"0.2395","loanFreq":"1M","rateType":"1","loanType":"PZ","reqPeriods":reqPeriods,"reqAmount":loan_amt,"dueDayOpt":"1","custDayRate":"0.2395","reqPurpose":"1"},"accInfoList":[{"acctKind":"01","acctTyp":"01","acctBankCode":"0105","bankName":bank_name,"acctNo":acct_no,"acctName":user_name,"idNo":id_no,"acctPhone":mobile_no,"phoneBelongAddr":"云浮"},{"acctKind":"02","acctTyp":"01","acctBankCode":"0105","bankName":bank_name,"acctNo":acct_no,"acctName":user_name,"idNo":id_no,"acctPhone":mobile_no,"phoneBelongAddr":"云浮"}]}), 'requestNo': req_no}
+        sx_need_encry_data = {'apiKey': 'RLTEST', 'params':json_dumps_cn({"monthlySalary":"1000","birthday":birthday,"applyDt":current_date,"maxDegree":"10","maritalStatus":"10","idStartDate":"2007-11-30","signOffice":"罗定市公安局","mobileNo":mobile_no,"gender":"F","userName":user_name,"loanseqno":loan_sqe_no,"idNo":id_no,"idExpireDate":"2027-11-30","custId":custid,"fromChannel":"01","fileIDs":"e6e60b02818642118986b9be415ad0f71688616059531,bc5cfb353801470d9ce96eaff7f9e9581688621835451,562d6907777740f48511cc21977ffe811688621899067,19e9811f19604ac7bd78e2e0d3c333191721644201451,a135991d08694618bc3af89bd4b813031721644816582,7fba94267f014b60a98106404b64048e1721656798711,adc70d84f62b4f7299a775b8c77c70e11721656622934,72a789eab2904b83b7af3ae2655ebdd91721644836668,cffb92523e444cbeac9d89931b6d3eff1688608811220,d5bb783557e9401ab0a5b72d54fc32231716516677985,08d869786e8f45afaff716aa402f18051688714948922","regAddress":{"area":"440106","address":"广东省广州市天河区冼村街道珠江东路11号","province":"440000","city":"440100"},"liveAddress":{"area":"440106","address":"广东省广州市天河区冼村街道珠江东路11号","province":"440000","city":"440100"},"emergencyContact":[{"relation":"01","mobileNo":"18197269653","name":"毛不易"},{"relation":"02","mobileNo":"18197269659","name":"李文忠"}],"guaranteeInfo":{"guarOdIntRate":"0.00022037","guarRate":"0.079333","guarTime":"12","guarAmt":"237.96"},"occupationInfo":{"companyAddInfo":{"area":"440106","address":"广东省广州市天河区冼村街道珠江东路11号","province":"440000","city":"440100"},"profession":"0","companyPhone":"02035949111","companyName":"测试科技有限公司","industry":"A","position":"01"},"loanInfo":{"priceAcc":"0.2395","loanFreq":"1M","rateType":"1","loanType":"PZ","reqPeriods":reqPeriods,"reqAmount":loan_amt,"dueDayOpt":"1","custDayRate":"0.2395","reqPurpose":"1"},"accInfoList":[{"acctKind":"01","acctTyp":"01","acctBankCode":"0105","bankName":bank_name,"acctNo":acct_no,"acctName":user_name,"idNo":id_no,"acctPhone":mobile_no,"phoneBelongAddr":"云浮"},{"acctKind":"02","acctTyp":"01","acctBankCode":"0105","bankName":bank_name,"acctNo":acct_no,"acctName":user_name,"idNo":id_no,"acctPhone":mobile_no,"phoneBelongAddr":"云浮"}]}), 'requestNo': req_no}
         # 加密数据
         sx_encry_data = encrypt_decrypt().param_encry_by_channel(sx_need_encry_data, 'runLou')
         # 1.授信申请请求,获取返回数据
@@ -72,6 +73,8 @@ def test_zhongyuan_loan_success():
     #     # 3.签约申请返回数据解密
     #     qysq_decry = encrypt_decrypt().param_decrys_by_channel(qysq_resp,'runLou')
     #     logging.info(f"解密后的签约申请返回数据为：======{qysq_decry}")
+    #
+    # with allure.step("绑卡签约确认"):
     #     # 4.签约确认加密
     #     qyqr_encry_data = {"apiKey": "RLTEST","params":json_dumps_cn({"seqno":bk_no,"smscode":"111111"}),"requestNo": req_no}
     #     # 需要将数据再次格式化成带转义符并且去除空格
@@ -82,15 +85,7 @@ def test_zhongyuan_loan_success():
     #     # 4.签约确认返回数据解密
     #     qyqr_decry = encrypt_decrypt().param_decrys_by_channel(qyqr_resp,'runLou')
     #     logging.info(f"解密后的签约确认返回数据为：======{qyqr_decry}")
-    #
-    # with allure.step("绑卡结果查询"):
-    #     # 4.签约确认加密
-    #     qycx_encry_data = {"apiKey": "RLTEST","params":json_dumps_cn({"seqno":bk_no}),"requestNo": req_no}
-    #     # 需要将数据再次格式化成带转义符并且去除空格
-    #     qycx_encry = encrypt_decrypt().param_encry_by_channel(qycx_encry_data,'runLou')
-    #     logging.info(f"加密后的签约确认数据为：======{qycx_encry}")
-    #     # 轮询绑卡结果
-    #     loop_result().loop_bkcx_result(qycx_encry,'runLou')
+
     # with allure.step("发起借款"):
     #     # 5.放款申请加密
     #     fk_encry_data = {"apiKey":"RLTEST","params":json_dumps_cn({"requestNo":fk_no,"loanseqno":loan_sqe_no,"amt":loan_amt,"fileIDs":"1780487717038329856,6b2a97dc90794fe2b78fa5412c82be581713337050255","accInfoDto":{"acctKind":"01","acctTyp":"01","acctBankCode":"0105","acct_no":acct_no,"acctName":user_name,"id_no":id_no,"acctPhone":mobile_no,"bankName":bank_name}}),"requestNo":req_no}

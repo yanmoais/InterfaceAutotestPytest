@@ -5,3 +5,11 @@ mysql:
     username: xjd
     password: NSaDKTGEeAqxox31OmD7hQzhQ1
     db_name: finance_router
+api:
+  api_flow:
+    host: 192.168.1.192
+    port: 13310
+    username: zws_middleware_360
+    password: maiS2ieb
+    db_name: zws_middleware_360
+

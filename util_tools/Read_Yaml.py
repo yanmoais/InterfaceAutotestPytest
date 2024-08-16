@@ -1,9 +1,9 @@
 """
     读取Yaml文件
 """
+import random
 import warnings
 import yaml
-
 from config.Base_Env import *
 
 # 忽略警告
@@ -18,5 +18,16 @@ def read_db_yaml():
         return db_data
 
 
+def read_risk_phone():
+    path = RISK_PHONE_PATH
+    with open(path, "r", encoding="utf-8") as file:
+        lines = file.readlines()
+        if lines:
+            random_line = random.choice(lines)
+            return random_line.strip()
+        else:
+            print("文件为空")
+
+
 if __name__ == '__main__':
-    print(read_db_yaml()['mysql']['zjly']['host'])
+    print(read_risk_phone())

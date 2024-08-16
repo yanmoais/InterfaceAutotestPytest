@@ -28,10 +28,10 @@ import allure
 @allure.severity(allure.severity_level.CRITICAL)
 def test_jmx_credit_success():
     with allure.step("数据初始化"):
-        id_no, birthday = get_user_idNo()
+        id_no, birthday = get_zx_user_id_no()
         user_name = get_user_name()
         mobile_no = get_phone_mum()
-        acct_no = get_ccb_num()
+        acct_no = get_jmx_ccb_num()
         custid = get_cust_id()
         bank_name = "建设银行"
         loan_amt = "2000"
@@ -79,10 +79,10 @@ def test_jmx_credit_success():
 @allure.severity(allure.severity_level.CRITICAL)
 def test_jmx_credit_amt_query_success():
     with allure.step("数据初始化"):
-        id_no, birthday = get_user_idNo()
+        id_no, birthday = get_zx_user_id_no()
         user_name = get_user_name()
         mobile_no = get_phone_mum()
-        acct_no = get_ccb_num()
+        acct_no = get_jmx_ccb_num()
         custid = get_cust_id()
         bank_name = "建设银行"
         loan_amt = "2000"
@@ -167,11 +167,12 @@ def test_jmx_credit_amt_query_success():
 @allure.severity(allure.severity_level.CRITICAL)
 def test_jmx_loan_success():
     with allure.step("数据初始化"):
-        id_no, birthday = get_user_idNo()
+        id_no, birthday = get_zx_user_id_no()
         user_name = get_user_name()
         mobile_no = get_phone_mum()
-        acct_no = get_ccb_num()
+        acct_no = get_jmx_ccb_num()
         custid = get_cust_id()
+        repay_no = get_repay_no()
         bank_name = "建设银行"
         loan_amt = "2000"
         reqPeriods = "12"
@@ -245,3 +246,53 @@ def test_jmx_loan_success():
 
     with allure.step("断言授信订单表"):
         loan_success_assert(loan_sqe_no, loan_success_assert_data)
+
+
+    # hk_loan_seq_no = "ZLTEST1723016460195"
+    # with allure.step("还款试算"):
+    #     # 8.还款试算加密
+    #     hkss_encry_data = {"apiKey": "JMXTEST","params":json_dumps_cn({"loanseqno":hk_loan_seq_no,"type":"01","period":"1"}),"requestNo":req_no}
+    #     # 需要将数据再次格式化成带转义符并且去除空格
+    #     data = json_dumps_format(hkss_encry_data)
+    #     logging.info(f"需要加密的还款试算数据为：======{data}")
+    #     hkss_encry = encrypt_decrypt().param_encry_by_channel(data, 'jinMeiXin')
+    #     logging.info(f"加密后的还款试算数据为：======{hkss_encry}")
+    #     # 8.还款试算请求
+    #     hkss_resp = core_zjly_api().test_calculation_repayment_before(hkss_encry)
+    #     # 8.还款试算返回数据解密
+    #     hkss_decry = encrypt_decrypt().param_decrys_by_channel(hkss_resp, 'jinMeiXin')
+    #     total_amt = hkss_decry["totalAmt"]
+    #     due_amt = hkss_decry["psRemPrcp"]
+    #     due_int = hkss_decry["odPrcpAmt"]
+    #     logging.info(f"当前需要还款的总金额为：======{total_amt},当前期到期本金：======{due_amt},当前期到期利息：======{due_int}")
+    #     logging.info(f"解密后的还款试算返回数据为：======{hkss_decry}")
+    #
+    # with allure.step("还款申请"):
+    #     signProtocolId = "1202407031346448220000483615"
+    #     # 9.还款申请加密-当期还款
+    #     # hk_encry_data = {"apiKey":"JMXTEST","params":json_dumps_cn({"signProtocolId":signProtocolId,"loanseqno":hk_loan_seq_no,"payseqno":repay_no,"type":"01","repay_type":"01","period":"3","repaymentCode":"","isCompensatory":"N","paymInd":"N","mobileNo":mobile_no,"bankCardNum":acct_no,"bankName":bank_name,"payChannel":"BF","pay_amt":total_amt,"paid_prcp_amt":due_amt,"paid_int_amt":due_int,"paid_od_int_amt":"0.00","paid_guarantee_fee_amt":"0.00","paid_late_fee_amt":"0.00","paid_oth_fee_amt":"0.00","paid_pre_repay_fee_amt":"0.00","reduction_amt":"0.00","reduction_prcp_amt":"0.00","reduction_int_amt":"0.00","reduction_od_int_amt":"0.00","reduction_guarantee_fee_amt":"0.00","reduction_late_fee_amt":"0.00","reduction_oth_fee_amt":"0.00","reduction_pre_repay_fee_amt":"0.00"}),"requestNo":req_no}
+    #     hk_encry_data = {"apiKey":"JMXTEST","params":json_dumps_cn({"loanseqno":hk_loan_seq_no,"payseqno":repay_no,"type":"01","repay_type":"01","period":"1","repaymentCode":"","isCompensatory":"N","paymInd":"Y","mobileNo":mobile_no,"bankCardNum":acct_no,"bankName":bank_name,"payChannel":"BF","pay_amt":total_amt,"paid_prcp_amt":due_amt,"paid_int_amt":due_int,"paid_od_int_amt":"0.00","paid_guarantee_fee_amt":"0.00","paid_late_fee_amt":"0.00","paid_oth_fee_amt":"0.00","paid_pre_repay_fee_amt":"0.00","reduction_amt":"0.00","reduction_prcp_amt":"0.00","reduction_int_amt":"0.00","reduction_od_int_amt":"0.00","reduction_guarantee_fee_amt":"0.00","reduction_late_fee_amt":"0.00","reduction_oth_fee_amt":"0.00","reduction_pre_repay_fee_amt":"0.00"}),"requestNo":req_no}
+    #     # 需要将数据再次格式化成带转义符并且去除空格
+    #     data = json_dumps_format(hk_encry_data)
+    #     logging.info(f"需要加密的还款申请数据为：======{data}")
+    #     tqjq_encry = encrypt_decrypt().param_encry_by_channel(data, 'jinMeiXin')
+    #     logging.info(f"加密后的还款申请数据为：======{tqjq_encry}")
+    #     # 9.数据库修改还款计划应还日期为到期/逾期
+    #     # 9.还款申请请求
+    #     hksq_resp = core_zjly_api().test_apply_repayment(tqjq_encry)
+    #     # 9.还款申请返回数据解密
+    #     hksq_decry = encrypt_decrypt().param_decrys_by_channel(hksq_resp, 'jinMeiXin')
+    #     logging.info(f"解密后的还款申请返回数据为：======{hksq_decry}")
+    #
+    # with allure.step("还款状态查询"):
+    #     # 10.还款状态查询加密
+    #     hkzt_encry_data = {"apiKey":"JMXTEST","params":json_dumps_cn({"payseqno":repay_no}),"requestNo":req_no}
+    #     # 需要将数据再次格式化成带转义符并且去除空格
+    #     data = json_dumps_format(hkzt_encry_data)
+    #     logging.info(f"需要加密的还款状态数据为：======{data}")
+    #     hkzt_encry = encrypt_decrypt().param_encry_by_channel(data, 'jinMeiXin')
+    #     logging.info(f"加密后的还款状态数据为：======{hkzt_encry}")
+    #     # 10.轮询还款状态查询申请
+    #     loop_result().loop_hkcx_result(hkzt_encry, 'jinMeiXin')
+
+

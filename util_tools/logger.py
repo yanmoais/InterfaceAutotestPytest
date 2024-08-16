@@ -3,16 +3,19 @@
 """
 import logging
 import logging.config
+from logging.handlers import RotatingFileHandler
+
 from util_tools.Faker import get_now_time
 from config.testconfig import BASE_DIR
 
 
 class Logger(object):
-    def __init__(self, log_name=f"{BASE_DIR}/logs/{get_now_time()}_log.log", log_level=logging.INFO):
+    def __init__(self, log_name=f"{BASE_DIR}/logs/{get_now_time()}_log.log", log_level=logging.INFO, max_bytes=5*1024*1024, backup_count=5):
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(log_level)
         # 创建一个handler，用于写入日志文件
-        fh = logging.FileHandler(filename=log_name, encoding="utf-8")
+        # fh = logging.FileHandler(filename=log_name, encoding="utf-8")
+        fh = RotatingFileHandler(filename=log_name, maxBytes=max_bytes, backupCount=backup_count, encoding="utf-8")
         fh.setLevel(log_level)
         # 判断当前日志对象中是否有处理器，如果没有，则添加处理器
         # 否则会重复打印日志
