@@ -19,6 +19,7 @@ from util_tools.Read_photo import *
 from util_tools.Read_Yaml import read_risk_phone
 from common.Update_Database_Result import Update_Sql_Result
 from util_tools.Loop_result import loop_result
+from util_tools.Xxl_Job_Executor import execute_xxl_job
 
 
 # API全流程-新长银放款成功
@@ -322,10 +323,23 @@ def test_new_cy_repay_d0_success_api_flow():
 
     with allure.step("修改api还款相关表"):
         # 修改api还款计划表以便于D0批扣还款
-        pass
+        time.sleep(1)
+        db.update_api_flow_zx_loan_plan_info_d0(loanApplyNo, "1")
+        db.update_api_flow_zx_loan_note_info_d0(loanApplyNo)
+        logging.info(f"修改api还款计划表、借据信息表成功")
+
     with allure.step("修改批发还款相关表"):
         # 修改批发路由还款计划表以便于D0批扣还款
-        pass
+        db.update_api_core_fr_api_repayment_plan_d0(loanApplyNo, "1")
+        db.update_api_core_fr_api_order_info_d0(loanApplyNo)
+        logging.info(f"修改批发还款计划表、API订单表成功")
+
     with allure.step("轮询执行D0批扣还款成功"):
         # 执行api侧D0批扣任务
+        time.sleep(1)
+        execute_xxl_job().new_cy_batch_d0_repay_apply()
+        logging.info(f"执行D0批扣任务成功！请稍等！")
+        loop_result().loop_api_flow_repay_result(loanApplyNo)
+
+    with allure.step("还款成功断言"):
         pass

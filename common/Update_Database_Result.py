@@ -9,6 +9,7 @@ from util_tools.Database_Conn import Mysql
 from dateutil.relativedelta import relativedelta
 from common.Select_Database_Result import Select_Sql_Result
 
+
 class Update_Sql_Result(Mysql):
     def __init__(self):
         super().__init__()
@@ -98,6 +99,6 @@ class Update_Sql_Result(Mysql):
 
 
 if __name__ == '__main__':
-    user_id = "SLN4401604407"
-    print(Update_Sql_Result().update_api_flow_zx_loan_note_info_d0("NCY1723456810067"))
+    user_id = "NCY1723456810067"
+    print(Update_Sql_Result().update_api_core_fr_api_repayment_plan_d0("NCY1723456810067", "1"))
     # print((datetime.datetime.now() - relativedelta(months=1)).strftime("%Y-%m-%d %H:%M:%S"))

@@ -399,6 +399,53 @@ class loop_result:
                 self.logging.info(f"当前系统查询次数过多，请稍后重试！")
                 break
 
+    # api全流程还款结果轮询查询
+    def loop_api_flow_repay_result(self, loanApplyNo):
+        # 轮训判断 还款结果查询，为"S"则跳出
+        count = 0
+        while True:
+            count += 1
+            # 等待10秒控制查询
+            time.sleep(5)
+            if count < 30:
+                self.logging.info(f"当前是第{count}次还款状态查询！")
+                try:
+                    # 查询数据库还款结果
+                    repay_result = Select_Sql_Result().select_zl_batch_deduction_apply(loanApplyNo)
+                    if repay_result:
+                        try:
+                            if repay_result["repay_status"] is not None:
+                                if repay_result["repay_status"] == "P" or repay_result["jxym_repay_status"] == "P":
+                                    self.logging.info("还款申请处理中，请稍等！！")
+                                    # 执行api侧D0批扣查询
+                                    time.sleep(5)
+                                    execute_xxl_job().new_cy_d0_batch_repayment_query(loanApplyNo)
+                                    self.logging.info(f"执行D0批扣结果查询成功！请稍等！")
+                                elif repay_result["repay_status"] == "F" or repay_result["jxym_repay_status"] == "F":
+                                    self.logging.info(f"还款申请失败，请检查数据是否存在问题！错误原因：{repay_result['reasonMsg']}")
+                                    break
+                                elif repay_result["repay_status"] == "S":
+                                    self.logging.info(f"还款成功！")
+                                    break
+                                else:
+                                    self.logging.info("系统错误,掉单,请重新尝试！！")
+                                    break
+                            else:
+                                self.logging.info(f"系统发生错误！请检查返回数据：{repay_result}")
+                                break
+                        except Exception as e:
+                            self.logging.error(f"执行过程中发生错误：{e}不存在或预期错误")
+                            break
+                    else:
+                        self.logging.error("请求返回为空，无法继续处理！")
+                        break
+                except Exception as e:
+                    self.logging.error(f"请求发生错误：{e}")
+                    continue
+            else:
+                self.logging.info(f"当前系统查询次数过多，请稍后重试！")
+                break
+
 
 if __name__ == '__main__':
     # api = core_api_flow_api()
@@ -414,5 +461,5 @@ if __name__ == '__main__':
         "userId": "SUR8591343939",
         "loanApplyNo": "SLN4526203503"
     }
-    loanApplyNo = "SLN4526203503"
-    loop_result().loop_api_flow_loan_result(jk_cx_data, loanApplyNo)
+    loanApplyNo = "NCY1723456810067"
+    loop_result().loop_api_flow_repay_result(loanApplyNo)

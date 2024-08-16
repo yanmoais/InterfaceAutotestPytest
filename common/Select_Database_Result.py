@@ -51,6 +51,13 @@ class Select_Sql_Result(Mysql):
         self.logging.info(f"数据库查询返回数据为：==={result}")
         return result
 
+    # 查询api侧zl_batch_deduction_apply表当前还款进度，根据借款流水号授信申请单号来查询(zx_loan_apply_no)
+    def select_zl_batch_deduction_apply(self, loan_apply_no):
+        select_sql = f"SELECT ar.repay_status, ar.jxym_repay_status FROM zl_batch_deduction_apply as ar WHERE ar.zx_loan_apply_no = '{loan_apply_no}';"
+        result = Mysql("api").select_db(select_sql)[0]
+        self.logging.info(f"数据库查询返回数据为：==={result}")
+        return result
+
     # 查询批发侧fr_api_repayment_plan表还款计划详情，根据上游借据号来查询
     def select_fr_api_repayment_plan(self, loan_apply_no):
         api_loan_no = Select_Sql_Result().select_zx_loan_apply_record(loan_apply_no)['loan_no']
@@ -82,7 +89,7 @@ class Select_Sql_Result(Mysql):
 
 
 if __name__ == '__main__':
-    bk_id = "SLN4401604407"
+    bk_id = "NCY1723456810067"
     db = Select_Sql_Result()
-    datas = db.select_zx_loan_apply_record(bk_id)
-    print(datas['loan_no'])
+    datas = db.select_zl_batch_deduction_apply(bk_id)
+    print(datas)
