@@ -58,14 +58,14 @@ class Update_Sql_Result(Mysql):
 
     # api操作还款前对api侧zx_loan_plan_info放款日期与还款计划进行修改,根据loan_apply_no来模糊查询,根据对应期数来修改日期
     def update_api_flow_zx_loan_plan_info_d0(self, loan_apply_no, term):
-        update_sql = f"UPDATE zws_middleware_360.zx_loan_plan_info as cai SET cai.start_date = '{(datetime.datetime.now() - relativedelta(months=1)).strftime("%Y%m%d")}', cai.due_date = '{(datetime.datetime.now().strftime("%Y%m%d"))}' WHERE cai.plan_no LIKE '{loan_apply_no}%' AND cai.term = '{term}';"
+        update_sql = f"UPDATE zws_middleware_360.zx_loan_plan_info as cai SET cai.start_date = '{(datetime.datetime.now() - relativedelta(months=1)).strftime('%Y%m%d')}', cai.due_date = '{(datetime.datetime.now().strftime('%Y%m%d'))}' WHERE cai.plan_no LIKE '{loan_apply_no}%' AND cai.term = '{term}';"
         result = Mysql("api").update_db(update_sql)
         self.logging.info(f"数据库执行完成!")
         return result
 
     # api操作还款前对api侧zx_loan_note_info放款日期与还款计划进行修改,根据loan_apply_no来模糊查询,根据对应期数来修改日期
     def update_api_flow_zx_loan_note_info_d0(self, loan_apply_no):
-        update_sql = f"UPDATE zws_middleware_360.zx_loan_note_info as cai SET cai.loan_time = '{(datetime.datetime.now() - relativedelta(months=1)).strftime("%Y%m%d%H%M%S")}', cai.cash_date = '{((datetime.datetime.now() - relativedelta(months=1)).strftime("%Y%m%d"))}', cai.inst_date = '{((datetime.datetime.now() - relativedelta(months=1)).strftime("%Y%m%d"))}' WHERE cai.loan_apply_no = '{loan_apply_no}';"
+        update_sql = f"UPDATE zws_middleware_360.zx_loan_note_info as cai SET cai.loan_time = '{(datetime.datetime.now() - relativedelta(months=1)).strftime('%Y%m%d%H%M%S')}', cai.cash_date = '{((datetime.datetime.now() - relativedelta(months=1)).strftime('%Y%m%d'))}', cai.inst_date = '{((datetime.datetime.now() - relativedelta(months=1)).strftime('%Y%m%d'))}' WHERE cai.loan_apply_no = '{loan_apply_no}';"
         result = Mysql("api").update_db(update_sql)
         self.logging.info(f"数据库执行完成!")
         return result
@@ -73,7 +73,7 @@ class Update_Sql_Result(Mysql):
     # api操作还款前对批发侧fr_api_repayment_plan还款计划进行修改,根据loan_apply_no来查询,根据对应期数来修改日期
     def update_api_core_fr_api_repayment_plan_d0(self, loan_apply_no, term):
         core_loan_no = Select_Sql_Result().select_fr_api_repayment_plan(loan_apply_no)[0]['loan_no']
-        update_sql = f"UPDATE finance_router.fr_api_repayment_plan as fr SET fr.ps_due_dt = '{(datetime.datetime.now().strftime("%Y-%m-%d"))}' WHERE fr.loan_no = '{core_loan_no}' AND fr.period = '{term}';"
+        update_sql = f"UPDATE finance_router.fr_api_repayment_plan as fr SET fr.ps_due_dt = '{(datetime.datetime.now().strftime('%Y-%m-%d'))}' WHERE fr.loan_no = '{core_loan_no}' AND fr.period = '{term}';"
         result = Mysql().update_db(update_sql)
         self.logging.info(f"数据库执行完成!")
         return result
@@ -82,7 +82,7 @@ class Update_Sql_Result(Mysql):
     def update_api_core_fr_api_order_info_d0(self, loan_apply_no):
         req_seq_no = Select_Sql_Result().select_zx_loan_apply_record(loan_apply_no)['loan_no']
         now_date = (datetime.datetime.now() - relativedelta(months=1))
-        update_sql = f"UPDATE finance_router.fr_api_order_info as fr SET fr.settle_time = '{now_date.strftime("%Y-%m-%d %H:%M:%S")}',fr.apply_dt = '{now_date.strftime("%Y-%m-%d")}', fr.repay_day = '{now_date.strftime("%Y-%m-%d")}' WHERE fr.req_seq_no = '{req_seq_no}';"
+        update_sql = f"UPDATE finance_router.fr_api_order_info as fr SET fr.settle_time = '{now_date.strftime('%Y-%m-%d %H:%M:%S')}',fr.apply_dt = '{now_date.strftime('%Y-%m-%d')}', fr.repay_day = '{now_date.strftime('%Y-%m-%d')}' WHERE fr.req_seq_no = '{req_seq_no}';"
         result = Mysql().update_db(update_sql)
         self.logging.info(f"数据库执行完成!")
         return result
