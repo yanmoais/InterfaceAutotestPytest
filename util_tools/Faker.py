@@ -33,8 +33,14 @@ def get_req_seq_no(channel="ZLTEST"):
 
 
 # 获取随机借据授信申请流水号，API全流程
-def get_credit_apply_no():
-    return str("ZLTEST_" + datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d") + str(int(time.time() * 1000)))
+def get_credit_apply_no(channel="ZLTEST_"):
+    return str(channel + datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d") + str(int(time.time() * 1000)))
+
+
+# 获取支付平台随机申请编号
+def get_zfpt_req_no():
+    return str("APP" + datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d%H%M%S") + str(
+        random.randint(100000, 999999)))
 
 
 # 获取随机绑卡订单号
@@ -217,6 +223,15 @@ def get_haixia_ccb_num():
             return data
 
 
+# 获取随机建设银行卡号,宝付MOCK规则-银行卡
+def get_baofu_ccb_num():
+    while True:
+        timestamp_part = str(int(time.time() * 1000)).zfill(1)
+        data = "621700" + timestamp_part
+        if data.endswith(('0', '2', '4', '6', '8')):
+            return data
+
+
 # 获取随机建设银行卡号,通联绑卡以0,1,9结尾
 def get_tl_bank_ccb_num():
     while True:
@@ -226,87 +241,107 @@ def get_tl_bank_ccb_num():
             return data  # 返回找到的数据
 
 
-def get_user_idNo(sex='girl'):
-    # 验证性别输入
-    if sex not in ('boy', 'girl'):
-        raise ValueError("Gender must be 'boy' or 'girl'")
-
-    # 生成身份证前17位
-    id_front = random.choice([
+def get_user_idNo(sex='girl'):  # 1. 生成身份证号码的前17位
+    # 区域码：假设我们使用一个常见的区域码，例如“440101” (广州)
+    area_code = random.choice([
         '440103', '440104', '440105', '440106', '440111',
         '440112', '440113', '440114', '440115'
-    ]) + (datetime.date(1970, 1, 1) + datetime.timedelta(
-        days=random.randint(0, (datetime.date(2001, 12, 31) - datetime.date(1979, 1, 1)).days)
-    )).strftime('%Y%m%d')
+    ])
 
-    # 生成序列号并调整最后一位以匹配性别
+    # 随机生成出生日期，假设出生日期范围在1980年到2000年之间
+    start_date = datetime.date(1980, 1, 1)
+    end_date = datetime.date(2000, 12, 31)
+    random_date = start_date + datetime.timedelta(days=random.randint(0, (end_date - start_date).days))
+    birth_date = random_date.strftime('%Y%m%d')
+
+    # 随机生成序列号，通常为3位数字，性别不同会影响序列号最后一位
     serial_number = f"{random.randint(0, 999):03d}"
-    last_digit = int(serial_number[-1])
-    if (sex == 'boy' and last_digit % 2 == 0) or (sex == 'girl' and last_digit % 2 != 0):
-        serial_number = serial_number[:-1] + str((last_digit + 1) % 10)
 
-    id_front += serial_number
+    # 拼接前17位
+    id_front = area_code + birth_date + serial_number
 
-    # 计算校验码
+    # 2. 计算校验码
+    # 系数
     weights = [7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2]
-    check_digits = '10X98765432'
-    check = check_digits[sum(int(id_front[i]) * weights[i] for i in range(17)) % 11]
 
-    # 生成完整身份证号
-    idcard = id_front + check
+    # 校验码对应表
+    check_digits = '10X98765432'
+
+    # 计算加权和
+    weighted_sum = sum(int(id_front[i]) * weights[i] for i in range(17))
+
+    # 计算余数并确定校验码
+    remainder = weighted_sum % 11
+    check_code = check_digits[remainder]
+
+    # 生成完整身份证号码
+    id_card_number = id_front + check_code
+    # 提取生日信息
+    birthday = f"{id_card_number[6:10]}-{id_card_number[10:12]}-{id_card_number[12:14]}"
+
+    return id_card_number, birthday
+
+
+# 振兴、金美信、中原、海峡身份证MOCK规则，尾号为X放款失败,所以排除了尾号X的身份证号码
+def get_zx_user_id_no(sex='girl'):
+    id_card_number = generate_valid_id_card_number()
 
     # 提取生日信息
-    birthday = f"{idcard[6:10]}-{idcard[10:12]}-{idcard[12:14]}"
+    birthday = f"{id_card_number[6:10]}-{id_card_number[10:12]}-{id_card_number[12:14]}"
 
-    return idcard, birthday
+    return id_card_number, birthday
 
 
-# 振兴、金美信、中原、海峡身份证MOCK规则，尾号为X放款失败
-def get_zx_user_id_no(sex='girl'):
-    # 确保性别是 'boy' 或 'girl'
-    if sex not in ['boy', 'girl']:
-        raise ValueError("Gender must be 'boy' or 'girl'")
-
-    # 生成身份证前17位
-    prefix = '110101'
-    birth_date = datetime.date(1970, 1, 1) + datetime.timedelta(
-        days=random.randint(0, (datetime.date(1977, 12, 31) - datetime.date(1970, 1, 1)).days)
-    )
-    id_front = prefix + birth_date.strftime('%Y%m%d')
-
-    # 生成序列号，确保性别匹配
-    serial_number = f"{random.randint(0, 999):03d}"
-    last_digit = int(serial_number[-1])
-
-    if sex == 'boy' and last_digit % 2 == 0:
-        serial_number = serial_number[:-1] + str((last_digit + 1) % 10)
-    elif sex == 'girl' and last_digit % 2 != 0:
-        serial_number = serial_number[:-1] + str((last_digit + 1) % 10)
-
-    id_front += serial_number
-
-    # 计算校验码
+def calculate_check_code(id_front):
+    # 系数
     weights = [7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2]
-    checksum_chars = '1098765432'
-    checksum = checksum_chars[
-        sum(int(id_front[i]) * weights[i] for i in range(17)) % 11
-        ]
+    # 校验码对应表
+    check_digits = '10X98765432'
 
-    idcard = id_front + checksum
+    # 计算加权和
+    weighted_sum = sum(int(id_front[i]) * weights[i] for i in range(17))
 
-    # 提取出生日期
-    year, mon, day = idcard[6:10], idcard[10:12], idcard[12:14]
-    birthday = f"{year}-{mon}-{day}"
+    # 计算余数并确定校验码
+    remainder = weighted_sum % 11
+    return check_digits[remainder]
 
-    return idcard, birthday
+
+def generate_valid_id_card_number():
+    while True:
+        # 1. 生成身份证号码的前17位
+        area_code = random.choice([
+            '440103', '440104', '440105', '440106', '440111',
+            '440112', '440113', '440114', '440115'
+        ])
+
+        # 随机生成出生日期，假设出生日期范围在1980年到2000年之间
+        start_date = datetime.date(1980, 1, 1)
+        end_date = datetime.date(2000, 12, 31)
+        random_date = start_date + datetime.timedelta(days=random.randint(0, (end_date - start_date).days))
+        birth_date = random_date.strftime('%Y%m%d')
+
+        # 随机生成序列号，通常为3位数字
+        serial_number = f"{random.randint(0, 999):03d}"
+
+        # 拼接前17位
+        id_front = area_code + birth_date + serial_number
+
+        # 计算校验码
+        check_code = calculate_check_code(id_front)
+
+        # 生成完整身份证号码
+        id_card_number = id_front + check_code
+
+        # 如果尾号不是'X'，则返回结果
+        if check_code != 'X':
+            return id_card_number
 
 
 if __name__ == '__main__':
     # certificationApplyNo = get_api_bk_id()
-    # SS = "11010119770323288X"
-    # id_no, birthday = get_zx_user_id_no()
+    id_no, birthday = get_zx_user_id_no()
     # print(id_no, birthday)
-    print(get_time_stand_api())
+    print(get_credit_apply_no("XM"))
     # 请求鉴权数据
     # bk_jq_need_encry_data = { "certificationApplyNo": "SC00565656","SFAF":"SFASFAF"}
     # print(bk_jq_need_encry_data)

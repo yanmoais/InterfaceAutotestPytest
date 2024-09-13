@@ -7,7 +7,6 @@
     此文件自动化案例为各个资金方授信-借款-还款流程
 """
 import pytest
-
 from testdata.assert_data.banding_assert_data import *
 from testdata.assert_data.loan_assert_data import *
 from testdata.assert_data.loan_credit_amt_assert_data import credit_amt_query_success_data

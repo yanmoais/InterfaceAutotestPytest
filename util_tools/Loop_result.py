@@ -237,7 +237,7 @@ class loop_result:
                                         if sql_result['sign_status'] == '' or sql_result['sign_status'] == "W" or sql_result['sign_status'] == "P":
                                             # 执行签章任务
                                             execute_xxl_job().apply_credit_sign_xxljob()
-                                            time.sleep(6)
+                                            time.sleep(20)
                                 elif resp_decry["status"] == "F":
                                     self.logging.info("申请失败，请检查落库原因！")
                                     break
@@ -261,7 +261,7 @@ class loop_result:
                     continue
             else:
                 self.logging.info(f"当前系统查询次数过多，请稍后重试！")
-                break
+                return False
 
     # api全流程绑卡轮询
     def loop_api_flow_bk_result(self, bk_data, channel_code):
@@ -325,7 +325,7 @@ class loop_result:
                     break
             else:
                 self.logging.info(f"当前系统查询次数过多，请稍后重试！")
-                break
+                return False
 
     # api全流程借款轮询查询
     def loop_api_flow_loan_result(self, data, loanApplyNo, channel_code):
@@ -397,7 +397,7 @@ class loop_result:
                     continue
             else:
                 self.logging.info(f"当前系统查询次数过多，请稍后重试！")
-                break
+                return False
 
     # api全流程还款结果轮询查询
     def loop_api_flow_repay_result(self, loanApplyNo):
@@ -444,7 +444,7 @@ class loop_result:
                     continue
             else:
                 self.logging.info(f"当前系统查询次数过多，请稍后重试！")
-                break
+                return False
 
 
 if __name__ == '__main__':

@@ -10,8 +10,8 @@ import hashlib
 
 class encrypt_decrypt(Base_Api):
     def __init__(self):
-        super().__init__()
-        self.dubbo_api = Base_Api()
+        super().__init__(ENV=None)
+        self.dubbo_api = Base_Api(ENV=None)
         self.now_time = get_time_stand()
         self.logging = Logger().init_logger()
 
@@ -21,7 +21,6 @@ class encrypt_decrypt(Base_Api):
         try:
             # 需要将数据再次格式化成带转义符并且去除空格
             data = json_dumps_format(request_data)
-            logging.info(f"需要加密的代偿后还款计划同步数据为：======{data}")
             self.logging.info(f"开始加密请求数据==========,{data}")
             encry_data = self.dubbo_api.post(apis, data)
             return encry_data

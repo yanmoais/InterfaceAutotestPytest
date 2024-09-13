@@ -48,6 +48,16 @@ class execute_xxl_job(xxlJob):
         self.excute_xxl_job.trigger_xxl_job(182, f'{param_data}')
         self.logging.info(f"执行查询批扣结果任务成功!")
 
+    # 调用单笔还款处理任务
+    def single_repay(self):
+        self.excute_xxl_job.trigger_xxl_job(199)
+        self.logging.info(f"调用单笔还款处理任务成功!")
+
+    # 调用单笔还款结果查询
+    def single_query_result(self):
+        self.excute_xxl_job.trigger_xxl_job(200)
+        self.logging.info(f"调用单笔还款处理任务成功!")
+
 
 if __name__ == '__main__':
     loanApplyNo = "SLN3487668801"

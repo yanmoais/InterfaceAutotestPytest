@@ -222,9 +222,6 @@ def test_haixia_loan_success():
         # 6.放款状态查询请求
         loop_result().loop_fkcx_result(fkzt_encry, 'haiXia')
 
-
-
-
     with allure.step("还款计划查询"):
         # 放款成功后需要再次调用一下还款计划接口，落库更新
         # 7.还款计划查询加密

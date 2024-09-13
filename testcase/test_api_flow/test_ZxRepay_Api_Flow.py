@@ -35,7 +35,7 @@ def test_new_cy_loan_success_api_flow():
         credit_apply_no = get_credit_apply_no()
         db = Update_Sql_Result()
         apply_time = get_time_stand_api()
-        id_no, birthday = get_user_idNo()
+        id_no, birthday = get_zx_user_id_no()
         user_name = get_user_name()
         # 获取风控加白了的手机号，读取本地txt文件
         mobile_no = read_risk_phone()
@@ -82,8 +82,8 @@ def test_new_cy_loan_success_api_flow():
                                                 "addressOCR": "黑龙江省哈尔滨市松北区成钧街道豪承小区190号楼501",
                                                 "sexOCR": "M", "ethnicOCR": "汉族", "issueOrgOCR": "黑龙江公安局"},
                               "faceInfo": {"assayTime": apply_time, "assayType": "SENSETIME", "best": get_best_photo()},
-                              "linkmanInfo": {"relationshipA": "10", "nameA": "毋琳子", "phoneA": "1516145537",
-                                              "relationshipB": "60", "nameB": "花娥茜", "phoneB": "1598220918"},
+                              "linkmanInfo": {"relationshipA": "10", "nameA": "毋琳子", "phoneA": "15161455378",
+                                              "relationshipB": "60", "nameB": "花娥茜", "phoneB": "15982209188"},
                               "bankCardInfo": {"bankCode": "0004", "idCardNo": id_no, "userMobile": mobile_no,
                                                "userName": user_name, "bankCardNo": bank_card_no},
                               "geoInfo": {"latitude": "43.57687931900941", "longitude": "112.55172012515888"},
@@ -116,31 +116,27 @@ def test_new_cy_loan_success_api_flow():
         resp = loop_result().loop_api_flow_sx_result(sx_cx_data, credit_apply_no, channel_code)
         logging.info(f"当前授信结果返回数据为：{resp}")
 
-    # with allure.step("授信审核结果通知下游"):
-    #     # 授信审核结果通知数据
-    #     result_notic_data = {"userId": user_id, "creditApplyNo": credit_apply_no,
-    #                          "partnerCreditNo": resp["partnerCreditNo"], "status": resp["status"],
-    #                          "statusTime": resp["statusTime"]}
-    #     # 加密授信审核结果通知数据
-    #     notic_encry_data = api.api_param_encry(result_notic_data, channel_code)
-    #     # 发起授信审核结果通知请求
-    #     notic_resp = api.test_notice_credit_result(notic_encry_data)
-    #     # 解密通知结果
-    #     notic_decry_data = api.api_param_decry(notic_resp)
-    #     logging.info(f"解密后的授信审核结果通知返回数据为：======={notic_decry_data}")
 
     with allure.step("绑卡申请"):
         # 请求鉴权数据
         bk_jq_need_encry_data = {"userId": user_id, "certificationApplyNo": certificationApplyNo, "bankCode": "0004",
                                  "idCardNo": id_no, "userMobile": mobile_no, "userName": user_name,
-                                 "bankCardNo": bank_card_no, "registerMobile": mobile_no, "agreementTime": apply_time,
-                                 "bindType": "fundsChannel"}
+                                 "bankCardNo": bank_card_no, "registerMobile": mobile_no, "agreementTime": apply_time
+                                 }
+        # 判断是360就直接绑卡，不指定bindType
         # 绑卡轮询，并且绑卡两次
+        # 此处需要优化，360的话不需要指定bindType,直接绑两次卡就好
         with allure.step("第一次绑卡"):
+            if channel_code == "APPZY":
+                bk_jq_need_encry_data["bindType"] = "fundsChannel"
+            else:
+                pass
             loop_result().loop_api_flow_bk_result(bk_jq_need_encry_data, channel_code)
         with allure.step("第二次绑卡"):
-            if channel_code == "APPZY":
+            if channel_code == "APPZY" or channel_code == "XL":
                 bk_jq_need_encry_data["bindType"] = "payChannel"
+            else:
+                pass
             # 第二次绑卡需要更新申请号以及时间，从新赋值
             time.sleep(2)
             bk_jq_need_encry_data["certificationApplyNo"], bk_jq_need_encry_data[
@@ -162,8 +158,8 @@ def test_new_cy_loan_success_api_flow():
                                  "agreementTime": apply_time,
                                  "bankCardInfo": {"bankCode": "0004", "idCardNo": id_no, "userMobile": mobile_no,
                                                   "userName": user_name, "bankCardNo": bank_card_no},
-                                 "linkmanInfo": {"relationshipA": "10", "nameA": "毋琳子", "phoneA": "1516145537",
-                                                 "relationshipB": "60", "nameB": "花娥茜", "phoneB": "1598220918"},
+                                 "linkmanInfo": {"relationshipA": "10", "nameA": "毋琳子", "phoneA": "15161455378",
+                                                 "relationshipB": "60", "nameB": "花娥茜", "phoneB": "15982209188"},
                                  "geoInfo": {"latitude": "43.57687931900941", "longitude": "112.55172012515888"}}
         # 加密借款申请数据
         jk_sq_encry_data = api.api_param_encry(jk_sq_need_encry_data, channel_code)
