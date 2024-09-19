@@ -40,10 +40,10 @@ def test_zfzt_banked_query():
 
 # 支付中台绑卡申请
 def test_zfzt_bank_apply():
-    ACCOUNT_NAME = "吴霞"
-    CREDIT_ACCTNO = "6217000544979326825"
-    TEL = "15915480565"
-    ID = "610522200007287100"
+    ACCOUNT_NAME = "胡晓"
+    TEL = "15971219450"
+    ID = "440104199007280409"
+    CREDIT_ACCTNO = "6217002355726778848"
     reqsn = get_zfpt_req_no()
     businessChannel = 101
     req_data = {
@@ -68,7 +68,7 @@ def test_zfzt_bank_apply():
 
 # 支付中台绑卡确认
 def test_zfzt_bank_confirm():
-    reqsn = "APP20240906175738193787"
+    reqsn = "APP20240913181406459455"
     businessChannel = 101
     req_data = {
         "reqSn": reqsn,

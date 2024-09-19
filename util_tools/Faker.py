@@ -192,7 +192,7 @@ def get_new_cy_ccb_num():
     while True:
         timestamp_part = str(int(time.time() * 1000)).zfill(1)
         data = "621700" + timestamp_part
-        if data.endswith(('0', '4', '7', '8', '9')):
+        if data.endswith(('0', '4', '8', '9')):
             return data
 
 
@@ -314,9 +314,9 @@ def generate_valid_id_card_number():
             '440112', '440113', '440114', '440115'
         ])
 
-        # 随机生成出生日期，假设出生日期范围在1980年到2000年之间
-        start_date = datetime.date(1980, 1, 1)
-        end_date = datetime.date(2000, 12, 31)
+        # 随机生成出生日期，假设出生日期范围在1975年到1978年之间
+        start_date = datetime.date(1975, 1, 1)
+        end_date = datetime.date(1978, 12, 31)
         random_date = start_date + datetime.timedelta(days=random.randint(0, (end_date - start_date).days))
         birth_date = random_date.strftime('%Y%m%d')
 
@@ -341,7 +341,9 @@ if __name__ == '__main__':
     # certificationApplyNo = get_api_bk_id()
     id_no, birthday = get_zx_user_id_no()
     # print(id_no, birthday)
-    print(get_credit_apply_no("XM"))
+    address = get_fake().currency_symbol()
+    print(address)
+    # print(get_credit_apply_no("")XM)
     # 请求鉴权数据
     # bk_jq_need_encry_data = { "certificationApplyNo": "SC00565656","SFAF":"SFASFAF"}
     # print(bk_jq_need_encry_data)

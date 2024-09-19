@@ -112,57 +112,6 @@ def test_xiaomi_loan_success():
         loan_success_assert(loan_sqe_no, loan_success_assert_data)
 
 
-    with allure.step("还款试算"):
-        # 8.还款试算加密
-        # 05 代偿
-        hkss_encry_data = {"apiKey": "XM_TEST","params":json_dumps_cn({"loanseqno":loan_sqe_no,"type":"01","period":"1"}),"requestNo":req_no}
-        # hkss_encry_data = {"apiKey": "XM_TEST","params":json_dumps_cn({"loanseqno":hk_loan_seq_no,"type":"01","period":"1,2,3,4,5,6,7,8,9,10,11,12"}),"requestNo":req_no}
-        # 需要将数据再次格式化成带转义符并且去除空格
-        data = json_dumps_format(hkss_encry_data)
-        logging.info(f"需要加密的还款试算数据为：======{data}")
-        hkss_encry = encrypt_decrypt().param_encry_by_channel(data, 'xiaoMi')
-        logging.info(f"加密后的还款试算数据为：======{hkss_encry}")
-        # 8.还款试算请求
-        hkss_resp = core_zjly_api().test_calculation_repayment_before(hkss_encry)
-        # 8.还款试算返回数据解密
-        hkss_decry = encrypt_decrypt().param_decrys_by_channel(hkss_resp, 'xiaoMi')
-        total_amt = hkss_decry["totalAmt"]
-        due_amt = hkss_decry["psRemPrcp"]
-        due_int = hkss_decry["odPrcpAmt"]
-        overdueFee = hkss_decry["overdueFee"]
-        logging.info(f"当前需要还款的总金额为：======{total_amt},当前期到期本金：======{due_amt},当前期到期利息：======{due_int},当前期到期罚息：======{overdueFee}")
-        logging.info(f"解密后的还款试算返回数据为：======{hkss_decry}")
-
-    with allure.step("还款申请"):
-        # 9.还款申请加密-逾期还款
-        hk_encry_data = {"apiKey":"XM_TEST","params":json_dumps_cn({"loanseqno":loan_sqe_no,"payseqno":repay_no,"type":"01","repay_type":"01","period":"2","repaymentCode":"","isCompensatory":"N","paymInd":"N","bankCode":"0104","mobileNo":"15980487481","bankCardNum":"6217001725861772320","bankName":"建设银行","payChannel":"BF","signProtocolId":"1202409091404187480000786710","pay_amt":total_amt,"paid_prcp_amt":due_amt,"paid_int_amt":due_int,"paid_od_int_amt":overdueFee,"paid_guarantee_fee_amt":"0.00","paid_late_fee_amt":"0.00","paid_oth_fee_amt":"0.00","paid_pre_repay_fee_amt":"0.00","reduction_amt":"0.00","reduction_prcp_amt":"0.00","reduction_int_amt":"0.00","reduction_od_int_amt":"0.00","reduction_guarantee_fee_amt":"0.00","reduction_late_fee_amt":"0.00","reduction_oth_fee_amt":"0.00","reduction_pre_repay_fee_amt":"0.00"}),"requestNo":req_no}
-        # hk_encry_data = {"apiKey":"XM_TEST","params":json_dumps_cn({"loanseqno":hk_loan_seq_no,"payseqno":repay_no,"type":"01","repay_type":"01","period":"2","repaymentCode":"","isCompensatory":"N","paymInd":"Y","mobileNo":mobile_no,"bankCardNum":acct_no,"bankName":bank_name,"payChannel":"BF","pay_amt":"495.01","paid_prcp_amt":"372.89","paid_int_amt":"99.79","paid_od_int_amt":"22.33","paid_guarantee_fee_amt":"0.00","paid_late_fee_amt":"0.00","paid_oth_fee_amt":"0.00","paid_pre_repay_fee_amt":"0.00","reduction_amt":"0.00","reduction_prcp_amt":"0.00","reduction_int_amt":"0.00","reduction_od_int_amt":"0.00","reduction_guarantee_fee_amt":"0.00","reduction_late_fee_amt":"0.00","reduction_oth_fee_amt":"0.00","reduction_pre_repay_fee_amt":"0.00"}),"requestNo":req_no}
-
-        # 需要将数据再次格式化成带转义符并且去除空格
-        data = json_dumps_format(hk_encry_data)
-        logging.info(f"需要加密的还款申请数据为：======{data}")
-        tqjq_encry = encrypt_decrypt().param_encry_by_channel(data,'xiaoMi')
-        logging.info(f"加密后的还款申请数据为：======{tqjq_encry}")
-        # 9.数据库修改还款计划应还日期为到期/逾期
-        # 9.还款申请请求
-        hksq_resp = core_zjly_api().test_apply_repayment(tqjq_encry)
-        # 9.还款申请返回数据解密
-        hksq_decry = encrypt_decrypt().param_decrys_by_channel(hksq_resp,'xiaoMi')
-        logging.info(f"解密后的还款申请返回数据为：======{hksq_decry}")
-
-    with allure.step("还款状态查询"):
-        # 10.还款状态查询加密
-        hkzt_encry_data = {"apiKey":"XM_TEST","params":json_dumps_cn({"payseqno":repay_no}),"requestNo":req_no}
-        # hkzt_encry_data = {"apiKey": "XM_TEST", "params": json_dumps_cn({"payseqno": "HK17204943"}), "requestNo": req_no}
-        # 需要将数据再次格式化成带转义符并且去除空格
-        data = json_dumps_format(hkzt_encry_data)
-        logging.info(f"需要加密的还款状态数据为：======{data}")
-        hkzt_encry = encrypt_decrypt().param_encry_by_channel(data,'xiaoMi')
-        logging.info(f"加密后的还款状态数据为：======{hkzt_encry}")
-        # 10.轮询还款状态查询申请
-        loop_result().loop_hkcx_result(hkzt_encry,'xiaoMi')
-
-
 @allure.epic("小米资方")
 @allure.feature("授信模块")
 @allure.story("小米资方授信还款案例")
@@ -250,7 +199,6 @@ def test_xiaomi__success():
 
     with allure.step("放款成功断言"):
         loan_success_assert(loan_sqe_no, loan_success_assert_data)
-
 
     with allure.step("还款试算"):
         # 8.还款试算加密

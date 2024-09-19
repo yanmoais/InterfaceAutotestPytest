@@ -75,13 +75,13 @@ def send_to_dingtalk(text):
         }
     }
     response = Base_Api().post_dingk(DINGTALK_WEBHOOK_URL, data, headers)
-    print(f"钉钉消息发送结果：{response.json}")
+    print(f"钉钉消息发送结果：{response}")
 
 
 if __name__ == '__main__':
     # 测试文件路径列表（请根据实际情况修改）
     test_files = [
-        # f"{BASE_DIR}/testcase/test_zjly/test_JmxLoanRepay.py",
+        f"{BASE_DIR}/testcase/test_zjly/test_JmxLoanRepay.py",
         f"{BASE_DIR}/testcase/test_zjly/test_ZyLoanRepay.py",
         f"{BASE_DIR}/testcase/test_zjly/test_NewCYLoanRepay.py",
         f"{BASE_DIR}/testcase/test_zjly/test_ZxLoanRepay.py"

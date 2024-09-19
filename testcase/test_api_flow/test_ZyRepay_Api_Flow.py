@@ -28,7 +28,7 @@ from util_tools.Loop_result import loop_result
 @allure.title("360沙盒渠道-借款成功-API全流程")
 @allure.story("360沙盒渠道-中原提钱花资方授信案例-API全流程")
 @allure.severity(allure.severity_level.CRITICAL)
-def test_new_cy_loan_success_api_flow():
+def test_zy_loan_success_api_flow():
     with allure.step("数据初始化"):
         api = core_api_flow_api()
         enc = encrypt_decrypt()

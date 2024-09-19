@@ -30,7 +30,7 @@ class loop_result:
         while True:
             # 等待2秒后发起授信状态查询请求
             count += 1
-            time.sleep(10)
+            time.sleep(15)
             resp = None
             if count < 20:
                 try:
@@ -77,7 +77,7 @@ class loop_result:
             count += 1
             time.sleep(30)
             resp = None
-            if count < 10:
+            if count < 20:
                 try:
                     resp = core_zjly_api().test_loan_apply_settle_query(data)
                 except Exception as e:
@@ -120,9 +120,9 @@ class loop_result:
         while True:
             count += 1
             # 等待2秒后发起还款查询请求
-            time.sleep(10)
+            time.sleep(30)
             resp = None
-            if count < 10:
+            if count < 30:
                 try:
                     resp = core_zjly_api().test_apply_repayment_query(data)
                 except Exception as e:

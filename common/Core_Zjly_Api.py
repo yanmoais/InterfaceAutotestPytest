@@ -162,8 +162,12 @@ class core_zjly_api:
         try:
             self.logging.info(f"开始发送授信申请请求：========，请求数据为{request_data}")
             resp = self.base_api.post("/v1/orderApply", request_data)
-            self.logging.info(f"返回结果数据为：=======，{resp}")
-            return resp
+            if resp['code'] == '9990':
+                self.logging.info(f"数据存在错误，请检查数据：========{resp}")
+                return False
+            else:
+                self.logging.info(f"返回结果数据为：=======，{resp}")
+                return resp
         except Exception as e:
             self.logging.info(f"请求发生异常，======={e}")
 
