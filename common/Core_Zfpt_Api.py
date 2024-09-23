@@ -71,7 +71,6 @@ class core_zfpt_api(Base_Api):
                         "requestData": encry_requst_data['requestData']}
         try:
             self.logging.info(f"开始发送支付中台绑卡签约确认请求：========，请求数据为{request_data}")
-            print(self.uri)
             resp = self.base_api.post("/v1/bindBankConfirm", request_data)
             self.logging.info(f"返回结果数据为：=======，{resp}")
             return resp

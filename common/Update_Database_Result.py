@@ -4,10 +4,11 @@
 # Them：Pyhon自动化
 # @Time :  下午6:30
 import datetime
-
+import time
 from util_tools.Database_Conn import Mysql
 from dateutil.relativedelta import relativedelta
 from common.Select_Database_Result import Select_Sql_Result
+from util_tools.Redis_Conn import Redis
 
 
 class Update_Sql_Result(Mysql):
@@ -97,8 +98,48 @@ class Update_Sql_Result(Mysql):
         db.update_api_flow_zx_credit_info(funds_code, user_id)
         self.logging.info(f"全部执行完毕！")
 
+    # 修改金美信走Mock环境
+    def update_jmx_zjly_mock(self):
+        update_sql_1 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'jinMeiXin_temp' WHERE fr.name = '金美信mock';"
+        update_sql_2 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'jinMeiXin_mock' WHERE fr.name = '金美信-测试';"
+        update_sql_3 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'jinMeiXin' WHERE fr.name = '金美信mock';"
+        Mysql().update_db(update_sql_1)
+        time.sleep(1)
+        Mysql().update_db(update_sql_2)
+        time.sleep(1)
+        result = Mysql().update_db(update_sql_3)
+        self.logging.info(f"数据库执行完成!")
+
+        # 实例化Redis连接
+        redis_clinet = Redis()
+        # 删除金美信Redis的Key值
+        redis_clinet.delete_redis_key("zijinluyou:api:param_config:::jinMeiXin")
+        # 关闭redis
+        redis_clinet.close_db()
+        return result
+
+    # 修改金美信走资方测试环境
+    def update_jmx_zjly_test(self):
+        update_sql_1 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'jinMeiXin_temp' WHERE fr.name = '金美信mock';"
+        update_sql_2 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'jinMeiXin' WHERE fr.name = '金美信-测试';"
+        update_sql_3 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'jinMeiXin_mock' WHERE fr.name = '金美信mock';"
+        Mysql().update_db(update_sql_1)
+        time.sleep(1)
+        Mysql().update_db(update_sql_2)
+        time.sleep(1)
+        result = Mysql().update_db(update_sql_3)
+        self.logging.info(f"数据库执行完成!")
+
+        # 实例化Redis连接
+        redis_clinet = Redis()
+        # 删除金美信Redis的Key值
+        redis_clinet.delete_redis_key("zijinluyou:api:param_config:::jinMeiXin")
+        # 关闭redis
+        redis_clinet.close_db()
+        return result
+
 
 if __name__ == '__main__':
     user_id = "NCY1723456810067"
-    print(Update_Sql_Result().update_api_core_fr_api_repayment_plan_d0("NCY1723456810067", "1"))
+    print(Update_Sql_Result().update_jmx_zjly_test())
     # print((datetime.datetime.now() - relativedelta(months=1)).strftime("%Y-%m-%d %H:%M:%S"))

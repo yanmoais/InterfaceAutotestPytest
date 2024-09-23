@@ -6,6 +6,9 @@
 """
     此文件自动化案例为各个资金方授信-借款-还款流程
 """
+import time
+
+import allure
 from testdata.assert_data.banding_assert_data import banding_card_assert_data_new_cy
 from testdata.assert_data.loan_assert_data import *
 from testdata.assert_data.banding_assert_data import *
@@ -16,7 +19,7 @@ from util_tools.logger import Logger
 from util_tools.Faker import *
 from common.Core_Zjly_Api import core_zjly_api
 from common.Encrypt_Decrypt import encrypt_decrypt
-import allure
+from testfunctions.core_zjly_test import Core_zjly_test_function
 
 
 @allure.epic("新长银资方")
@@ -354,26 +357,6 @@ def test_new_cy_loan_success():
 @allure.story("新长银资方授信放款案例-宝付共享模式")
 @allure.title("放款成功-宝付共享模式")
 def test_new_cy_bf_loan_success():
-    # with allure.step("数据初始化"):
-    #     id_no, birthday = "440105199206246955", "1992-06-24"
-    #     user_name = "何淑华"
-    #     mobile_no = "13287516903"
-    #     acct_no = "6217002774007597380"
-    #     signProtocolId = "1202409131814146700000847518"
-    #     custid = get_cust_id()
-    #     bank_name = "中国建设银行"
-    #     loan_amt = "2000"
-    #     reqPeriods = "12"
-    #     loanType = "PZ01"
-    #     current_date = get_now_time()
-    #     repay_no = get_repay_no()
-    #
-    #     loan_sqe_no = "ZLTEST1726294741197"
-    #     req_no = get_req_no()
-    #     bk_id = get_bank_id()
-    #     fk_no = get_fk_id()
-    #     logging = Logger().init_logger()
-
     with allure.step("数据初始化"):
         id_no, birthday = get_user_idNo()
         user_name = get_user_name()
@@ -382,10 +365,10 @@ def test_new_cy_bf_loan_success():
         custid = get_cust_id()
         bank_name = "中国建设银行"
         loan_amt = "2000"
-        loanType = "PZ01"
         reqPeriods = "12"
+        reqAmount = "50000"
+        loanType = "PZ01"
         current_date = get_now_time()
-        repay_no = get_repay_no()
 
         loan_sqe_no = get_req_seq_no()
         req_no = get_req_no()
@@ -393,9 +376,22 @@ def test_new_cy_bf_loan_success():
         fk_no = get_fk_id()
         logging = Logger().init_logger()
 
+    if loanType == "PZ02":
+        with allure.step("发起支付平台宝付绑卡"):
+            # 发起协议平台绑卡申请
+            bind_resp = Core_zjly_test_function().test_zfzt_bank_apply(user_name, mobile_no, id_no, acct_no)
+            # 发起协议平台绑卡确认
+            confirm_resp = Core_zjly_test_function().test_zfzt_bank_confirm(bind_resp[0])
+            # 获取协议号
+            signProtocolId = confirm_resp["AGRMNO"]
+            logging.info(f"宝付协议绑卡成功，协议号为： {signProtocolId} 。")
+            time.sleep(1)
+    else:
+        pass
+
     with allure.step("发起授信/客户信息同步"):
         # 1.授信申请加密
-        sx_need_encry_data = {'apiKey': 'CYBFCS', 'params':json_dumps_cn({"monthlySalary":"1000","birthday":birthday,"applyDt":current_date,"maxDegree":"10","maritalStatus":"10","idStartDate":"2034-03-30","signOffice":"罗定市公安局","mobileNo":mobile_no,"gender":"F","userName":user_name,"loanseqno":loan_sqe_no,"idNo":id_no,"idExpireDate":"2054-03-30","custId":custid,"fromChannel":"01","fileIDs":"2cbe60ee87c04a4a8157546bb9eae7201721714755548,15a77e528c574cfd97887312dfd62ff11721714757215,c1565b0e3b844cb4beaa1f823c529b361721715260280,3db022318aba42389125af725fda1b151721718784024,32c60737dc624a318bbb51ccb207bcd01721714758712,3844840339a74d33ad8e2ab02458c8d81721714758960,f01427fc71f64f50a6dce7412c00a3981721714759218,5576a532f7c747a3b0c4a4842a5cfc941721714759339","regAddress":{"area":"440106","address":"广东省广州市天河区冼村街道珠江东路11号","province":"440000","city":"440100"},"liveAddress":{"area":"440106","address":"广东省广州市天河区冼村街道珠江东路11号","province":"440000","city":"440100"},"emergencyContact":[{"relation":"01","mobileNo":"18197269653","name":"毛不易"},{"relation":"02","mobileNo":"18197269659","name":"李文忠"}],"guaranteeInfo":{"guarOdIntRate":"0.00022037","guarRate":"0.079333","guarTime":"12","guarAmt":"237.96"},"occupationInfo":{"companyAddInfo":{"area":"440106","address":"广东省广州市天河区冼村街道珠江东路11号","province":"440000","city":"440100"},"profession":"0","companyPhone":"02035949111","companyName":"测试科技有限公司","industry":"A","position":"01"},"loanInfo":{"priceAcc":"0.2395","loanFreq":"1M","rateType":"1","loanType":loanType,"reqPeriods":reqPeriods,"reqAmount":loan_amt,"dueDayOpt":"1","custDayRate":"0.2395","reqPurpose":"1"},"accInfoList":[{"acctKind":"01","acctTyp":"01","acctBankCode":"0105","bankName":bank_name,"acctNo":acct_no,"acctName":user_name,"idNo":id_no,"acctPhone":mobile_no,"phoneBelongAddr":"云浮"},{"acctKind":"02","acctTyp":"01","acctBankCode":"0105","bankName":bank_name,"acctNo":acct_no,"acctName":user_name,"idNo":id_no,"acctPhone":mobile_no,"phoneBelongAddr":"云浮"}]}), 'requestNo': req_no}
+        sx_need_encry_data = {'apiKey': 'CYBFCS', 'params':json_dumps_cn({"monthlySalary":"1000","birthday":birthday,"applyDt":current_date,"maxDegree":"10","maritalStatus":"10","idStartDate":"2034-03-30","signOffice":"罗定市公安局","mobileNo":mobile_no,"gender":"F","userName":user_name,"loanseqno":loan_sqe_no,"idNo":id_no,"idExpireDate":"2054-03-30","custId":custid,"fromChannel":"01","fileIDs":"2cbe60ee87c04a4a8157546bb9eae7201721714755548,15a77e528c574cfd97887312dfd62ff11721714757215,c1565b0e3b844cb4beaa1f823c529b361721715260280,3db022318aba42389125af725fda1b151721718784024,32c60737dc624a318bbb51ccb207bcd01721714758712,3844840339a74d33ad8e2ab02458c8d81721714758960,f01427fc71f64f50a6dce7412c00a3981721714759218,5576a532f7c747a3b0c4a4842a5cfc941721714759339","regAddress":{"area":"440106","address":"广东省广州市天河区冼村街道珠江东路11号","province":"440000","city":"440100"},"liveAddress":{"area":"440106","address":"广东省广州市天河区冼村街道珠江东路11号","province":"440000","city":"440100"},"emergencyContact":[{"relation":"01","mobileNo":"18197269653","name":"毛不易"},{"relation":"02","mobileNo":"18197269659","name":"李文忠"}],"guaranteeInfo":{"guarOdIntRate":"0.00022037","guarRate":"0.079333","guarTime":"12","guarAmt":"237.96"},"occupationInfo":{"companyAddInfo":{"area":"440106","address":"广东省广州市天河区冼村街道珠江东路11号","province":"440000","city":"440100"},"profession":"0","companyPhone":"02035949111","companyName":"测试科技有限公司","industry":"A","position":"01"},"loanInfo":{"priceAcc":"0.2395","loanFreq":"1M","rateType":"1","loanType":loanType,"reqPeriods":reqPeriods,"reqAmount":reqAmount,"dueDayOpt":"1","custDayRate":"0.2395","reqPurpose":"1"},"accInfoList":[{"acctKind":"01","acctTyp":"01","acctBankCode":"0105","bankName":bank_name,"acctNo":acct_no,"acctName":user_name,"idNo":id_no,"acctPhone":mobile_no,"phoneBelongAddr":"云浮"},{"acctKind":"02","acctTyp":"01","acctBankCode":"0105","bankName":bank_name,"acctNo":acct_no,"acctName":user_name,"idNo":id_no,"acctPhone":mobile_no,"phoneBelongAddr":"云浮"}]}), 'requestNo': req_no}
         # 加密数据
         sx_encry_data = encrypt_decrypt().param_encry_by_channel(sx_need_encry_data, 'changYinNew')
         # 1.授信申请请求,获取返回数据
@@ -415,9 +411,15 @@ def test_new_cy_bf_loan_success():
         # 2.授信状态查询请求
         loop_result().loop_sxcx_result(sxzt_encry,'changYinNew')
 
-    with allure.step("发起通联绑卡"):
+    with allure.step("发起通联&宝付绑卡"):
         # 3.签约申请加密
-        qybk_ency_data = {"apiKey": "CYBFCS","params":json_dumps_cn({"seqno":bk_id,"loanseqno":loan_sqe_no,"id_no":id_no,"user_name":user_name,"mobile_no":mobile_no,"bankCode":"0105","cardNo":acct_no,"bankName":bank_name,"registerPhone":mobile_no}),"requestNo": req_no}
+        params = {"seqno":bk_id,"loanseqno":loan_sqe_no,"id_no":id_no,"user_name":user_name,"mobile_no":mobile_no,"bankCode":"0105","cardNo":acct_no,"bankName":bank_name,"registerPhone":mobile_no}
+        if loanType == "PZ02":
+            params['signProtocolId'] = signProtocolId
+            params['payChannel'] = 'BF'
+        else:
+            pass
+        qybk_ency_data = {"apiKey": "CYBFCS","params":json_dumps_cn(params),"requestNo": req_no}
         # 加密数据
         logging.info(f"需要加密的签约申请数据为：======{qybk_ency_data}")
         qybk_encry = encrypt_decrypt().param_encry_by_channel(qybk_ency_data, 'changYinNew')
@@ -445,7 +447,14 @@ def test_new_cy_bf_loan_success():
 
     with allure.step("发起借款"):
         # 5.放款申请加密
-        fk_encry_data = {"apiKey":"CYBFCS","params":json_dumps_cn({"requestNo":fk_no,"loanseqno":loan_sqe_no,"amt":loan_amt,"fileIDs":"1780487717038329856,6b2a97dc90794fe2b78fa5412c82be581713337050255","accInfoDto":{"acctKind":"01","acctTyp":"01","acctBankCode":"0105","acct_no":acct_no,"acctName":user_name,"id_no":id_no,"acctPhone":mobile_no,"bankName":bank_name}}),"requestNo":req_no}
+        params = {"requestNo":fk_no,"loanseqno":loan_sqe_no,"amt":loan_amt,"fileIDs":"1780487717038329856,6b2a97dc90794fe2b78fa5412c82be581713337050255","accInfoDto":{"acctKind":"01","acctTyp":"01","acctBankCode":"0105","acct_no":acct_no,"acctName":user_name,"id_no":id_no,"acctPhone":mobile_no,"bankName":bank_name}}
+        if loanType == "PZ02":
+            params['signProtocolId'] = signProtocolId
+            params['payChannel'] = 'BF'
+        else:
+            pass
+        fk_encry_data = {"apiKey":"CYBFCS","params":json_dumps_cn(params),"requestNo":req_no}
+        print(fk_encry_data)
         # 加密数据
         logging.info(f"需要加密的放款申请数据为：======{fk_encry_data}")
         fksq_encry = encrypt_decrypt().param_encry_by_channel(fk_encry_data, 'changYinNew')

@@ -12,4 +12,9 @@ api:
     username: zws_middleware_360
     password: maiS2ieb
     db_name: zws_middleware_360
-
+redis:
+  zjly:
+    host: 192.168.1.159
+    port: 6379
+    password: a6ENZ8CCM1xPhcf@
+    db: 6
