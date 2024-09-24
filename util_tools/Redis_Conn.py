@@ -34,7 +34,7 @@ class Redis:
         if self.test_db_name == "zjly":
             db_config = config['redis']['zjly']
         elif self.test_db_name == "api":
-            db_config = config['api']['api_flow']
+            db_config = config['redis']['api']
         else:
             raise ValueError("未知的数据库名称")
         return db_config['host'], db_config['password'], db_config['port'], db_config['db']
@@ -49,12 +49,12 @@ class Redis:
         return result
 
     def _connect_db(self):
-        self.redb = re.StrictRedis(host="192.168.1.159", port=6379, db=6, password="a6ENZ8CCM1xPhcf@",
+        self.redb = re.StrictRedis(host=self.db_host, port=self.port, db=self.db, password=self.password,
                                    decode_responses=True)
         self.logging.info(f"Redis数据库连接成功-----{self.test_db_name}")
 
 
 if __name__ == '__main__':
-    redis_client = Redis()
+    redis_client = Redis('api')
+    print(redis_client.redb.get('zl_cashloan:zl_api_user:::' + 'ICE_ZLSK_36'))
     redis_client.close_db()
-    print(redis_client)

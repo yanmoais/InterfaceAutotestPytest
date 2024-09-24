@@ -77,6 +77,20 @@ class Select_Sql_Result(Mysql):
         self.logging.info(f"数据库查询返回数据为：==={result}")
         return result
 
+    # 查询批发侧fr_channel_config表当前为何环境，根据name来查询(name)
+    def select_fr_channel_config(self, name):
+        select_sql = f"SELECT * FROM finance_router.fr_channel_config WHERE name = '{name}';"
+        result = Mysql().select_db(select_sql)[0]
+        self.logging.info(f"数据库查询返回数据为：===,{result}")
+        return result
+
+    # 查询api侧zl_api_user表当前渠道为何模式，根据channel_code来查询(channel_code)
+    def select_zl_api_user(self, channel_code):
+        select_sql = f"SELECT * FROM zws_middleware_360.zl_api_user WHERE channel_code = '{channel_code}';"
+        result = Mysql("api").select_db(select_sql)[0]
+        self.logging.info(f"数据库查询返回数据为：===,{result}")
+        return result
+
     # 查询api侧zx_loan_plan_info表还款计划详情，根据loan_apply_no来模糊查询所有期数
     def select_api_flow_zx_loan_plan_info(self, loan_apply_no):
         select_sql = f"SELECT term,overdue_day,start_date,due_date,plan_status,CAST(prin_amt AS CHAR)AS prin_amt,CAST(int_amt AS CHAR)AS int_amt,CAST(oint_amt AS CHAR)AS oint_amt FROM zx_loan_plan_info WHERE plan_no LIKE '{loan_apply_no}%';"
@@ -89,7 +103,7 @@ class Select_Sql_Result(Mysql):
 
 
 if __name__ == '__main__':
-    bk_id = "NCY1723456810067"
+    bk_id = "ICE_ZLSK_36"
     db = Select_Sql_Result()
-    datas = db.select_zl_batch_deduction_apply(bk_id)
+    datas = db.select_zl_api_user(bk_id)
     print(datas)

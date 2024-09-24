@@ -7,10 +7,30 @@ from common.Update_Database_Result import *
 
 
 # 更新金美信为Mock环境
-def update_jmx_to_mock():
+def test_update_jmx_to_mock():
     Update_Sql_Result().update_jmx_zjly_mock()
 
 
 # 更新金美信为资方测试环境
-def update_jmx_to_test():
+def test_update_jmx_to_test():
     Update_Sql_Result().update_jmx_zjly_test()
+
+
+# 更新海峡为Mock环境
+def test_update_haixia_to_mock():
+    pass
+
+
+# 更新海峡为资方测试环境
+def test_update_haixia_to_test():
+    pass
+
+
+# 更新中原提前花为Mock环境
+def test_update_zytqh_to_mock():
+    pass
+
+
+# 更新中原提前花为资方测试环境
+def test_update_zytqh_to_test():
+    pass

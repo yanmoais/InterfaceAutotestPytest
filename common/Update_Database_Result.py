@@ -100,46 +100,100 @@ class Update_Sql_Result(Mysql):
 
     # 修改金美信走Mock环境
     def update_jmx_zjly_mock(self):
-        update_sql_1 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'jinMeiXin_temp' WHERE fr.name = '金美信mock';"
-        update_sql_2 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'jinMeiXin_mock' WHERE fr.name = '金美信-测试';"
-        update_sql_3 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'jinMeiXin' WHERE fr.name = '金美信mock';"
-        Mysql().update_db(update_sql_1)
-        time.sleep(1)
-        Mysql().update_db(update_sql_2)
-        time.sleep(1)
-        result = Mysql().update_db(update_sql_3)
-        self.logging.info(f"数据库执行完成!")
+        # 获取当前是否为Mock环境
+        results = Select_Sql_Result().select_fr_channel_config('金美信mock')
+        if results['code'] == "jinMeiXin_mock":
+            update_sql_1 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'jinMeiXin_temp' WHERE fr.name = '金美信mock';"
+            update_sql_2 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'jinMeiXin_mock' WHERE fr.name = '金美信-测试';"
+            update_sql_3 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'jinMeiXin' WHERE fr.name = '金美信mock';"
+            Mysql().update_db(update_sql_1)
+            time.sleep(1)
+            Mysql().update_db(update_sql_2)
+            time.sleep(1)
+            result = Mysql().update_db(update_sql_3)
+            self.logging.info(f"数据库执行完成!")
 
-        # 实例化Redis连接
-        redis_clinet = Redis()
-        # 删除金美信Redis的Key值
-        redis_clinet.delete_redis_key("zijinluyou:api:param_config:::jinMeiXin")
-        # 关闭redis
-        redis_clinet.close_db()
-        return result
+            # 实例化Redis连接
+            redis_clinet = Redis()
+            # 删除金美信Redis的Key值
+            try:
+                redis_clinet.delete_redis_key("zijinluyou:api:param_config:::jinMeiXin")
+            except Exception as e:
+                self.logging.error(f"请求发生错误：{e}")
+            # 关闭redis
+            finally:
+                redis_clinet.close_db()
+            return result
+        else:
+            self.logging.info("当前模式为Mock环境，无需切换！")
 
     # 修改金美信走资方测试环境
     def update_jmx_zjly_test(self):
-        update_sql_1 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'jinMeiXin_temp' WHERE fr.name = '金美信mock';"
-        update_sql_2 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'jinMeiXin' WHERE fr.name = '金美信-测试';"
-        update_sql_3 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'jinMeiXin_mock' WHERE fr.name = '金美信mock';"
-        Mysql().update_db(update_sql_1)
-        time.sleep(1)
-        Mysql().update_db(update_sql_2)
-        time.sleep(1)
-        result = Mysql().update_db(update_sql_3)
-        self.logging.info(f"数据库执行完成!")
+        # 获取当前是否为Mock环境
+        results = Select_Sql_Result().select_fr_channel_config('金美信mock')
+        if results['code'] == "jinMeiXin":
+            update_sql_1 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'jinMeiXin_temp' WHERE fr.name = '金美信mock';"
+            update_sql_2 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'jinMeiXin' WHERE fr.name = '金美信-测试';"
+            update_sql_3 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'jinMeiXin_mock' WHERE fr.name = '金美信mock';"
+            Mysql().update_db(update_sql_1)
+            time.sleep(1)
+            Mysql().update_db(update_sql_2)
+            time.sleep(1)
+            result = Mysql().update_db(update_sql_3)
+            self.logging.info(f"数据库执行完成!")
 
-        # 实例化Redis连接
-        redis_clinet = Redis()
-        # 删除金美信Redis的Key值
-        redis_clinet.delete_redis_key("zijinluyou:api:param_config:::jinMeiXin")
-        # 关闭redis
-        redis_clinet.close_db()
-        return result
+            # 实例化Redis连接
+            redis_clinet = Redis()
+            # 删除金美信Redis的Key值
+            redis_clinet.delete_redis_key("zijinluyou:api:param_config:::jinMeiXin")
+            # 关闭redis
+            redis_clinet.close_db()
+            return result
+        else:
+            self.logging.info("当前模式为资方测试环境，无需切换！")
+
+    # 修改Api侧对应渠道为限流模式
+    def update_api_chanel_non_funds(self, channel_code):
+        # 获取当前是否为限流模式
+        results = Select_Sql_Result().select_zl_api_user(channel_code)
+        if results['funds_router'] == "1":
+            update_sql = f"UPDATE zws_middleware_360.zl_api_user zl SET zl.funds_router = '' WHERE zl.channel_code = '{channel_code}';"
+            result = Mysql('api').update_db(update_sql)
+            self.logging.info(f"数据库执行完成!")
+
+            # 实例化Redis连接
+            redis_clinet = Redis('api')
+            # 删除Redis的Key值
+            redis_clinet.delete_redis_key('zl_cashloan:zl_api_user:::' + channel_code)
+            # 关闭redis
+            redis_clinet.close_db()
+            self.logging.info("已切换为限流模式！")
+            return result
+        else:
+            self.logging.info("当前渠道为限流模式，无需切换！")
+
+    # 修改Api侧对应渠道为路由模式
+    def update_api_chanel_funds_router(self, channel_code):
+        # 获取当前是否为路由模式
+        results = Select_Sql_Result().select_zl_api_user(channel_code)
+        if results['funds_router'] == "":
+            update_sql = f"UPDATE zws_middleware_360.zl_api_user zl SET zl.funds_router = '1' WHERE zl.channel_code = '{channel_code}';"
+            result = Mysql('api').update_db(update_sql)
+            self.logging.info(f"数据库执行完成!")
+
+            # 实例化Redis连接
+            redis_clinet = Redis('api')
+            # 删除Redis的Key值
+            redis_clinet.delete_redis_key('zl_cashloan:zl_api_user:::' + channel_code)
+            # 关闭redis
+            redis_clinet.close_db()
+            self.logging.info("已切换为路由模式！")
+            return result
+        else:
+            self.logging.info("当前渠道为路由模式，无需切换！")
 
 
 if __name__ == '__main__':
     user_id = "NCY1723456810067"
-    print(Update_Sql_Result().update_jmx_zjly_test())
+    print(Update_Sql_Result().update_api_chanel_funds_router('ICE_ZLSK_36'))
     # print((datetime.datetime.now() - relativedelta(months=1)).strftime("%Y-%m-%d %H:%M:%S"))
