@@ -34,3 +34,13 @@ def test_update_zytqh_to_mock():
 # 更新中原提前花为资方测试环境
 def test_update_zytqh_to_test():
     pass
+
+
+# 更新润楼为Mock环境
+def test_update_runlou_to_mock():
+    pass
+
+
+# 更新润楼为资方测试环境
+def test_update_runlou_to_test():
+    pass

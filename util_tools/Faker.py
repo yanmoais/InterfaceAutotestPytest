@@ -183,7 +183,7 @@ def get_ccb_num():
     while True:
         timestamp_part = str(int(time.time() * 1000)).zfill(1)
         data = "621700" + timestamp_part
-        if data.endswith(('0', '1', '9', '5')):
+        if data.endswith(('0', '1', '9')):
             return data  # 返回找到的数据
 
 
