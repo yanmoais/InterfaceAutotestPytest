@@ -26,6 +26,8 @@ class Base_Api:
             self.uri = config['test_zfpt_host']
         elif ENV == 'api':
             self.uri = config['test_api_host']
+        elif ENV == "TYH_HY":
+            self.uri = config['test_tyh_hy_host']
         else:
             self.uri = config['test_zjly_host']
         self.headers = {"Content-Type": "application/json"}

@@ -24,4 +24,4 @@ def test_api_to_non_funds(channel_code='ICE_ZLSK_36'):
 
 # 更新api侧对应渠道为路由模式
 def test_api_to_funds_router(channel_code='ICE_ZLSK_36'):
-    Update_Sql_Result().update_api_chanel_non_funds(channel_code)
+    Update_Sql_Result().update_api_chanel_funds_router(channel_code)

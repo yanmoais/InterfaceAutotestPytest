@@ -84,8 +84,10 @@ if __name__ == '__main__':
         f"{BASE_DIR}/testcase/test_zjly/test_JmxLoanRepay.py",
         f"{BASE_DIR}/testcase/test_zjly/test_ZyLoanRepay.py",
         f"{BASE_DIR}/testcase/test_zjly/test_NewCYLoanRepay.py",
-        f"{BASE_DIR}/testcase/test_zjly/test_ZxLoanRepay.py"
-        # f"{BASE_DIR}/testcase/test_zjly/test_HaiXiaLoanRepay.py"
+        f"{BASE_DIR}/testcase/test_zjly/test_ZxLoanRepay.py",
+        f"{BASE_DIR}/testcase/test_zjly/test_HaiXiaLoanRepay.py",
+        f"{BASE_DIR}/testcase/test_zjly/test_MengShangLoanRepay.py",
+        f"{BASE_DIR}/testcase/test_zjly/test_RunLouLoanRepay.py"
     ]
 
     report_dir = f"{BASE_DIR}/report/result"

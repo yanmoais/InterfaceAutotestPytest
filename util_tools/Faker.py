@@ -237,7 +237,7 @@ def get_tl_bank_ccb_num():
     while True:
         timestamp_part = str(int(time.time() * 1000)).zfill(1)
         data = "621700" + timestamp_part
-        if data.endswith(('0', '1', '9')):
+        if data.endswith(('0')):
             return data  # 返回找到的数据
 
 
@@ -283,8 +283,8 @@ def get_user_idNo(sex='girl'):  # 1. 生成身份证号码的前17位
 
 
 # 振兴、金美信、中原、海峡身份证MOCK规则，尾号为X放款失败,所以排除了尾号X的身份证号码
-def get_zx_user_id_no(sex='girl'):
-    id_card_number = generate_valid_id_card_number()
+def get_zx_user_id_no(year_s=1970, year_e=1976):
+    id_card_number = generate_valid_id_card_number(year_s, year_e)
 
     # 提取生日信息
     birthday = f"{id_card_number[6:10]}-{id_card_number[10:12]}-{id_card_number[12:14]}"
@@ -306,7 +306,7 @@ def calculate_check_code(id_front):
     return check_digits[remainder]
 
 
-def generate_valid_id_card_number():
+def generate_valid_id_card_number(year_s=1970, year_e=1976):
     while True:
         # 1. 生成身份证号码的前17位
         area_code = random.choice([
@@ -314,9 +314,9 @@ def generate_valid_id_card_number():
             '440112', '440113', '440114', '440115'
         ])
 
-        # 随机生成出生日期，假设出生日期范围在1975年到1978年之间
-        start_date = datetime.date(1975, 1, 1)
-        end_date = datetime.date(1978, 12, 31)
+        # 随机生成出生日期，假设出生日期范围在1975年到1977年之间
+        start_date = datetime.date(year_s, 1, 1)
+        end_date = datetime.date(year_e, 12, 31)
         random_date = start_date + datetime.timedelta(days=random.randint(0, (end_date - start_date).days))
         birth_date = random_date.strftime('%Y%m%d')
 
