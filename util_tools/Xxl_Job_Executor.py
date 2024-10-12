@@ -56,7 +56,7 @@ class execute_xxl_job(xxlJob):
     # 调用单笔还款结果查询
     def single_query_result(self):
         self.excute_xxl_job.trigger_xxl_job(200)
-        self.logging.info(f"调用单笔还款处理任务成功!")
+        self.logging.info(f"调用单笔还款查询任务成功!")
 
 
 if __name__ == '__main__':

@@ -12,6 +12,7 @@ from common.Encrypt_Decrypt import encrypt_decrypt
 from config.testconfig import config
 from util_tools.Read_Yaml import read_risk_phone
 
+
 class core_tyh_api(Base_Api):
     def __init__(self):
         super().__init__(ENV="TYH_HY")
@@ -58,6 +59,26 @@ class core_tyh_api(Base_Api):
         except Exception as e:
             self.logging.info(f"请求发生异常，======={e}")
 
+    # 借款结果查询
+    def test_query_loan_result(self, encry_request_data):
+        try:
+            self.logging.info(f"开始发送借款结果查询请求：========，请求数据为{encry_request_data}")
+            resp = self.base_api.api_post("/queryLoanResult", json.loads(json_dumps_cn(encry_request_data)))
+            self.logging.info(f"返回结果数据为：=======，{json_dumps_cn(resp)}")
+            return json_dumps_cn(resp)
+        except Exception as e:
+            self.logging.info(f"请求发生异常，======={e}")
+
+    # 还款结果查询
+    def test_query_repay_result(self, encry_request_data):
+        try:
+            self.logging.info(f"开始发送还款结果查询请求：========，请求数据为{encry_request_data}")
+            resp = self.base_api.api_post("/queryRepayResult", json.loads(json_dumps_cn(encry_request_data)))
+            self.logging.info(f"返回结果数据为：=======，{json_dumps_cn(resp)}")
+            return json_dumps_cn(resp)
+        except Exception as e:
+            self.logging.info(f"请求发生异常，======={e}")
+
     # TYH_HY加密请求数据
     def api_param_encry(self, data, channel_code="TYH_HY"):
         headers = {"Content-Type": "application/json",
@@ -89,13 +110,19 @@ class core_tyh_api(Base_Api):
 
 if __name__ == '__main__':
     phone = read_risk_phone()
-    core_tyh_api = core_tyh_api()
-    phone_md5 = encrypt_decrypt().param_encry_by_md5(phone)
-    data = {
-            "md5": phone_md5,
-            "mode": "M"
-    }
-    check_user_encry = core_tyh_api.api_param_encry(data)
-    check_user_resp = core_tyh_api.test_check_user(check_user_encry)
-    check_user_decry = core_tyh_api.api_param_decry(check_user_resp)
-    print(check_user_decry)
+    # core_tyh_api = core_tyh_api()
+    # print(core_tyh_api.uri)
+    # phone_md5 = encrypt_decrypt().param_encry_by_md5(phone)
+    # # data = {
+    # #         "md5": phone_md5,
+    # #         "mode": "M"
+    # # }
+    # # 借款查询数据
+    # loan_query_need_encry_data = {
+    #     "userId": "tyhhycs01",
+    #     "loanApplyNo": "tyhhycs011"
+    # }
+    # check_user_encry = core_tyh_api.api_param_encry(loan_query_need_encry_data)
+    # check_user_resp = core_tyh_api.test_query_loan_result(check_user_encry)
+    # check_user_decry = core_tyh_api.api_param_decry(check_user_resp)
+    # print(check_user_decry)

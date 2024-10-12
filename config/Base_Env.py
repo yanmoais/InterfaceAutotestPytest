@@ -6,7 +6,7 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DB_YAML_PATH = BASE_DIR + os.sep + "config" + os.sep + "database_config.yaml"
 RISK_PHONE_PATH = BASE_DIR + os.sep + "testdata" + os.sep + "risk_phone" + os.sep + "user_phone.txt"
-CASE_FILE_PATH = BASE_DIR + os.sep + "Test_Data" + os.sep + "test_file.xlsx"
+CASE_FILE_PATH = BASE_DIR + os.sep + "testdata" + os.sep + "test_case_excel" + os.sep + "test_case.xlsx"
 SHEET_NAME_PATH = "Sheet1"
 XXL_JOB_USERNMAE = 'admin'
 XXL_JOB_PASSWORD = '123456'
@@ -16,6 +16,4 @@ PHOTO_PATH = BASE_DIR + "/testdata/photo_data/image/"
 
 
 if __name__ == '__main__':
-    print(BASE_DIR)
-    print(DB_YAML_PATH)
-    print(RISK_PHONE_PATH)
+    print(CASE_FILE_PATH)
