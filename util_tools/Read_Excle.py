@@ -3,12 +3,14 @@
 """
 from openpyxl import load_workbook
 from config.Base_Env import *
+from util_tools.logger import Logger
 
 
 class read_excel():
     def __init__(self, excle_file=CASE_FILE_PATH, sheet_name=SHEET_NAME_PATH):
         self.excel_obj = load_workbook(excle_file)
         self.sheet_obj = self.excel_obj[sheet_name]
+        self.logging = Logger().init_logger()
 
     def _get_title_and_data(self):
         case_datas = list(self.sheet_obj.iter_rows(values_only=True))
@@ -18,8 +20,18 @@ class read_excel():
     def _close_excel(self):
         self.excel_obj.close()
 
-    def _save_excel(self):
-        pass
+    def write_save_excel(self, case_name, status):
+        # 案例名称在G列，所以得从案例名称开始找
+        for row in self.sheet_obj.iter_rows(min_row=2):  # 从第二行开始找
+            if row[6].value == case_name:
+                row[7].value = status
+                break
+        try:
+            self.excel_obj.save(CASE_FILE_PATH)
+        except FileNotFoundError:
+            self.logging.error(f"保存出错，未找到该文件 {CASE_FILE_PATH}！请检查是否误删或者改名！")
+        finally:
+            self.excel_obj.close()
 
     def get_case_data(self):
         case_data_list = []
@@ -29,7 +41,23 @@ class read_excel():
             case_data_list.append(json_data)
         return case_data_list
 
+    def get_case_private_params(self, case_data, keys):
+        case_param_list = []
+        for results in case_data:
+            case_param_list.append(results[keys])
+        return case_param_list
+
 
 if __name__ == '__main__':
     sheet_obj = read_excel()
-    print(sheet_obj.get_case_data())
+    test_function = ['test_jmx_credit_success', 'test_jmx_credit_amt_query_success', 'test_jmx_loan_success',
+                     'test_zhongyuan_credit_success', 'test_zhongyuan_credit_amt_query_success',
+                     'test_zhongyuan_binding_card_success', 'test_zhongyuan_loan_success',
+                     'test_zhongyuan_d0_repay_success', 'test_new_cy_credit_success',
+                     'test_new_cy_binding_card_success', 'test_new_cy_credit_amt_query_success',
+                     'test_new_cy_loan_success', 'test_new_cy_bf_loan_success', 'test_zx_credit_success',
+                     'test_zx_credit_amt_query_success', 'test_zx_binding_card_success', 'test_zx_loan_success',
+                     'test_zx_loan_success', 'test_new_zx_loan_success', 'test_haixia_credit_success',
+                     'test_haixia_credit_amt_query_success', 'test_haixia_loan_success', 'test_mengshang_loan_success',
+                     'test_runlou_loan_success']
+    sheet_obj.write_save_excel(test_function)

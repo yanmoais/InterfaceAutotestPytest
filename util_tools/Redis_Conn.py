@@ -33,7 +33,7 @@ class Redis:
         config = read_db_yaml()
         if self.test_db_name == "zjly":
             db_config = config['redis']['zjly']
-        elif self.test_db_name == "api":
+        elif self.test_db_name == "api" or self.test_db_name == "tyh":
             db_config = config['redis']['api']
         else:
             raise ValueError("未知的数据库名称")

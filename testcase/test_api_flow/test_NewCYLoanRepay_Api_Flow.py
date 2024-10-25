@@ -58,6 +58,9 @@ def test_new_cy_loan_success_api_flow():
         # 产品信息
         product_code = "KN_HALF"
 
+    with allure.step("更新为限流模式"):
+        Update_Sql_Result().update_api_chanel_non_funds("ICE_ZLSK_36")
+
     with allure.step("用户撞库"):
         # 撞库数据,以手机号为主
         zk_need_encry_data = {"params": {"md5": enc.param_encry_by_md5(mobile_no), "mode": "M"}}
@@ -116,6 +119,11 @@ def test_new_cy_loan_success_api_flow():
         # 发起授信结果轮询请求
         resp = loop_result().loop_api_flow_sx_result(sx_cx_data, credit_apply_no, channel_code)
         logging.info(f"当前授信结果返回数据为：{resp}")
+
+    with allure.step("推送客户中心"):
+        execute_xxl_job().push_credit_info_to_customer_center(credit_apply_no)
+        time.sleep(5)
+        logging.info("授信成功后推送客户中心成功！")
 
     with allure.step("绑卡申请"):
         # 请求鉴权数据
@@ -216,6 +224,9 @@ def test_new_cy_repay_d0_success_api_flow():
         # 产品信息
         product_code = "KN_HALF"
 
+    with allure.step("更新为限流模式"):
+        Update_Sql_Result().update_api_chanel_non_funds("ICE_ZLSK_36")
+
     with allure.step("用户撞库"):
         # 撞库数据,以手机号为主
         zk_need_encry_data = {"params": {"md5": enc.param_encry_by_md5(mobile_no), "mode": "M"}}
@@ -274,6 +285,11 @@ def test_new_cy_repay_d0_success_api_flow():
         # 发起授信结果轮询请求
         resp = loop_result().loop_api_flow_sx_result(sx_cx_data, credit_apply_no, channel_code)
         logging.info(f"当前授信结果返回数据为：{resp}")
+
+    with allure.step("推送客户中心"):
+        execute_xxl_job().push_credit_info_to_customer_center(credit_apply_no)
+        time.sleep(5)
+        logging.info("授信成功后推送客户中心成功！")
 
     with allure.step("绑卡申请"):
         # 请求鉴权数据

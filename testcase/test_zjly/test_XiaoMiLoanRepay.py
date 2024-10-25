@@ -116,7 +116,7 @@ def test_xiaomi_loan_success():
 @allure.feature("授信模块")
 @allure.story("小米资方授信还款案例")
 @allure.title("还款成功-到期还款")
-def test_xiaomi__success():
+def test_xiaomi_dueday_repay_success():
     with allure.step("数据初始化"):
         id_no, birthday = get_user_idNo()
         user_name = "胡斌"

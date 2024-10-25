@@ -67,6 +67,8 @@ class Mysql:
             db_config = config['mysql']['zjly']
         elif self.test_db_name == "api":
             db_config = config['api']['api_flow']
+        elif self.test_db_name == "tyh":
+            db_config = config['tyh']['tyh_api_flow']
         else:
             raise ValueError("未知的数据库名称")
         return db_config['host'], db_config['username'], db_config['password'], db_config['port'], db_config['db_name']

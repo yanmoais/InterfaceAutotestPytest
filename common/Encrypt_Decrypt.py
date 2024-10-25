@@ -75,5 +75,5 @@ class encrypt_decrypt(Base_Api):
 
 if __name__ == '__main__':
     ss = encrypt_decrypt()
-    data = "13812331774"
+    data = "440511199604126616"
     print(ss.param_encry_by_md5(data))

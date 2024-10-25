@@ -28,8 +28,8 @@ def test_runlou_loan_success():
         mobile_no = get_phone_mum()
         acct_no = get_ccb_num()
         custid = get_cust_id()
-        bank_name = "建设银行"
-        loan_amt = "2000"
+        bank_name = "中国建设银行"
+        loan_amt = "2000.0000"
         reqPeriods = "12"
         bk_no = get_bank_id()
         repay_no = get_repay_no()
@@ -117,7 +117,7 @@ def test_runlou_loan_success():
     with allure.step("还款计划查询"):
         # 放款成功后需要再次调用一下还款计划接口，落库更新
         # 7.还款计划查询加密
-        hkjh_encry_data = {"apiKey":"RLTEST","params":json_dumps_cn({"loanseqno":"1830808464411213824"}),"requestNo":req_no}
+        hkjh_encry_data = {"apiKey":"RLTEST","params":json_dumps_cn({"loanseqno":loan_sqe_no}),"requestNo":req_no}
         # 加密数据
         logging.info(f"需要加密的还款计划查询数据为：======{hkjh_encry_data}")
         hkjh_encry = encrypt_decrypt().param_encry_by_channel(hkjh_encry_data, 'runLou')

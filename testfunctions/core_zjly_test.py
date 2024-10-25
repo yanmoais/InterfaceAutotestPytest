@@ -5,6 +5,7 @@
 # @Time :  下午2:20
 from common.Core_Zfpt_Api import core_zfpt_api
 from common.Core_Api_Flow_Api import *
+from common.Update_Database_Result import Update_Sql_Result
 from util_tools.logger import Logger
 from util_tools.Faker import *
 
@@ -18,6 +19,10 @@ class Core_zjly_test_function:
     # 资金路由解密
     def test_zjly_jiemi(self, data):
         return core_zfpt_api().zfpt_param_decry(data)
+
+    # 海峡切换成mock环境
+    def test_haixia_mock(self):
+        Update_Sql_Result().update_haixia_zjly_mock()
 
     # 已绑银行卡查询
     def test_zfzt_banked_query(self):
@@ -38,8 +43,8 @@ class Core_zjly_test_function:
         return decry_resp
 
     # 支付中台绑卡申请
-    def test_zfzt_bank_apply(self, ACCOUNT_NAME="胡四", TEL="15901529340", ID="440511199604122316",
-                             CREDIT_ACCTNO="6217008643603262968"):
+    def test_zfzt_bank_apply(self, ACCOUNT_NAME="胡百年", TEL="17620472620", ID="500102198707281700",
+                             CREDIT_ACCTNO="6217003588077666100"):
         ACCOUNT_NAME = ACCOUNT_NAME
         TEL = TEL
         ID = ID
@@ -168,6 +173,6 @@ class Core_zjly_test_function:
 
 
 if __name__ == '__main__':
-    resp = Core_zjly_test_function().test_zfzt_bank_apply("胡五", "15949590390", "440511199604125015", "6217007053167747068")
+    resp = Core_zjly_test_function().test_zfzt_bank_apply()
     resp_confirm = Core_zjly_test_function().test_zfzt_bank_confirm(resp[0])
     print(resp[0], resp_confirm["AGRMNO"])

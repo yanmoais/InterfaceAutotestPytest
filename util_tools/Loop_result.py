@@ -10,7 +10,6 @@
 
 from common.Core_Zjly_Api import core_zjly_api
 from common.Core_Api_Flow_Api import core_api_flow_api
-from util_tools.Faker import get_now_time, get_api_bk_id, get_time_stand_api
 from util_tools.logger import Logger
 from common.Encrypt_Decrypt import encrypt_decrypt
 from util_tools.Xxl_Job_Executor import *
@@ -19,9 +18,11 @@ import time
 
 
 class loop_result:
-    def __init__(self):
+    def __init__(self, test_db="api"):
         self.logging = Logger().init_logger()
         self.db = Select_Sql_Result()
+        if test_db == "api":
+            self.api = core_api_flow_api()
 
     # 资金路由授信结果查询轮询
     def loop_sxcx_result(self, data, channel=None):
@@ -214,27 +215,28 @@ class loop_result:
             if count < 10:
                 try:
                     time.sleep(15)
-                    api = core_api_flow_api()
                     # 加密授信查询数据
-                    encry_data = api.api_param_encry(data, channel_code)
+                    encry_data = self.api.api_param_encry(data, channel_code)
                     # 查询授信结果
-                    resp = api.test_query_credit_result(encry_data)
+                    resp = self.api.test_query_credit_result(encry_data)
                     if resp:
                         try:
                             # 解密返回结果
-                            resp_decry = api.api_param_decry(resp)
+                            resp_decry = self.api.api_param_decry(resp)
                             self.logging.info(f"当前解密后的返回数据为：{resp_decry}")
                             if resp_decry["status"] is not None:
                                 if resp_decry["status"] == "P" or resp_decry["status"] == "U":
                                     self.logging.info("授信处理中，请稍等！！")
                                     # 查询数据库借款单处于什么状态，来对应跑对应的任务
                                     sql_result = self.db.select_zx_credit_applicant_result(credit_applyNo)
-                                    if sql_result['risk_status'] == "" or sql_result['risk_status'] == "W" or sql_result['risk_status'] == "P":
+                                    if sql_result['risk_status'] == "" or sql_result['risk_status'] == "W" or \
+                                            sql_result['risk_status'] == "P":
                                         # 执行授信处理任务
                                         execute_xxl_job().apply_credit_xxljob(credit_applyNo)
                                         time.sleep(6)
                                     else:
-                                        if sql_result['sign_status'] == '' or sql_result['sign_status'] == "W" or sql_result['sign_status'] == "P":
+                                        if sql_result['sign_status'] == '' or sql_result['sign_status'] == "W" or \
+                                                sql_result['sign_status'] == "P":
                                             # 执行签章任务
                                             execute_xxl_job().apply_credit_sign_xxljob()
                                             time.sleep(20)
@@ -274,18 +276,17 @@ class loop_result:
             resp = None
             if count < 10:
                 try:
-                    api = core_api_flow_api()
                     # 加密绑卡鉴权数据
-                    encry_data = api.api_param_encry(bk_data, channel_code)
+                    encry_data = self.api.api_param_encry(bk_data, channel_code)
                     # 发起鉴权绑卡请求
-                    resp = api.test_apply_certification(encry_data)
+                    resp = self.api.test_apply_certification(encry_data)
                 except Exception as e:
                     self.logging.error(f"请求发生错误：{e}")
                     continue
                 if resp:
                     try:
                         # 解密返回结果
-                        resp_decry = api.api_param_decry(resp)
+                        resp_decry = self.api.api_param_decry(resp)
                         self.logging.info(f"当前解密后的返回数据为：{resp_decry}")
                         if resp_decry["result"] is not None:
                             if resp_decry["result"] == "S":
@@ -295,11 +296,11 @@ class loop_result:
                                                           "bindType": "fundsChannel"}
                                 self.logging.info("鉴权成功！！")
                                 # 加密验证数据
-                                verify_encry_data = api.api_param_encry(verify_need_encry_data, channel_code)
+                                verify_encry_data = self.api.api_param_encry(verify_need_encry_data, channel_code)
                                 # 发起验证请求
-                                bk_resp = api.test_verify_code(verify_encry_data)
+                                bk_resp = self.api.test_verify_code(verify_encry_data)
                                 # 解密验证返回数据
-                                bk_resp_decry_data = api.api_param_decry(bk_resp)
+                                bk_resp_decry_data = self.api.api_param_decry(bk_resp)
                                 if bk_resp_decry_data:
                                     if bk_resp_decry_data["verifyResult"] is not None:
                                         if bk_resp_decry_data["verifyResult"] == "S":
@@ -339,15 +340,14 @@ class loop_result:
             if count < 30:
                 self.logging.info(f"当前是第{count}次借款状态查询！")
                 try:
-                    api = core_api_flow_api()
                     # 加密借款查询数据
-                    encry_data = api.api_param_encry(data, channel_code)
+                    encry_data = self.api.api_param_encry(data, channel_code)
                     # 查询借款结果
-                    resp = api.test_query_loan_result(encry_data)
+                    resp = self.api.test_query_loan_result(encry_data)
                     if resp:
                         try:
                             # 解密返回结果
-                            resp_decry = api.api_param_decry(resp)
+                            resp_decry = self.api.api_param_decry(resp)
                             self.logging.info(f"当前解密后的返回数据为：{resp_decry}")
                             if resp_decry["loanStatus"] is not None:
                                 if resp_decry["loanStatus"] == "P":
@@ -422,7 +422,8 @@ class loop_result:
                                     execute_xxl_job().new_cy_d0_batch_repayment_query(loanApplyNo)
                                     self.logging.info(f"执行D0批扣结果查询成功！请稍等！")
                                 elif repay_result["repay_status"] == "F" or repay_result["jxym_repay_status"] == "F":
-                                    self.logging.info(f"还款申请失败，请检查数据是否存在问题！错误原因：{repay_result['reasonMsg']}")
+                                    self.logging.info(
+                                        f"还款申请失败，请检查数据是否存在问题！错误原因：{repay_result['reasonMsg']}")
                                     break
                                 elif repay_result["repay_status"] == "S":
                                     self.logging.info(f"还款成功！")
@@ -446,6 +447,117 @@ class loop_result:
                 self.logging.info(f"当前系统查询次数过多，请稍后重试！")
                 return False
 
+    # 仅供天源花侧查询API授信数据使用
+    def loop_tyh_api_sx_result(self, credit_applyNo):
+        # 轮训判断 授信表查询，为"S"则跳出
+        count = 0
+        while True:
+            count += 1
+            if count < 10:
+                try:
+                    # 查询API侧的表单数据
+                    # 查询数据库授信单处于什么状态，来对应跑对应的任务
+                    sql_result = self.db.select_zx_credit_applicant_result(credit_applyNo)
+                    time.sleep(3)
+                    if sql_result:
+                        if sql_result["status"] is not None:
+                            if sql_result["status"] == "P" or sql_result["status"] == "W":
+                                self.logging.info("授信处理中，请稍等！！")
+                                if sql_result['risk_status'] == "" or sql_result['risk_status'] == "W" or \
+                                        sql_result['risk_status'] == "P":
+                                    # 执行授信处理任务
+                                    execute_xxl_job().apply_credit_xxljob(credit_applyNo)
+                                    time.sleep(6)
+                                else:
+                                    if sql_result['sign_status'] == '' or sql_result['sign_status'] == "W" or \
+                                            sql_result['sign_status'] == "P":
+                                        # 执行签章任务
+                                        execute_xxl_job().apply_credit_sign_xxljob()
+                                        time.sleep(20)
+                            elif sql_result["status"] == "F":
+                                self.logging.info("申请失败，请检查落库原因！")
+                                break
+                            elif sql_result["status"] == "S":
+                                self.logging.info(f"授信成功！")
+                                return sql_result
+                            else:
+                                self.logging.info("系统错误,掉单,请重新尝试！！")
+                                break
+                        else:
+                            self.logging.info(f"系统发生错误！请检查返回数据：{sql_result}")
+                            break
+                    else:
+                        self.logging.error("请求返回为空，无法继续处理！")
+                        break
+                except Exception as e:
+                    self.logging.error(f"请求发生错误：{e}")
+                    continue
+            else:
+                self.logging.info(f"当前系统查询次数过多，请稍后重试！")
+                return False
+
+    # 仅供天源花侧查询API借款数据使用
+    def loop_tyh_api_loan_result(self, loanApplyNo):
+        # 轮训判断 借款查询结果，为"成功"则跳出
+        count = 0
+        while True:
+            count += 1
+            resp = None
+            # 等待10秒控制查询
+            time.sleep(10)
+            if count < 30:
+                self.logging.info(f"当前是第{count}次借款状态查询！")
+                try:
+                    # 查询API侧的表单数据
+                    # 查询数据库借款单处于什么状态，来对应跑对应的任务
+                    sql_result = self.db.select_zx_loan_apply_record(loanApplyNo)
+                    time.sleep(3)
+                    if sql_result:
+                        if sql_result["loan_status"] is not None:
+                            if sql_result["loan_status"] == "P":
+                                self.logging.info("借款申请处理中，请稍等！！")
+                                if sql_result["risk_status"] == "" or sql_result["risk_status"] == "W" or \
+                                        sql_result["risk_status"] == "P":
+                                    # 执行放款处理任务，调取风控系统
+                                    execute_xxl_job().apply_credit_xxljob(loanApplyNo)
+                                    self.logging.info("开始暂停60S。。。。。")
+                                    time.sleep(60)
+                                    self.logging.info("暂停结束。。。。。")
+                                else:
+                                    if sql_result["sign_status"]:
+                                        if sql_result["sign_status"] == "P" or sql_result["sign_status"] == "W" or \
+                                                sql_result["sign_status"] == "P1" or sql_result["sign_status"] == "":
+                                            # 执行放款签章任务
+                                            execute_xxl_job().apply_credit_sign_xxljob()
+                                            time.sleep(15)
+                                        elif sql_result["sign_status"] == "PSC" or sql_result[
+                                            "sign_status"] == "PSL":
+                                            # 执行放款处理任务
+                                            execute_xxl_job().apply_credit_xxljob(loanApplyNo)
+                                            time.sleep(15)
+                            elif sql_result["loan_status"] == "F":
+                                self.logging.info(
+                                    f"借款申请失败，请检查数据是否存在问题！错误原因：{sql_result['reason_msg']}")
+                                break
+                            elif sql_result["loan_status"] == "S":
+                                self.logging.info(f"借款成功！")
+                                return sql_result
+                            else:
+                                self.logging.info("系统错误,掉单,请重新尝试！！")
+                                break
+                        else:
+                            self.logging.info(f"系统发生错误！请检查返回数据：{sql_result}")
+                            break
+                    else:
+                        self.logging.error("请求返回为空，无法继续处理！")
+                        break
+                except Exception as e:
+                    self.logging.error(f"请求发生错误：{e}")
+                    continue
+            else:
+                self.logging.info(f"当前系统查询次数过多，请稍后重试！")
+                return False
+
 
 if __name__ == '__main__':
     # api = core_api_flow_api()
@@ -457,9 +569,6 @@ if __name__ == '__main__':
     # reqPeriods = "12"
     # current_date = get_now_time()
     # logging = Logger().init_logger()
-    jk_cx_data = {
-        "userId": "SUR8591343939",
-        "loanApplyNo": "SLN4526203503"
-    }
-    loanApplyNo = "NCY1723456810067"
-    loop_result().loop_api_flow_repay_result(loanApplyNo)
+    data = {}
+    loanApplyNo = "1846850735699148800"
+    print(loop_result().loop_tyh_api_loan_result(loanApplyNo))

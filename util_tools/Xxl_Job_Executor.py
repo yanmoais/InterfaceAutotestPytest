@@ -39,14 +39,20 @@ class execute_xxl_job(xxlJob):
     # 调用新长银批扣 D0 定时任务，到期日批扣
     # 新长银批扣需要满足条件：当前系统日期 - 到期日 >= 0
     def new_cy_batch_d0_repay_apply(self, date=datetime.datetime.now().strftime("%Y%m%d")):
-        self.excute_xxl_job.trigger_xxl_job(309, f'{date}')
+        self.excute_xxl_job.trigger_xxl_job(601, f'{date}')
         self.logging.info(f"执行新长银批扣 D0 定时任务成功：======日期为{date}")
 
     # 调用查询批扣结果任务，传loanApplyNo
     def new_cy_d0_batch_repayment_query(self, loanApplyNo):
         param_data = {"loanApplyNo": loanApplyNo}
-        self.excute_xxl_job.trigger_xxl_job(182, f'{param_data}')
+        self.excute_xxl_job.trigger_xxl_job(578, f'{param_data}')
         self.logging.info(f"执行查询批扣结果任务成功!")
+
+    # 调用推送客户中心任务，传creditApplyNo
+    def push_credit_info_to_customer_center(self, creditApplyNo):
+        param_data = {"limit":10, "filterChannelCodes":["ICE_ZLSK_36"], "cutTimeStr":f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}", "creditApplyNoList":[f"{creditApplyNo}"]}
+        self.excute_xxl_job.trigger_xxl_job(430, f'{param_data}')
+        self.logging.info(f"执行推送客户中心任务成功!")
 
     # 调用单笔还款处理任务
     def single_repay(self):
@@ -60,5 +66,6 @@ class execute_xxl_job(xxlJob):
 
 
 if __name__ == '__main__':
-    loanApplyNo = "SLN3487668801"
-    execute_xxl_job().new_cy_batch_d0_repay_apply()
+    loanApplyNo = "1848609538098610176"
+    execute_xxl_job().push_credit_info_to_customer_center(loanApplyNo)
+    # print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))

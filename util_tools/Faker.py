@@ -342,7 +342,7 @@ if __name__ == '__main__':
     id_no, birthday = get_zx_user_id_no()
     # print(id_no, birthday)
     address = get_fake().currency_symbol()
-    print(address)
+    print(id_no, birthday)
     # print(get_credit_apply_no("")XM)
     # 请求鉴权数据
     # bk_jq_need_encry_data = { "certificationApplyNo": "SC00565656","SFAF":"SFASFAF"}

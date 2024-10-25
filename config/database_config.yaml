@@ -12,6 +12,14 @@ api:
     username: zws_middleware_360
     password: maiS2ieb
     db_name: zws_middleware_360
+tyh:
+  tyh_api_flow:
+    host: 192.168.1.192
+    port: 13310
+    username: tyh_cashloan
+    password: 08*wP&DT@w#J
+    db_name: tyh_cashloan
+
 redis:
   zjly:
     host: 192.168.1.159

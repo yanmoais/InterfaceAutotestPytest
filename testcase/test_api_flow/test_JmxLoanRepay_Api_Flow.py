@@ -36,16 +36,16 @@ def test_jmx_loan_success_api_flow():
         credit_apply_no = get_credit_apply_no()
         db = Update_Sql_Result()
         apply_time = get_time_stand_api()
-        id_no, birthday = "440106197703233642", "1977-03-23"
-        user_name = "燕雷"
-        bank_card_no = "6217001727076472002"
-        user_id = "ZL172707647200"
+        id_no, birthday = get_zx_user_id_no()
+        user_name = get_user_name()
+        bank_card_no = get_ccb_num()
+        user_id = get_cust_id()
         certificationApplyNo = get_api_bk_id()
         logging = Logger().init_logger()
 
         # 获取风控加白了的手机号，读取本地txt文件
-        mobile_no = "15959789459"
-        # 修改对应的缩写或其他标志：金美信消金  ==  XM
+        mobile_no = read_risk_phone()
+        # 修改对应的缩写或其他标志：金美信消金  ==  JMX
         loanApplyNo = get_req_seq_no("JMX")
         # 资金方，修改成对应需要放款的资金方funds_code
         funds_code = "JMX"
@@ -57,6 +57,12 @@ def test_jmx_loan_success_api_flow():
         reqPeriods = "12"
         # 产品信息
         product_code = "KN_HALF"
+
+    with allure.step("更新为限流模式"):
+        Update_Sql_Result().update_api_chanel_non_funds("ICE_ZLSK_36")
+
+    with allure.step("更新为MOCK环境"):
+        Update_Sql_Result().update_jmx_zjly_mock()
 
     with allure.step("用户撞库"):
         # 撞库数据,以手机号为主
@@ -116,6 +122,11 @@ def test_jmx_loan_success_api_flow():
         # 发起授信结果轮询请求
         resp = loop_result().loop_api_flow_sx_result(sx_cx_data, credit_apply_no, channel_code)
         logging.info(f"当前授信结果返回数据为：{resp}")
+
+    with allure.step("推送客户中心"):
+        execute_xxl_job().push_credit_info_to_customer_center(credit_apply_no)
+        time.sleep(5)
+        logging.info("授信成功后推送客户中心成功！")
 
     with allure.step("绑卡申请"):
         # 请求鉴权数据
@@ -195,7 +206,7 @@ def test_jmx_repay_d0_success_api_flow():
         db = Update_Sql_Result()
         apply_time = get_time_stand_api()
         id_no, birthday = get_zx_user_id_no()
-        user_name = "胡斌"
+        user_name = get_user_name()
         bank_card_no = get_baofu_ccb_num()
         user_id = get_cust_id()
         certificationApplyNo = get_api_bk_id()
@@ -203,8 +214,8 @@ def test_jmx_repay_d0_success_api_flow():
 
         # 获取风控加白了的手机号，读取本地txt文件
         mobile_no = read_risk_phone()
-        # 修改对应的缩写或其他标志：金美信消金  ==  XM
-        loanApplyNo = get_req_seq_no("XM")
+        # 修改对应的缩写或其他标志：金美信消金  ==  JMX
+        loanApplyNo = get_req_seq_no("JMX")
         # 资金方，修改成对应需要放款的资金方funds_code
         funds_code = "JMX"
         # 渠道方，修改成对应需要走的渠道方channel_code
@@ -215,6 +226,12 @@ def test_jmx_repay_d0_success_api_flow():
         reqPeriods = "12"
         # 产品信息
         product_code = "KN_HALF"
+
+    with allure.step("更新为限流模式"):
+        Update_Sql_Result().update_api_chanel_non_funds("ICE_ZLSK_36")
+
+    with allure.step("更新为MOCK环境"):
+        Update_Sql_Result().update_jmx_zjly_mock()
 
     with allure.step("用户撞库"):
         # 撞库数据,以手机号为主
@@ -274,6 +291,11 @@ def test_jmx_repay_d0_success_api_flow():
         # 发起授信结果轮询请求
         resp = loop_result().loop_api_flow_sx_result(sx_cx_data, credit_apply_no, channel_code)
         logging.info(f"当前授信结果返回数据为：{resp}")
+
+    with allure.step("推送客户中心"):
+        execute_xxl_job().push_credit_info_to_customer_center(credit_apply_no)
+        time.sleep(5)
+        logging.info("授信成功后推送客户中心成功！")
 
     with allure.step("绑卡申请"):
         # 请求鉴权数据
@@ -374,7 +396,7 @@ def test_jmx_repay_success_api_flow():
         db = Update_Sql_Result()
         apply_time = get_time_stand_api()
         id_no, birthday = get_zx_user_id_no()
-        user_name = "胡斌"
+        user_name = get_user_name()
         bank_card_no = get_baofu_ccb_num()
         user_id = get_cust_id()
         certificationApplyNo = get_api_bk_id()
@@ -382,9 +404,9 @@ def test_jmx_repay_success_api_flow():
 
         # 获取风控加白了的手机号，读取本地txt文件
         mobile_no = read_risk_phone()
-        # 修改对应的缩写或其他标志：金美信消金  ==  XM
-        loanApplyNo = get_req_seq_no("XM")
-        repayApplyNo = get_credit_apply_no("XM")
+        # 修改对应的缩写或其他标志：金美信消金  ==  JMX
+        loanApplyNo = get_req_seq_no("JMX")
+        repayApplyNo = get_credit_apply_no("JMX")
         # 资金方，修改成对应需要放款的资金方funds_code
         funds_code = "JMX"
         # 渠道方，修改成对应需要走的渠道方channel_code
@@ -395,6 +417,12 @@ def test_jmx_repay_success_api_flow():
         reqPeriods = "12"
         # 产品信息
         product_code = "KN_HALF"
+
+    with allure.step("更新为限流模式"):
+        Update_Sql_Result().update_api_chanel_non_funds("ICE_ZLSK_36")
+
+    with allure.step("更新为MOCK环境"):
+        Update_Sql_Result().update_jmx_zjly_mock()
 
     with allure.step("用户撞库"):
         # 撞库数据,以手机号为主
@@ -454,6 +482,11 @@ def test_jmx_repay_success_api_flow():
         # 发起授信结果轮询请求
         resp = loop_result().loop_api_flow_sx_result(sx_cx_data, credit_apply_no, channel_code)
         logging.info(f"当前授信结果返回数据为：{resp}")
+
+    with allure.step("推送客户中心"):
+        execute_xxl_job().push_credit_info_to_customer_center(credit_apply_no)
+        time.sleep(5)
+        logging.info("授信成功后推送客户中心成功！")
 
     with allure.step("绑卡申请"):
         # 请求鉴权数据

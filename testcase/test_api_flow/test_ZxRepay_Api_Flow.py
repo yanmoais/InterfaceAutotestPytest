@@ -36,12 +36,12 @@ def test_zx_loan_success_api_flow():
         credit_apply_no = get_credit_apply_no()
         db = Update_Sql_Result()
         apply_time = get_time_stand_api()
-        id_no, birthday = "420105200501201786", "2005-01-20"
-        user_name = "束冰卿"
+        id_no, birthday = get_zx_user_id_no()
+        user_name = get_user_name()
         # 获取风控加白了的手机号，读取本地txt文件
-        mobile_no = "15910012430"
-        bank_card_no = "6227007737516052060"
-        user_id = "SUR9095686604"
+        mobile_no = read_risk_phone()
+        bank_card_no = get_ccb_num()
+        user_id = get_cust_id()
         certificationApplyNo = get_api_bk_id()
         logging = Logger().init_logger()
 
@@ -56,93 +56,100 @@ def test_zx_loan_success_api_flow():
         # 借款期数
         reqPeriods = "12"
         # 产品信息
-        product_code = "P_001"
-        partner_creditNo = "1840320367860789248"
+        product_code = "KN_HALF"
 
-    # with allure.step("用户撞库"):
-    #     # 撞库数据,以手机号为主
-    #     zk_need_encry_data = {"params": {"md5": enc.param_encry_by_md5(mobile_no), "mode": "M"}}
-    #     # 加密撞库数据
-    #     zk_encry_data = api.api_param_encry(zk_need_encry_data, channel_code)
-    #     # 发送撞库请求
-    #     zk_resp = api.test_check_user(zk_encry_data)
-    #     # 撞库解密
-    #     zk_decry_resp = api.api_param_decry(zk_resp)
-    #     logging.info(f"解密后的撞库返回结果为：======{zk_decry_resp}")
-    #
-    # with allure.step("授信审核申请"):
-    #     # 授信申请数据
-    #     sx_need_encry_data = {"userId": user_id, "creditApplyNo": credit_apply_no, "applyTime": apply_time,
-    #                           "productCode": product_code, "applyAmount": "20000.00",
-    #                           "userInfo": {"mobile": mobile_no, "name": user_name, "idCardNo": id_no, "marriage": "20",
-    #                                        "monthlyIncome": "4", "education": "20", "job": "1", "province": "230000",
-    #                                        "city": "230100", "district": "230109",
-    #                                        "addrDetail": "黑龙江省哈尔滨市松北区成钧街道豪承小区190号楼501"},
-    #                           "idCardOcrInfo": {"positive": get_positive_photo(), "negative": get_negative_photo(),
-    #                                             "nameOCR": user_name, "idCardNoOCR": id_no, "beginTimeOCR": "20170829",
-    #                                             "duetimeOCR": "99991231",
-    #                                             "addressOCR": "黑龙江省哈尔滨市松北区成钧街道豪承小区190号楼501",
-    #                                             "sexOCR": "M", "ethnicOCR": "汉族", "issueOrgOCR": "黑龙江公安局"},
-    #                           "faceInfo": {"assayTime": apply_time, "assayType": "SENSETIME", "best": get_best_photo()},
-    #                           "linkmanInfo": {"relationshipA": "10", "nameA": "毋琳子", "phoneA": "15161455378",
-    #                                           "relationshipB": "60", "nameB": "花娥茜", "phoneB": "15982209188"},
-    #                           "bankCardInfo": {"bankCode": "0004", "idCardNo": id_no, "userMobile": mobile_no,
-    #                                            "userName": user_name, "bankCardNo": bank_card_no},
-    #                           "geoInfo": {"latitude": "43.57687931900941", "longitude": "112.55172012515888"},
-    #                           "companyInfo": {
-    #                               "companyName": "中国建筑集团有限公司",
-    #                               "province": "110000",
-    #                               "city": "110100",
-    #                               "district": "110108",
-    #                               "companyAddr": "北京市海淀区三里河路15号"},
-    #                           "agreementTime": apply_time}
-    #     logging.info(f"{json_dumps_cn(sx_need_encry_data)}")
-    #     # 加密授信数据
-    #     sx_encry_data = api.api_param_encry(sx_need_encry_data, channel_code)
-    #     # 发送授信申请请求
-    #     sx_resp = api.test_apply_credit(sx_encry_data)
-    #     # 授信结果解密
-    #     sx_decry_data = api.api_param_decry(sx_resp)
-    #     partner_creditNo = sx_decry_data["partnerCreditNo"]
-    #     logging.info(f"解密后的授信申请返回结果为：======{sx_decry_data}")
-    #
-    # with allure.step("更新授信相关表为振兴资方"):
-    #     db.update_api_flow_all_table(funds_code, user_id)
-    #     logging.info(f"数据库更新资方完毕")
-    #     time.sleep(5)
-    #
-    # with allure.step("轮询判断是否授信成功"):
-    #     # 授信查询数据
-    #     sx_cx_data = {"userId": user_id, "creditApplyNo": credit_apply_no}
-    #     # 发起授信结果轮询请求
-    #     resp = loop_result().loop_api_flow_sx_result(sx_cx_data, credit_apply_no, channel_code)
-    #     logging.info(f"当前授信结果返回数据为：{resp}")
-    #
-    # with allure.step("绑卡申请"):
-    #     # 请求鉴权数据
-    #     bk_jq_need_encry_data = {"userId": user_id, "certificationApplyNo": certificationApplyNo, "bankCode": "0004",
-    #                              "idCardNo": id_no, "userMobile": mobile_no, "userName": user_name,
-    #                              "bankCardNo": bank_card_no, "registerMobile": mobile_no, "agreementTime": apply_time
-    #                              }
-    #     # 判断是360就直接绑卡，不指定bindType
-    #     # 绑卡轮询，并且绑卡两次
-    #     # 此处需要优化，360的话不需要指定bindType,直接绑两次卡就好
-    #     with allure.step("第一次绑卡"):
-    #         if channel_code == "APPZY":
-    #             bk_jq_need_encry_data["bindType"] = "fundsChannel"
-    #         else:
-    #             pass
-    #         loop_result().loop_api_flow_bk_result(bk_jq_need_encry_data, channel_code)
-    #     with allure.step("第二次绑卡"):
-    #         if channel_code == "APPZY" or channel_code == "XL":
-    #             bk_jq_need_encry_data["bindType"] = "payChannel"
-    #         else:
-    #             pass
-    #         # 第二次绑卡需要更新申请号以及时间，从新赋值
-    #         time.sleep(2)
-    #         bk_jq_need_encry_data["certificationApplyNo"], bk_jq_need_encry_data[
-    #             "agreementTime"] = get_api_bk_id(), get_time_stand_api()
-    #         loop_result().loop_api_flow_bk_result(bk_jq_need_encry_data, channel_code)
+    with allure.step("更新为限流模式"):
+        Update_Sql_Result().update_api_chanel_non_funds("ICE_ZLSK_36")
+
+    with allure.step("用户撞库"):
+        # 撞库数据,以手机号为主
+        zk_need_encry_data = {"params": {"md5": enc.param_encry_by_md5(mobile_no), "mode": "M"}}
+        # 加密撞库数据
+        zk_encry_data = api.api_param_encry(zk_need_encry_data, channel_code)
+        # 发送撞库请求
+        zk_resp = api.test_check_user(zk_encry_data)
+        # 撞库解密
+        zk_decry_resp = api.api_param_decry(zk_resp)
+        logging.info(f"解密后的撞库返回结果为：======{zk_decry_resp}")
+
+    with allure.step("授信审核申请"):
+        # 授信申请数据
+        sx_need_encry_data = {"userId": user_id, "creditApplyNo": credit_apply_no, "applyTime": apply_time,
+                              "productCode": product_code, "applyAmount": "20000.00",
+                              "userInfo": {"mobile": mobile_no, "name": user_name, "idCardNo": id_no, "marriage": "20",
+                                           "monthlyIncome": "4", "education": "20", "job": "1", "province": "230000",
+                                           "city": "230100", "district": "230109",
+                                           "addrDetail": "黑龙江省哈尔滨市松北区成钧街道豪承小区190号楼501"},
+                              "idCardOcrInfo": {"positive": get_positive_photo(), "negative": get_negative_photo(),
+                                                "nameOCR": user_name, "idCardNoOCR": id_no, "beginTimeOCR": "20170829",
+                                                "duetimeOCR": "99991231",
+                                                "addressOCR": "黑龙江省哈尔滨市松北区成钧街道豪承小区190号楼501",
+                                                "sexOCR": "M", "ethnicOCR": "汉族", "issueOrgOCR": "黑龙江公安局"},
+                              "faceInfo": {"assayTime": apply_time, "assayType": "SENSETIME", "best": get_best_photo()},
+                              "linkmanInfo": {"relationshipA": "10", "nameA": "毋琳子", "phoneA": "15161455378",
+                                              "relationshipB": "60", "nameB": "花娥茜", "phoneB": "15982209188"},
+                              "bankCardInfo": {"bankCode": "0004", "idCardNo": id_no, "userMobile": mobile_no,
+                                               "userName": user_name, "bankCardNo": bank_card_no},
+                              "geoInfo": {"latitude": "43.57687931900941", "longitude": "112.55172012515888"},
+                              "companyInfo": {
+                                  "companyName": "中国建筑集团有限公司",
+                                  "province": "110000",
+                                  "city": "110100",
+                                  "district": "110108",
+                                  "companyAddr": "北京市海淀区三里河路15号"},
+                              "agreementTime": apply_time}
+        logging.info(f"{json_dumps_cn(sx_need_encry_data)}")
+        # 加密授信数据
+        sx_encry_data = api.api_param_encry(sx_need_encry_data, channel_code)
+        # 发送授信申请请求
+        sx_resp = api.test_apply_credit(sx_encry_data)
+        # 授信结果解密
+        sx_decry_data = api.api_param_decry(sx_resp)
+        partner_creditNo = sx_decry_data["partnerCreditNo"]
+        logging.info(f"解密后的授信申请返回结果为：======{sx_decry_data}")
+
+    with allure.step("更新授信相关表为振兴资方"):
+        db.update_api_flow_all_table(funds_code, user_id)
+        logging.info(f"数据库更新资方完毕")
+        time.sleep(5)
+
+    with allure.step("轮询判断是否授信成功"):
+        # 授信查询数据
+        sx_cx_data = {"userId": user_id, "creditApplyNo": credit_apply_no}
+        # 发起授信结果轮询请求
+        resp = loop_result().loop_api_flow_sx_result(sx_cx_data, credit_apply_no, channel_code)
+        logging.info(f"当前授信结果返回数据为：{resp}")
+
+    with allure.step("推送客户中心"):
+        execute_xxl_job().push_credit_info_to_customer_center(credit_apply_no)
+        time.sleep(5)
+        logging.info("授信成功后推送客户中心成功！")
+
+    with allure.step("绑卡申请"):
+        # 请求鉴权数据
+        bk_jq_need_encry_data = {"userId": user_id, "certificationApplyNo": certificationApplyNo, "bankCode": "0004",
+                                 "idCardNo": id_no, "userMobile": mobile_no, "userName": user_name,
+                                 "bankCardNo": bank_card_no, "registerMobile": mobile_no, "agreementTime": apply_time
+                                 }
+        # 判断是360就直接绑卡，不指定bindType
+        # 绑卡轮询，并且绑卡两次
+        # 此处需要优化，360的话不需要指定bindType,直接绑两次卡就好
+        with allure.step("第一次绑卡"):
+            if channel_code == "APPZY":
+                bk_jq_need_encry_data["bindType"] = "fundsChannel"
+            else:
+                pass
+            loop_result().loop_api_flow_bk_result(bk_jq_need_encry_data, channel_code)
+        with allure.step("第二次绑卡"):
+            if channel_code == "APPZY" or channel_code == "XL":
+                bk_jq_need_encry_data["bindType"] = "payChannel"
+            else:
+                pass
+            # 第二次绑卡需要更新申请号以及时间，从新赋值
+            time.sleep(2)
+            bk_jq_need_encry_data["certificationApplyNo"], bk_jq_need_encry_data[
+                "agreementTime"] = get_api_bk_id(), get_time_stand_api()
+            loop_result().loop_api_flow_bk_result(bk_jq_need_encry_data, channel_code)
 
     with allure.step("借款试算"):
         # 借款试算数据
@@ -204,7 +211,7 @@ def test_zx_repay_d0_success_api_flow():
         credit_apply_no = get_credit_apply_no()
         db = Update_Sql_Result()
         apply_time = get_time_stand_api()
-        id_no, birthday = get_user_idNo()
+        id_no, birthday = get_zx_user_id_no()
         user_name = get_user_name()
         bank_card_no = get_tl_bank_ccb_num()
         user_id = get_cust_id()
@@ -225,6 +232,9 @@ def test_zx_repay_d0_success_api_flow():
         reqPeriods = "12"
         # 产品信息
         product_code = "KN_HALF"
+
+    with allure.step("更新为限流模式"):
+        Update_Sql_Result().update_api_chanel_non_funds("ICE_ZLSK_36")
 
     with allure.step("用户撞库"):
         # 撞库数据,以手机号为主
@@ -284,6 +294,11 @@ def test_zx_repay_d0_success_api_flow():
         # 发起授信结果轮询请求
         resp = loop_result().loop_api_flow_sx_result(sx_cx_data, credit_apply_no, channel_code)
         logging.info(f"当前授信结果返回数据为：{resp}")
+
+    with allure.step("推送客户中心"):
+        execute_xxl_job().push_credit_info_to_customer_center(credit_apply_no)
+        time.sleep(5)
+        logging.info("授信成功后推送客户中心成功！")
 
     with allure.step("绑卡申请"):
         # 请求鉴权数据

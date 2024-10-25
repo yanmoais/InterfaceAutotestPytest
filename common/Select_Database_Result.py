@@ -3,6 +3,7 @@
 # @Author : Blues.Lan
 # Them：Pyhon自动化
 # @Time :  下午6:30
+import time
 
 from util_tools.Database_Conn import Mysql
 
@@ -38,23 +39,23 @@ class Select_Sql_Result(Mysql):
         return result
 
     # 查询api侧zx_loan_apply_record表当前放款进度，根据借款流水号来查询(loan_apply_no)
-    def select_zx_loan_apply_record(self, loan_apply_no):
-        select_sql = f"SELECT ap.loan_no,ap.risk_status, ap.apply_status, ap.loan_status, ap.sign_status FROM zx_loan_apply_record as ap WHERE ap.loan_apply_no = '{loan_apply_no}';"
-        result = Mysql("api").select_db(select_sql)[0]
+    def select_zx_loan_apply_record(self, loan_apply_no, test_db="api"):
+        select_sql = f"SELECT ap.loan_no,ap.risk_status, ap.apply_status, ap.loan_status, ap.sign_status, ap.reason_msg FROM zx_loan_apply_record as ap WHERE ap.loan_apply_no = '{loan_apply_no}';"
+        result = Mysql(test_db).select_db(select_sql)[0]
         self.logging.info(f"数据库查询返回数据为：==={result}")
         return result
 
     # 查询api侧zx_credit_applicant_result表当前授信进度，根据借款流水号授信申请单号来查询(credit_apply_no)
-    def select_zx_credit_applicant_result(self, loan_apply_no):
-        select_sql = f"SELECT ar.sign_status, ar.risk_status FROM zx_credit_applicant_result as ar WHERE ar.credit_apply_no = '{loan_apply_no}';"
-        result = Mysql("api").select_db(select_sql)[0]
+    def select_zx_credit_applicant_result(self, loan_apply_no, test_db="api"):
+        select_sql = f"SELECT ar.status, ar.sign_status, ar.risk_status FROM zx_credit_applicant_result as ar WHERE ar.credit_apply_no = '{loan_apply_no}';"
+        result = Mysql(test_db).select_db(select_sql)[0]
         self.logging.info(f"数据库查询返回数据为：==={result}")
         return result
 
     # 查询api侧zl_batch_deduction_apply表当前还款进度，根据借款流水号授信申请单号来查询(zx_loan_apply_no)
-    def select_zl_batch_deduction_apply(self, loan_apply_no):
+    def select_zl_batch_deduction_apply(self, loan_apply_no, test_db="api"):
         select_sql = f"SELECT ar.repay_status, ar.jxym_repay_status FROM zl_batch_deduction_apply as ar WHERE ar.zx_loan_apply_no = '{loan_apply_no}';"
-        result = Mysql("api").select_db(select_sql)[0]
+        result = Mysql(test_db).select_db(select_sql)[0]
         self.logging.info(f"数据库查询返回数据为：==={result}")
         return result
 
@@ -85,25 +86,77 @@ class Select_Sql_Result(Mysql):
         return result
 
     # 查询api侧zl_api_user表当前渠道为何模式，根据channel_code来查询(channel_code)
-    def select_zl_api_user(self, channel_code):
+    def select_zl_api_user(self, channel_code, test_db="api"):
         select_sql = f"SELECT * FROM zws_middleware_360.zl_api_user WHERE channel_code = '{channel_code}';"
-        result = Mysql("api").select_db(select_sql)[0]
+        result = Mysql(test_db).select_db(select_sql)[0]
         self.logging.info(f"数据库查询返回数据为：===,{result}")
         return result
 
     # 查询api侧zx_loan_plan_info表还款计划详情，根据loan_apply_no来模糊查询所有期数
-    def select_api_flow_zx_loan_plan_info(self, loan_apply_no):
+    def select_api_flow_zx_loan_plan_info(self, loan_apply_no, test_db="api"):
         select_sql = f"SELECT term,overdue_day,start_date,due_date,plan_status,CAST(prin_amt AS CHAR)AS prin_amt,CAST(int_amt AS CHAR)AS int_amt,CAST(oint_amt AS CHAR)AS oint_amt FROM zx_loan_plan_info WHERE plan_no LIKE '{loan_apply_no}%';"
-        data = Mysql("api").select_db(select_sql)
+        data = Mysql(test_db).select_db(select_sql)
         self.logging.info(f"数据库查询返回数据为：==={data}")
         result = {}
         for index, value in enumerate(data):
             result[index] = value
         return result
 
+    # 查询api侧zx_loan_apply_record表放款成功后的partner_loan_no，根据loan_apply_no来查询(loan_apply_no)
+    def select_partner_loan_no_apply_record(self, loan_apply_no, test_db="api"):
+        select_sql = f"SELECT partner_loan_no FROM zws_middleware_360.zx_loan_apply_record WHERE loan_apply_no = '{loan_apply_no}';"
+        result = Mysql(test_db).select_db(select_sql)[0]['partner_loan_no']
+        self.logging.info(f"数据库查询返回数据为：===,{result}")
+        return result
+
+    # 查询api侧tlt_bind_card_info表绑卡资方成功后的协议号、支付通道，根据user_id来查询(user_id)
+    def select_greement_id_pay_channel(self, user_id, test_db="api"):
+        select_sql = f"SELECT pay_channel_code,agrmno FROM zws_middleware_360.tlt_bind_confirm_info WHERE user_id = '{user_id}' AND pay_channel_code IS NOT NULL;"
+        result = Mysql(test_db).select_db(select_sql)[0]
+        self.logging.info(f"数据库查询返回数据为：===,{result}")
+        return result['pay_channel_code'], result['agrmno']
+
+    # 查询api侧zx_credit_applicant_result表的credit_apply_no，根据天源花的credit_apply_no来查找apply表在api侧的数据
+    def select_credit_apply_no_by_tyh(self, tyh_credit_apply_no, test_db="tyh"):
+        select_sql = f"SELECT credit_apply_no FROM jxym_credit_apply WHERE zx_credit_apply_no = '{tyh_credit_apply_no}';"
+        while True:
+            try:
+                result = Mysql(test_db).select_db(select_sql)[0]
+                if result:
+                    self.logging.info(f"数据库查询返回数据为：===,{result}")
+                    return result['credit_apply_no']
+                else:
+                    pass
+            except IndexError:
+                self.logging.info("没有找到数据，等待10秒后重试...")
+                time.sleep(10)
+                continue
+
+    # 查询api侧zx_credit_applicant_result表的credit_apply_no，根据天源花的credit_apply_no来查找apply表在api侧的数据
+    def select_user_id_by_tyh(self, tyh_credit_apply_no, test_db="api"):
+        select_sql = f"SELECT user_id FROM zx_credit_applicant_result WHERE credit_apply_no = '{tyh_credit_apply_no}';"
+        result = Mysql(test_db).select_db(select_sql)[0]
+        self.logging.info(f"数据库查询返回数据为：===,{result}")
+        return result['user_id']
+
+    # 查询天源花侧zx_credit_applicant_result表的partner_credit_no，根据天源花的credit_apply_no来查找
+    def select_partner_credit_no_by_tyh(self, credit_apply_no, test_db="tyh"):
+        select_sql = f"SELECT partner_credit_no FROM zx_credit_applicant_result WHERE credit_apply_no = '{credit_apply_no}';"
+        result = Mysql(test_db).select_db(select_sql)[0]
+        self.logging.info(f"数据库查询返回数据为：===,{result}")
+        return result['partner_credit_no']
+
+    # 查询天源花侧zx_credit_applicant_result表的partner_credit_no，根据天源花的credit_apply_no来查找
+    def select_loan_apply_no_by_tyh(self, zx_loan_apply_no, test_db="tyh"):
+        select_sql = f"SELECT loan_apply_no FROM jxym_loan_apply WHERE zx_loan_apply_no = '{zx_loan_apply_no}';"
+        result = Mysql(test_db).select_db(select_sql)[0]
+        self.logging.info(f"数据库查询返回数据为：===,{result}")
+        return result['loan_apply_no']
+
 
 if __name__ == '__main__':
-    bk_id = "ICE_ZLSK_36"
+    loan_apply_no = 'tyhhycs0927012'
     db = Select_Sql_Result()
-    datas = db.select_zl_api_user(bk_id)
-    print(datas)
+    channel = db.select_loan_apply_no_by_tyh(loan_apply_no)
+    reap = db.select_zx_loan_apply_record(channel)
+    print(reap)

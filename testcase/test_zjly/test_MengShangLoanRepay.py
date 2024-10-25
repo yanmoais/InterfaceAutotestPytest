@@ -33,6 +33,8 @@ def test_mengshang_loan_success():
         reqPeriods = "12"
         bk_no = get_bank_id()
         repay_no = get_repay_no()
+        apiKey = "ZLSK-MS"
+        channel = "mengShang"
 
         loan_sqe_no = get_req_seq_no()
         req_no = get_req_no()
@@ -45,87 +47,86 @@ def test_mengshang_loan_success():
     # 每次请求前需要进行加密，得到的返回结果需要传给下游接口时候需要解密出来，下次使用又需要加密
     with allure.step("发起授信"):
         # 1.授信申请加密
-        sx_need_encry_data = {'apiKey': 'ZLSK-MS', 'params':json_dumps_cn({"gender":"F","birthday":birthday,"guaranteeInfo":{"guarOdIntRate":"0.00022037","guarRate":"0.079333","guarTime":"12","guarAmt":"237.96"},"nation":"汉","loanseqno":loan_sqe_no,"idNo":id_no,"merchantName":"大商户","monthlySalary":"1000","idExpireDate":"2037-11-30","merchantId":"69355551222","companyPhone":"02061959111","childrenNum":"2","custId":custid,"fromChannel":"01","regAddress":{"area":"440106","address":"广东省广州市天河区冼村街道珠江东路11号","province":"440000","city":"440100"},"liveAddress":{"area":"440106","address":"广东省广州市天河区冼村街道珠江东路11号","province":"440000","city":"440100"},"applyDt":"2024-09-04","emergencyContact":[{"relation":"01","mobileNo":"18197269653","name":"毛不易"},{"relation":"02","mobileNo":"18197269659","name":"李文忠"}],"idStartDate":"2017-11-30","signOffice":"罗定市公安局","mobileNo":mobile_no,"userName":user_name,"fileIDs":"cedd3e995c184f72a3056d3b1fbe4a321727076310700,d54691c092f64c3493ee89348e8a8dfe1727076309153,e14ede19ac3b498686f25407c86da2101727076307942","occupationInfo":{"companyAddInfo":{"area":"440106","address":"广东省广州市天河区冼村街道珠江东路11号","province":"440000","city":"440100"},"profession":"0","companyPhone":"02035949111","companyName":"测试科技有限公司","industry":"A","position":"01"},"loanInfo":{"priceAcc":"0.2395","loanFreq":"1M","rateType":"1","loanType":"PZ","reqPeriods":reqPeriods,"reqAmount":loan_amt,"dueDayOpt":"1","custDayRate":"0.2394","reqPurpose":"1"},"maxDegree":"10","accInfoList":[{"acctKind":"01","acctTyp":"01","acctBankCode":"0105","bankName":bank_name,"acctNo":acct_no,"acctName":user_name,"idNo":id_no,"acctPhone":mobile_no,"phoneBelongAddr":"云浮"},{"acctKind":"02","acctTyp":"01","acctBankCode":"0105","bankName":bank_name,"acctNo":acct_no,"acctName":user_name,"idNo":id_no,"acctPhone":mobile_no,"phoneBelongAddr":"云浮"}],"maritalStatus":"10"}), 'requestNo': req_no}
+        sx_need_encry_data = {'apiKey': apiKey, 'params':json_dumps_cn({"gender":"F","birthday":birthday,"guaranteeInfo":{"guarOdIntRate":"0.00022037","guarRate":"0.079333","guarTime":"12","guarAmt":"237.96"},"nation":"汉","loanseqno":loan_sqe_no,"idNo":id_no,"merchantName":"大商户","monthlySalary":"1000","idExpireDate":"2037-11-30","merchantId":"69355551222","companyPhone":"02061959111","childrenNum":"2","custId":custid,"fromChannel":"01","regAddress":{"area":"440106","address":"广东省广州市天河区冼村街道珠江东路11号","province":"440000","city":"440100"},"liveAddress":{"area":"440106","address":"广东省广州市天河区冼村街道珠江东路11号","province":"440000","city":"440100"},"applyDt":"2024-09-04","emergencyContact":[{"relation":"01","mobileNo":"18197269653","name":"毛不易"},{"relation":"02","mobileNo":"18197269659","name":"李文忠"}],"idStartDate":"2017-11-30","signOffice":"罗定市公安局","mobileNo":mobile_no,"userName":user_name,"fileIDs":"cedd3e995c184f72a3056d3b1fbe4a321727076310700,d54691c092f64c3493ee89348e8a8dfe1727076309153,e14ede19ac3b498686f25407c86da2101727076307942","occupationInfo":{"companyAddInfo":{"area":"440106","address":"广东省广州市天河区冼村街道珠江东路11号","province":"440000","city":"440100"},"profession":"0","companyPhone":"02035949111","companyName":"测试科技有限公司","industry":"A","position":"01"},"loanInfo":{"priceAcc":"0.2395","loanFreq":"1M","rateType":"1","loanType":"PZ","reqPeriods":reqPeriods,"reqAmount":loan_amt,"dueDayOpt":"1","custDayRate":"0.2394","reqPurpose":"1"},"maxDegree":"10","accInfoList":[{"acctKind":"01","acctTyp":"01","acctBankCode":"0105","bankName":bank_name,"acctNo":acct_no,"acctName":user_name,"idNo":id_no,"acctPhone":mobile_no,"phoneBelongAddr":"云浮"},{"acctKind":"02","acctTyp":"01","acctBankCode":"0105","bankName":bank_name,"acctNo":acct_no,"acctName":user_name,"idNo":id_no,"acctPhone":mobile_no,"phoneBelongAddr":"云浮"}],"maritalStatus":"10"}), 'requestNo': req_no}
         # 加密数据
-        sx_encry_data = encrypt_decrypt().param_encry_by_channel(sx_need_encry_data, 'mengShang')
-        print("加密的数据是==================", sx_encry_data)
+        sx_encry_data = encrypt_decrypt().param_encry_by_channel(sx_need_encry_data, channel)
         # 1.授信申请请求,获取返回数据
         sxsq_resp = core_zjly_api().test_order_apply(sx_encry_data)
         # 1.授信申请返回数据解密
-        decry_data = encrypt_decrypt().param_decrys_by_channel(sxsq_resp, 'mengShang')
+        decry_data = encrypt_decrypt().param_decrys_by_channel(sxsq_resp, channel)
         logging.info(f"解密后的授信申请返回数据为：======{decry_data}")
 
     with allure.step("授信状态查询"):
         # 2.授信状态查询加密
-        zt_need_ency_data = {"apiKey": "ZLSK-MS","params":json_dumps_cn({"loanseqno":loan_sqe_no}),"requestNo": req_no}
+        zt_need_ency_data = {"apiKey": apiKey,"params":json_dumps_cn({"loanseqno":loan_sqe_no}),"requestNo": req_no}
         # 加密数据
         logging.info(f"需要加密的授信状态查询数据为：======{zt_need_ency_data}")
-        sxzt_encry = encrypt_decrypt().param_encry_by_channel(zt_need_ency_data, 'mengShang')
+        sxzt_encry = encrypt_decrypt().param_encry_by_channel(zt_need_ency_data, channel)
         logging.info(f"加密后的授信状态查询数据为：======{sxzt_encry}")
         # 轮训读取判断查询结果，为"授信通过"则跳出
         # 2.授信状态查询请求
-        loop_result().loop_sxcx_result(sxzt_encry, 'mengShang')
+        loop_result().loop_sxcx_result(sxzt_encry, channel)
 
     # with allure.step("发起通联绑卡"):
     #     # 3.签约申请加密
-    #     qybk_ency_data = {"apiKey": "ZLSK-MS","params":json_dumps_cn({"seqno":bk_no,"loanseqno":loan_sqe_no,"id_no":id_no,"user_name":user_name,"mobile_no":mobile_no,"bankCode":"0105","cardNo":acct_no,"bankName":bank_name,"registerPhone":mobile_no}),"requestNo": req_no}
+    #     qybk_ency_data = {"apiKey": apiKey,"params":json_dumps_cn({"seqno":bk_no,"loanseqno":loan_sqe_no,"id_no":id_no,"user_name":user_name,"mobile_no":mobile_no,"bankCode":"0105","cardNo":acct_no,"bankName":bank_name,"registerPhone":mobile_no}),"requestNo": req_no}
     #     # 加密数据
     #     logging.info(f"需要加密的签约申请数据为：======{qybk_ency_data}")
-    #     qybk_encry = encrypt_decrypt().param_encry_by_channel(qybk_ency_data, 'mengShang')
+    #     qybk_encry = encrypt_decrypt().param_encry_by_channel(qybk_ency_data, channel)
     #     logging.info(f"加密后的签约申请数据为：======{qybk_encry}")
     #     # 3.签约申请请求
     #     qysq_resp = core_zjly_api().test_binding_card_apply(qybk_encry)
     #     # 3.签约申请返回数据解密
-    #     qysq_decry = encrypt_decrypt().param_decrys_by_channel(qysq_resp,'mengShang')
+    #     qysq_decry = encrypt_decrypt().param_decrys_by_channel(qysq_resp,channel)
     #     logging.info(f"解密后的签约申请返回数据为：======{qysq_decry}")
     #
     # with allure.step("绑卡签约确认"):
     #     # 4.签约确认加密
-    #     qyqr_encry_data = {"apiKey": "ZLSK-MS","params":json_dumps_cn({"seqno":bk_no,"smscode":"111111"}),"requestNo": req_no}
+    #     qyqr_encry_data = {"apiKey": apiKey,"params":json_dumps_cn({"seqno":bk_no,"smscode":"111111"}),"requestNo": req_no}
     #     # 需要将数据再次格式化成带转义符并且去除空格
-    #     qyqr_encry = encrypt_decrypt().param_encry_by_channel(qyqr_encry_data,'mengShang')
+    #     qyqr_encry = encrypt_decrypt().param_encry_by_channel(qyqr_encry_data,channel)
     #     logging.info(f"加密后的签约确认数据为：======{qyqr_encry}")
     #     # 4.签约确认请求
     #     qyqr_resp = core_zjly_api().test_binding_card_confirm(qyqr_encry)
     #     # 4.签约确认返回数据解密
-    #     qyqr_decry = encrypt_decrypt().param_decrys_by_channel(qyqr_resp,'mengShang')
+    #     qyqr_decry = encrypt_decrypt().param_decrys_by_channel(qyqr_resp,channel)
     #     logging.info(f"解密后的签约确认返回数据为：======{qyqr_decry}")
 
     with allure.step("发起借款"):
         # 5.放款申请加密
-        fk_encry_data = {"apiKey":"ZLSK-MS","params":json_dumps_cn({"requestNo":fk_no,"loanseqno":loan_sqe_no,"bindid":bink_no,"amt":loan_amt,"guarAmt":"237.96","guarRate":"0.079333","guarTime":"12","guarOdIntRate":"0.00022037","guarSignTime":"2024-09-07","guarEndTime":"2025-09-07","guarContNo":dbht_no,"guarContAddr":"广东","contractNo":contract_no,"fileIDs":"","accInfoDto":{"acctKind":"01","acctTyp":"01","acctBankCode":"0105","acct_no":acct_no,"acctName":user_name,"id_no":id_no,"acctPhone":mobile_no,"phoneBelongAddr":"云浮","bankName":bank_name},"guaranteeList":[{"perdNo":"1","guarDate":"2024-10-07","perGuarFee":"19.83"},{"perdNo":"2","guarDate":"2024-11-07","perGuarFee":"19.83"},{"perdNo":"3","guarDate":"2024-12-07","perGuarFee":"19.83"},{"perdNo":"4","guarDate":"2025-01-07","perGuarFee":"19.83"},{"perdNo":"5","guarDate":"2025-02-07","perGuarFee":"19.83"},{"perdNo":"6","guarDate":"2025-03-07","perGuarFee":"19.83"},{"perdNo":"7","guarDate":"2025-04-07","perGuarFee":"19.83"},{"perdNo":"8","guarDate":"2025-05-07","perGuarFee":"19.83"},{"perdNo":"9","guarDate":"2025-06-07","perGuarFee":"19.83"},{"perdNo":"10","guarDate":"2025-07-07","perGuarFee":"19.83"},{"perdNo":"11","guarDate":"2025-08-07","perGuarFee":"19.83"},{"perdNo":"12","guarDate":"2025-09-07","perGuarFee":"19.83"}]}),"requestNo":req_no}
+        fk_encry_data = {"apiKey":apiKey,"params":json_dumps_cn({"requestNo":fk_no,"loanseqno":loan_sqe_no,"bindid":bink_no,"amt":loan_amt,"guarAmt":"237.96","guarRate":"0.079333","guarTime":"12","guarOdIntRate":"0.00022037","guarSignTime":"2024-09-07","guarEndTime":"2025-09-07","guarContNo":dbht_no,"guarContAddr":"广东","contractNo":contract_no,"fileIDs":"","accInfoDto":{"acctKind":"01","acctTyp":"01","acctBankCode":"0105","acct_no":acct_no,"acctName":user_name,"id_no":id_no,"acctPhone":mobile_no,"phoneBelongAddr":"云浮","bankName":bank_name},"guaranteeList":[{"perdNo":"1","guarDate":"2024-10-07","perGuarFee":"19.83"},{"perdNo":"2","guarDate":"2024-11-07","perGuarFee":"19.83"},{"perdNo":"3","guarDate":"2024-12-07","perGuarFee":"19.83"},{"perdNo":"4","guarDate":"2025-01-07","perGuarFee":"19.83"},{"perdNo":"5","guarDate":"2025-02-07","perGuarFee":"19.83"},{"perdNo":"6","guarDate":"2025-03-07","perGuarFee":"19.83"},{"perdNo":"7","guarDate":"2025-04-07","perGuarFee":"19.83"},{"perdNo":"8","guarDate":"2025-05-07","perGuarFee":"19.83"},{"perdNo":"9","guarDate":"2025-06-07","perGuarFee":"19.83"},{"perdNo":"10","guarDate":"2025-07-07","perGuarFee":"19.83"},{"perdNo":"11","guarDate":"2025-08-07","perGuarFee":"19.83"},{"perdNo":"12","guarDate":"2025-09-07","perGuarFee":"19.83"}]}),"requestNo":req_no}
         # 加密数据
         logging.info(f"需要加密的放款申请数据为：======{fk_encry_data}")
-        fksq_encry = encrypt_decrypt().param_encry_by_channel(fk_encry_data, 'mengShang')
+        fksq_encry = encrypt_decrypt().param_encry_by_channel(fk_encry_data, channel)
         logging.info(f"加密后的放款申请数据为：======{fksq_encry}")
         # 5.放款申请请求
         fksq_resp = core_zjly_api().test_loan_apply_settle(fksq_encry)
         # 5.放款申请返回数据解密
-        fksq_decry = encrypt_decrypt().param_decrys_by_channel(fksq_resp, 'mengShang')
+        fksq_decry = encrypt_decrypt().param_decrys_by_channel(fksq_resp, channel)
         logging.info(f"解密后的放款申请返回数据为：======{fksq_decry}")
 
     with allure.step("借款状态查询"):
         # 6.放款状态查询加密
-        fkzt_encry_data = {"apiKey": "ZLSK-MS","params":json_dumps_cn({"requestNo":fk_no,"loanseqno":loan_sqe_no}),"requestNo": req_no}
+        fkzt_encry_data = {"apiKey": apiKey,"params":json_dumps_cn({"requestNo":fk_no,"loanseqno":loan_sqe_no}),"requestNo": req_no}
         # 加密数据
-        fkzt_encry = encrypt_decrypt().param_encry_by_channel(fkzt_encry_data, 'mengShang')
+        fkzt_encry = encrypt_decrypt().param_encry_by_channel(fkzt_encry_data, channel)
         logging.info(f"加密后的放款状态数据为：======{fkzt_encry}")
         # 轮询查询放款结果，查询到结果为"放款成功"则跳出
         # 6.放款状态查询请求
-        loop_result().loop_fkcx_result(fkzt_encry, 'mengShang')
+        loop_result().loop_fkcx_result(fkzt_encry, channel)
 
     with allure.step("还款计划查询"):
         # 放款成功后需要再次调用一下还款计划接口，落库更新
         # 7.还款计划查询加密
-        hkjh_encry_data = {"apiKey":"ZLSK-MS","params":json_dumps_cn({"loanseqno":"1830808464411213824"}),"requestNo":req_no}
+        hkjh_encry_data = {"apiKey":apiKey,"params":json_dumps_cn({"loanseqno":loan_sqe_no}),"requestNo":req_no}
         # 加密数据
         logging.info(f"需要加密的还款计划查询数据为：======{hkjh_encry_data}")
-        hkjh_encry = encrypt_decrypt().param_encry_by_channel(hkjh_encry_data, 'mengShang')
+        hkjh_encry = encrypt_decrypt().param_encry_by_channel(hkjh_encry_data, channel)
         logging.info(f"加密后的还款计划查询数据为：======{hkjh_encry}")
         # 7.还款计划查询请求
         hkjh_resp = core_zjly_api().test_loan_apply_order_query(hkjh_encry)
         # 7.还款计划查询返回数据解密
-        hkjh_decry = encrypt_decrypt().param_decrys_by_channel(hkjh_resp, 'mengShang')
+        hkjh_decry = encrypt_decrypt().param_decrys_by_channel(hkjh_resp, channel)
         logging.info(f"解密后的还款计划查询数据为：======{hkjh_decry}")
 
     with allure.step("放款成功断言"):
