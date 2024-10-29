@@ -359,7 +359,7 @@ class loop_result:
                                         # 执行放款处理任务，调取风控系统
                                         execute_xxl_job().apply_credit_xxljob(loanApplyNo)
                                         self.logging.info("开始暂停60S。。。。。")
-                                        time.sleep(60)
+                                        time.sleep(30)
                                         self.logging.info("暂停结束。。。。。")
                                     else:
                                         if sql_result["sign_status"]:

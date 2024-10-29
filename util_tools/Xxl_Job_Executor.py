@@ -4,10 +4,9 @@
 # Them：Pyhon自动化
 # @Time :  上午11:00
 import datetime
-
 import allure
 from common.Xxl_Job import xxlJob
-
+from util_tools.Faker import *
 
 class execute_xxl_job(xxlJob):
     def __init__(self):
@@ -50,8 +49,8 @@ class execute_xxl_job(xxlJob):
 
     # 调用推送客户中心任务，传creditApplyNo
     def push_credit_info_to_customer_center(self, creditApplyNo):
-        param_data = {"limit":10, "filterChannelCodes":["ICE_ZLSK_36"], "cutTimeStr":f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}", "creditApplyNoList":[f"{creditApplyNo}"]}
-        self.excute_xxl_job.trigger_xxl_job(430, f'{param_data}')
+        param_data = {"limit":10, "cutTimeStr":f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}", "creditApplyNoList":[f"{creditApplyNo}"]}
+        self.excute_xxl_job.trigger_xxl_job(430, f'{json_dump_cn(param_data)}')
         self.logging.info(f"执行推送客户中心任务成功!")
 
     # 调用单笔还款处理任务
@@ -66,6 +65,6 @@ class execute_xxl_job(xxlJob):
 
 
 if __name__ == '__main__':
-    loanApplyNo = "1848609538098610176"
+    loanApplyNo = "ZLTEST_202410211729493860807"
     execute_xxl_job().push_credit_info_to_customer_center(loanApplyNo)
     # print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
