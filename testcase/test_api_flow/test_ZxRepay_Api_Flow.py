@@ -160,15 +160,6 @@ def test_zx_loan_success_api_flow():
 
     with allure.step("借款申请"):
         # 借款申请数据
-        # jk_sq_need_encry_data = {"loanTime": apply_time, "productCode": product_code, "repayMethod": "01",
-        #                          "loanPurpose": "05", "partnerCreditNo": partner_creditNo, "term": reqPeriods,
-        #                          "loanAmt": loan_amt, "loanApplyNo": loanApplyNo, "userId": user_id,
-        #                          "agreementTime": apply_time,
-        #                          "bankCardInfo": {"bankCode": "0004", "idCardNo": id_no, "userMobile": mobile_no,
-        #                                           "userName": user_name, "bankCardNo": bank_card_no},
-        #                          "linkmanInfo": {"relationshipA": "10", "nameA": "毋琳子", "phoneA": "15161455378",
-        #                                          "relationshipB": "60", "nameB": "花娥茜", "phoneB": "15982209188"},
-        #                          "geoInfo": {"latitude": "43.57687931900941", "longitude": "112.55172012515888"}}
         jk_sq_need_encry_data = {"loanTime": apply_time, "productCode": product_code, "repayMethod": "01",
                                  "loanPurpose": "05", "partnerCreditNo": partner_creditNo, "term": reqPeriods,
                                  "loanAmt": loan_amt, "loanApplyNo": loanApplyNo, "userId": user_id,

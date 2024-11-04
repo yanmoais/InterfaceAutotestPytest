@@ -35,6 +35,11 @@ class execute_xxl_job(xxlJob):
         self.excute_xxl_job.trigger_xxl_job(198, f'{param_data}')
         self.logging.info(f"执行放款任务处理定时任务成功：======申请单号为{loanApplyNo}")
 
+    # 调用放款签章定时任务
+    def apply_loan_sign_xxljob(self):
+        self.excute_xxl_job.trigger_xxl_job(197)
+        self.logging.info(f"执行放款签章定时任务成功!")
+
     # 调用新长银批扣 D0 定时任务，到期日批扣
     # 新长银批扣需要满足条件：当前系统日期 - 到期日 >= 0
     def new_cy_batch_d0_repay_apply(self, date=datetime.datetime.now().strftime("%Y%m%d")):

@@ -128,16 +128,27 @@ class Select_Sql_Result(Mysql):
                 else:
                     pass
             except IndexError:
-                self.logging.info("没有找到数据，等待10秒后重试...")
-                time.sleep(10)
+                self.logging.info("没有找到数据，等待20秒后重试...")
+                time.sleep(20)
                 continue
 
-    # 查询api侧zx_credit_applicant_result表的credit_apply_no，根据天源花的credit_apply_no来查找apply表在api侧的数据
+    # 查询api侧zx_credit_applicant_result表的user_id，根据天源花的credit_apply_no来查找apply表在api侧的数据
     def select_user_id_by_tyh(self, tyh_credit_apply_no, test_db="api"):
         select_sql = f"SELECT user_id FROM zx_credit_applicant_result WHERE credit_apply_no = '{tyh_credit_apply_no}';"
         result = Mysql(test_db).select_db(select_sql)[0]
         self.logging.info(f"数据库查询返回数据为：===,{result}")
-        return result['user_id']
+        while True:
+            try:
+                result = Mysql(test_db).select_db(select_sql)[0]
+                if result:
+                    self.logging.info(f"数据库查询返回数据为：===,{result}")
+                    return result['user_id']
+                else:
+                    pass
+            except IndexError:
+                self.logging.info("没有找到数据，等待20秒后重试...")
+                time.sleep(20)
+                continue
 
     # 查询天源花侧zx_credit_applicant_result表的partner_credit_no，根据天源花的credit_apply_no来查找
     def select_partner_credit_no_by_tyh(self, credit_apply_no, test_db="tyh"):
@@ -155,8 +166,8 @@ class Select_Sql_Result(Mysql):
 
 
 if __name__ == '__main__':
-    loan_apply_no = 'tyhhycs0927012'
+    loan_apply_no = '1853324554789994496'
     db = Select_Sql_Result()
-    channel = db.select_loan_apply_no_by_tyh(loan_apply_no)
-    reap = db.select_zx_loan_apply_record(channel)
-    print(reap)
+    channel = db.select_user_id_by_tyh(loan_apply_no)
+    # reap = db.select_zx_loan_apply_record(channel)
+    print(channel)

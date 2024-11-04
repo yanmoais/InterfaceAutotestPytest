@@ -12,7 +12,7 @@ import random
 import time
 import jsonpath
 from faker import Faker
-
+from util_tools.Read_Yaml import *
 
 # 实例化Faker对象
 def get_fake():
@@ -224,11 +224,11 @@ def get_haixia_ccb_num():
 
 
 # 获取随机建设银行卡号,宝付MOCK规则-银行卡
-def get_baofu_ccb_num():
+def get_baofu_ccb_num(rule=('0', '2', '4', '6', '8')):
     while True:
         timestamp_part = str(int(time.time() * 1000)).zfill(1)
         data = "621700" + timestamp_part
-        if data.endswith(('0', '2', '4', '6', '8')):
+        if data.endswith((rule)):
             return data
 
 
@@ -333,16 +333,17 @@ def generate_valid_id_card_number(year_s=1970, year_e=1976):
         id_card_number = id_front + check_code
 
         # 如果尾号不是'X'，则返回结果
-        if check_code != 'X':
+        if check_code != 'X' and check_code != '0' and check_code != '1':
             return id_card_number
 
 
 if __name__ == '__main__':
     # certificationApplyNo = get_api_bk_id()
     id_no, birthday = get_zx_user_id_no()
+    ccb = get_baofu_ccb_num(('0', '2', '4', '6'))
+    phone = read_risk_phone()
     # print(id_no, birthday)
-    address = get_fake().currency_symbol()
-    print(id_no, birthday)
+    print(id_no, birthday, ccb, phone)
     # print(get_credit_apply_no("")XM)
     # 请求鉴权数据
     # bk_jq_need_encry_data = { "certificationApplyNo": "SC00565656","SFAF":"SFASFAF"}
