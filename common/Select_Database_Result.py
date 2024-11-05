@@ -117,57 +117,106 @@ class Select_Sql_Result(Mysql):
         return result['pay_channel_code'], result['agrmno']
 
     # 查询api侧zx_credit_applicant_result表的credit_apply_no，根据天源花的credit_apply_no来查找apply表在api侧的数据
-    def select_credit_apply_no_by_tyh(self, tyh_credit_apply_no, test_db="tyh"):
+    def select_credit_apply_no_by_tyh(self, tyh_credit_apply_no, test_db="tyh", max_retries=5, wait_time=20):
         select_sql = f"SELECT credit_apply_no FROM jxym_credit_apply WHERE zx_credit_apply_no = '{tyh_credit_apply_no}';"
-        while True:
+        retries = 0
+        while retries < max_retries:
             try:
-                result = Mysql(test_db).select_db(select_sql)[0]
-                if result:
-                    self.logging.info(f"数据库查询返回数据为：===,{result}")
-                    return result['credit_apply_no']
-                else:
-                    pass
-            except IndexError:
-                self.logging.info("没有找到数据，等待20秒后重试...")
-                time.sleep(20)
-                continue
+                # 执行查询
+                result = Mysql(test_db).select_db(select_sql)
+                if result:  # 如果有数据返回
+                    self.logging.info(f"数据库查询返回数据为：{result}")
+                    # 假设查询结果是列表且有数据
+                    return result[0]['credit_apply_no']
+                self.logging.info(f"未找到对应的授信申请号：{tyh_credit_apply_no}")
+            except Exception as e:
+                # 捕获异常并记录日志
+                self.logging.error(f"查询数据库出错：{str(e)}")
+            retries += 1
+            # 如果查询结果为空，表示没有找到数据
+            self.logging.info(f"没有找到数据，等待 {wait_time} 秒后重试...（重试次数：{retries}/{max_retries}）")
+            time.sleep(wait_time)  # 等待指定时间后重试
+        # 达到最大重试次数后返回 None
+        self.logging.error(f"查询失败，达到最大重试次数：{max_retries}次，该笔数据可能掉单，请检查数据库！")
+        return None
 
     # 查询api侧zx_credit_applicant_result表的user_id，根据天源花的credit_apply_no来查找apply表在api侧的数据
-    def select_user_id_by_tyh(self, tyh_credit_apply_no, test_db="api"):
+    def select_user_id_by_tyh(self, tyh_credit_apply_no, test_db="api", max_retries=5, wait_time=20):
         select_sql = f"SELECT user_id FROM zx_credit_applicant_result WHERE credit_apply_no = '{tyh_credit_apply_no}';"
-        result = Mysql(test_db).select_db(select_sql)[0]
-        self.logging.info(f"数据库查询返回数据为：===,{result}")
-        while True:
+        retries = 0
+        while retries < max_retries:
             try:
-                result = Mysql(test_db).select_db(select_sql)[0]
-                if result:
-                    self.logging.info(f"数据库查询返回数据为：===,{result}")
-                    return result['user_id']
-                else:
-                    pass
-            except IndexError:
-                self.logging.info("没有找到数据，等待20秒后重试...")
-                time.sleep(20)
-                continue
+                # 执行查询
+                result = Mysql(test_db).select_db(select_sql)
+                if result:  # 如果有数据返回
+                    self.logging.info(f"数据库查询返回数据为：{result}")
+                    # 假设查询结果是列表且有数据
+                    return result[0]['user_id']
+                self.logging.info(f"未找到对应的授信申请号：{tyh_credit_apply_no}")
+            except Exception as e:
+                # 捕获异常并记录日志
+                self.logging.error(f"查询数据库出错：{str(e)}")
+            retries += 1
+            # 如果查询结果为空，表示没有找到数据
+            self.logging.info(f"没有找到数据，等待 {wait_time} 秒后重试...（重试次数：{retries}/{max_retries}）")
+            time.sleep(wait_time)  # 等待指定时间后重试
+        # 达到最大重试次数后返回 None
+        self.logging.error(f"查询失败，达到最大重试次数：{max_retries}次，该笔数据可能掉单，请检查数据库！")
+        return None
 
     # 查询天源花侧zx_credit_applicant_result表的partner_credit_no，根据天源花的credit_apply_no来查找
-    def select_partner_credit_no_by_tyh(self, credit_apply_no, test_db="tyh"):
+    def select_partner_credit_no_by_tyh(self, credit_apply_no, test_db="tyh", max_retries=5, wait_time=20):
         select_sql = f"SELECT partner_credit_no FROM zx_credit_applicant_result WHERE credit_apply_no = '{credit_apply_no}';"
-        result = Mysql(test_db).select_db(select_sql)[0]
-        self.logging.info(f"数据库查询返回数据为：===,{result}")
-        return result['partner_credit_no']
+        retries = 0
+        while retries < max_retries:
+            try:
+                # 执行查询
+                result = Mysql(test_db).select_db(select_sql)
+                if result:  # 如果有数据返回
+                    self.logging.info(f"数据库查询返回数据为：{result}")
+                    # 假设查询结果是列表且有数据
+                    return result[0]['partner_credit_no']
+                # 如果查询结果为空，表示没有找到数据
+                self.logging.info(f"未找到对应的授信申请号：{credit_apply_no}")
+            except Exception as e:
+                # 捕获异常并记录日志
+                self.logging.error(f"查询数据库出错：{str(e)}")
+            retries += 1
+            self.logging.info(f"没有找到数据，等待 {wait_time} 秒后重试...（重试次数：{retries}/{max_retries}）")
+            time.sleep(wait_time)  # 等待指定时间后重试
+        # 达到最大重试次数后返回 None
+        self.logging.error(f"查询失败，达到最大重试次数：{max_retries}次，该笔数据可能掉单，请检查数据库！")
+        return None
 
     # 查询天源花侧zx_credit_applicant_result表的partner_credit_no，根据天源花的credit_apply_no来查找
-    def select_loan_apply_no_by_tyh(self, zx_loan_apply_no, test_db="tyh"):
+    def select_loan_apply_no_by_tyh(self, zx_loan_apply_no, test_db="tyh", max_retries=5, wait_time=20):
+        # 准备查询 SQL
         select_sql = f"SELECT loan_apply_no FROM jxym_loan_apply WHERE zx_loan_apply_no = '{zx_loan_apply_no}';"
-        result = Mysql(test_db).select_db(select_sql)[0]
-        self.logging.info(f"数据库查询返回数据为：===,{result}")
-        return result['loan_apply_no']
+        retries = 0
+        while retries < max_retries:
+            try:
+                # 执行查询
+                result = Mysql(test_db).select_db(select_sql)
+                if result:  # 如果有数据返回
+                    self.logging.info(f"数据库查询返回数据为：{result}")
+                    # 假设查询结果是列表且有数据
+                    return result[0]['loan_apply_no']
+                # 如果查询结果为空，表示没有找到数据
+                self.logging.info(f"未找到对应的贷款申请号：{zx_loan_apply_no}")
+            except Exception as e:
+                # 捕获异常并记录日志
+                self.logging.error(f"查询数据库出错：{str(e)}")
+            retries += 1
+            self.logging.info(f"没有找到数据，等待 {wait_time} 秒后重试...（重试次数：{retries}/{max_retries}）")
+            time.sleep(wait_time)  # 等待指定时间后重试
+        # 达到最大重试次数后返回 None
+        self.logging.error(f"查询失败，达到最大重试次数：{max_retries}次，该笔数据可能掉单，请检查数据库！")
+        return None
 
 
 if __name__ == '__main__':
-    loan_apply_no = '1853324554789994496'
+    loan_apply_no = 'TYH_202411051730S774983448'
     db = Select_Sql_Result()
-    channel = db.select_user_id_by_tyh(loan_apply_no)
+    channel = db.select_credit_apply_no_by_tyh(loan_apply_no)
     # reap = db.select_zx_loan_apply_record(channel)
     print(channel)

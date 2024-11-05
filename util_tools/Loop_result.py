@@ -357,7 +357,7 @@ class loop_result:
                                     if sql_result["risk_status"] == "" or sql_result["risk_status"] == "W" or \
                                             sql_result["risk_status"] == "P":
                                         # 执行放款处理任务，调取风控系统
-                                        execute_xxl_job().apply_loan_xxljob(loanApplyNo)
+                                        self.__perform_task(loanApplyNo, "loan")
                                         self.logging.info("开始暂停60S。。。。。")
                                         time.sleep(30)
                                         self.logging.info("暂停结束。。。。。")
@@ -574,5 +574,5 @@ if __name__ == '__main__':
     # current_date = get_now_time()
     # logging = Logger().init_logger()
     data = {}
-    loanApplyNo = "1846850735699148800"
-    print(loop_result().loop_tyh_api_loan_result(loanApplyNo))
+    # loanApplyNo = "1846850735699148800"
+    # print(loop_result().loop_tyh_api_loan_result(loanApplyNo))

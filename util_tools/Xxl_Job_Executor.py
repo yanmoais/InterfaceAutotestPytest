@@ -70,6 +70,7 @@ class execute_xxl_job(xxlJob):
 
 
 if __name__ == '__main__':
-    loanApplyNo = "ZLTEST_202410211729493860807"
-    execute_xxl_job().push_credit_info_to_customer_center(loanApplyNo)
+    # loanApplyNo = "ZLTEST_202410211729493860807"
+    # execute_xxl_job().push_credit_info_to_customer_center(loanApplyNo)
     # print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    pass
