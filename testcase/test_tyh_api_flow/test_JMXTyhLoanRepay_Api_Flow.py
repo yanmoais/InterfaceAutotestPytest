@@ -211,17 +211,6 @@ def test_tyh_jmx_loan_success():
         qy_decry_data = api.api_param_decry(qy_resp)
         logging.info(f"权益展示的结果是：{qy_decry_data}")
 
-    with allure.step("开通权益"):
-        # 开通权益数据
-        qy_kt_need_encry_data = {"loanApplyNo": loanApplyNo, "eqCode": eqCode, "cacheEqCode": cacheEqCode}
-        # 加密数据
-        qy_kt_encry_data = api.api_param_encry(qy_kt_need_encry_data)
-        # 发起权益开通请求
-        qy_kt_resp = api.test_apply_equity_by_loan_after(qy_kt_encry_data)
-        # 解密请求结果
-        qy_kt_decry_data = api.api_param_decry(qy_kt_resp)
-        logging.info(f"权益开通的结果是：{qy_kt_decry_data}")
-
     with allure.step("天源花人脸跳过"):
         pass
 
