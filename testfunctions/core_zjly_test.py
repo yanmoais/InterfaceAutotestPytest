@@ -43,8 +43,8 @@ class Core_zjly_test_function:
         return decry_resp
 
     # 支付中台绑卡申请
-    def test_zfzt_bank_apply(self, ACCOUNT_NAME="储担保", TEL="13806828260", ID="61042219870123322X",
-                             CREDIT_ACCTNO="6217005007653994219"):
+    def test_zfzt_bank_apply(self, ACCOUNT_NAME="储担保", TEL="18277986451", ID="120119197602179736",
+                             CREDIT_ACCTNO="6217007766322709779"):
         ACCOUNT_NAME = ACCOUNT_NAME
         TEL = TEL
         ID = ID

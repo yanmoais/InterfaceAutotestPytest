@@ -222,6 +222,13 @@ def test_tyh_jmx_loan_success():
         qy_kt_decry_data = api.api_param_decry(qy_kt_resp)
         logging.info(f"权益开通的结果是：{qy_kt_decry_data}")
 
+    with allure.step("天源花人脸跳过"):
+        pass
+
+    with allure.step("获取H5链接"):
+        loan_h5, repay_h5 = tyh_h5_loan_repay(credit_apply_no, user_id, loanApplyNo)
+        logging.info(f"借据信息&还款页面链接为：{loan_h5}{repay_h5}")
+
 
 @pytest.mark.run(order=11)
 @allure.epic("天源花渠道-金美信资方-天源花API全流程")

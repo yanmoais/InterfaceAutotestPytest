@@ -9,3 +9,6 @@ for i in range(10):
         if i != j:
             list_sort.append(int(str(i)+str(j)))
 print(list_sort)
+
+for i in range(7):
+    print("*" * i)
