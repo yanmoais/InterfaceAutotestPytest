@@ -20,6 +20,7 @@ from util_tools.Read_Yaml import read_risk_phone
 from common.Update_Database_Result import Update_Sql_Result
 from util_tools.Loop_result import loop_result
 from util_tools.Xxl_Job_Executor import execute_xxl_job
+from config.testconfig import channel_codes
 
 
 # API全流程-新长银放款成功
@@ -135,13 +136,13 @@ def test_new_cy_loan_success_api_flow():
         # 绑卡轮询，并且绑卡两次
         # 此处需要优化，360的话不需要指定bindType,直接绑两次卡就好
         with allure.step("第一次绑卡"):
-            if channel_code == "APPZY":
+            if channel_code in channel_codes:
                 bk_jq_need_encry_data["bindType"] = "fundsChannel"
             else:
                 pass
             loop_result().loop_api_flow_bk_result(bk_jq_need_encry_data, channel_code)
         with allure.step("第二次绑卡"):
-            if channel_code == "APPZY" or channel_code == "XL":
+            if channel_code in channel_codes:
                 bk_jq_need_encry_data["bindType"] = "payChannel"
             else:
                 pass
@@ -301,13 +302,13 @@ def test_new_cy_repay_d0_success_api_flow():
         # 绑卡轮询，并且绑卡两次
         # 此处需要优化，360的话不需要指定bindType,直接绑两次卡就好
         with allure.step("第一次绑卡"):
-            if channel_code == "APPZY":
+            if channel_code in channel_codes:
                 bk_jq_need_encry_data["bindType"] = "fundsChannel"
             else:
                 pass
             loop_result().loop_api_flow_bk_result(bk_jq_need_encry_data, channel_code)
         with allure.step("第二次绑卡"):
-            if channel_code == "APPZY" or channel_code == "XL":
+            if channel_code in channel_codes:
                 bk_jq_need_encry_data["bindType"] = "payChannel"
             else:
                 pass

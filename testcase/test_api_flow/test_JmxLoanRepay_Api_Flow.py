@@ -6,6 +6,8 @@
 import time
 import pytest
 import allure
+
+from config.testconfig import channel_codes
 from testdata.assert_data.banding_assert_data import *
 from testdata.assert_data.loan_assert_data import *
 from testdata.assert_data.loan_credit_amt_assert_data import credit_amt_query_success_data
@@ -138,13 +140,13 @@ def test_jmx_loan_success_api_flow():
         # 绑卡轮询，并且绑卡两次
         # 此处需要优化，360的话不需要指定bindType,直接绑两次卡就好
         with allure.step("第一次绑卡"):
-            if channel_code == "APPZY":
+            if channel_code in channel_codes:
                 bk_jq_need_encry_data["bindType"] = "fundsChannel"
             else:
                 pass
             loop_result().loop_api_flow_bk_result(bk_jq_need_encry_data, channel_code)
         with allure.step("第二次绑卡"):
-            if channel_code == "APPZY" or channel_code == "XL":
+            if channel_code in channel_codes:
                 bk_jq_need_encry_data["bindType"] = "payChannel"
             else:
                 pass
@@ -304,14 +306,13 @@ def test_jmx_repay_d0_success_api_flow():
                                  "bankCardNo": bank_card_no, "registerMobile": mobile_no, "agreementTime": apply_time}
         # 绑卡轮询，并且绑卡两次
         with allure.step("第一次绑卡"):
-            if channel_code == "APPZY" or channel_code == "XL":
+            if channel_code in channel_codes:
                 bk_jq_need_encry_data["bindType"] = "fundsChannel"
             else:
                 pass
             loop_result().loop_api_flow_bk_result(bk_jq_need_encry_data, channel_code)
-
         with allure.step("第二次绑卡"):
-            if channel_code == "APPZY" or channel_code == "XL":
+            if channel_code in channel_codes:
                 bk_jq_need_encry_data["bindType"] = "payChannel"
             else:
                 pass
@@ -495,14 +496,13 @@ def test_jmx_repay_success_api_flow():
                                  "bankCardNo": bank_card_no, "registerMobile": mobile_no, "agreementTime": apply_time}
         # 绑卡轮询，并且绑卡两次
         with allure.step("第一次绑卡"):
-            if channel_code == "APPZY" or channel_code == "XL":
+            if channel_code in channel_codes:
                 bk_jq_need_encry_data["bindType"] = "fundsChannel"
             else:
                 pass
             loop_result().loop_api_flow_bk_result(bk_jq_need_encry_data, channel_code)
-
         with allure.step("第二次绑卡"):
-            if channel_code == "APPZY" or channel_code == "XL":
+            if channel_code in channel_codes:
                 bk_jq_need_encry_data["bindType"] = "payChannel"
             else:
                 pass

@@ -7,6 +7,7 @@ import time
 import pytest
 import allure
 
+from common.Select_Database_Result import Select_Sql_Result
 from config.testconfig import channel_codes
 from testdata.assert_data.banding_assert_data import *
 from testdata.assert_data.loan_assert_data import *
@@ -24,14 +25,14 @@ from util_tools.Loop_result import loop_result
 from util_tools.Xxl_Job_Executor import execute_xxl_job
 
 
-# API全流程-小米消金放款成功
+# API全流程-苏商（蒙商）放款成功
 @pytest.mark.run(order=10)
-@allure.epic("360沙盒渠道-小米消金资方-API全流程")
+@allure.epic("360沙盒渠道-苏商（蒙商）资方-API全流程")
 @allure.feature("360沙盒渠道-授信模块-API全流程")
 @allure.title("360沙盒渠道-借款成功-API全流程")
-@allure.story("360沙盒渠道-小米消金资方授信案例-API全流程")
+@allure.story("360沙盒渠道-苏商（蒙商）资方授信案例-API全流程")
 @allure.severity(allure.severity_level.CRITICAL)
-def test_xiaomi_loan_success_api_flow():
+def test_sushang_loan_success_api_flow():
     with allure.step("数据初始化"):
         api = core_api_flow_api()
         enc = encrypt_decrypt()
@@ -40,17 +41,17 @@ def test_xiaomi_loan_success_api_flow():
         apply_time = get_time_stand_api()
         id_no, birthday = get_zx_user_id_no()
         user_name = get_user_name()
-        bank_card_no = get_ccb_num()
+        bank_card_no = get_baofu_ccb_num()
         user_id = get_cust_id()
         certificationApplyNo = get_api_bk_id()
         logging = Logger().init_logger()
 
         # 获取风控加白了的手机号，读取本地txt文件
         mobile_no = read_risk_phone()
-        # 修改对应的缩写或其他标志：小米消金  ==  XM
-        loanApplyNo = get_req_seq_no("XM")
+        # 修改对应的缩写或其他标志：苏商（蒙商）  ==  MSS
+        loanApplyNo = get_req_seq_no("MSS")
         # 资金方，修改成对应需要放款的资金方funds_code
-        funds_code = "XIAO_MI"
+        funds_code = "M_SU_SHANG"
         # 渠道方，修改成对应需要走的渠道方channel_code
         channel_code = "ICE_ZLSK_36"
         # 借款金额
@@ -63,8 +64,8 @@ def test_xiaomi_loan_success_api_flow():
     with allure.step("更新为限流模式"):
         Update_Sql_Result().update_api_chanel_non_funds("ICE_ZLSK_36")
 
-    with allure.step("更新为MOCK环境"):
-        Update_Sql_Result().update_xiaomi_zjly_mock()
+    # with allure.step("更新为MOCK环境"):
+    #     Update_Sql_Result().update_sushang_zjly_mock()
 
     with allure.step("用户撞库"):
         # 撞库数据,以手机号为主
@@ -113,7 +114,7 @@ def test_xiaomi_loan_success_api_flow():
         partner_creditNo = sx_decry_data["partnerCreditNo"]
         logging.info(f"解密后的授信申请返回结果为：======{sx_decry_data}")
 
-    with allure.step("更新授信相关表为小米消金资方"):
+    with allure.step("更新授信相关表为苏商（蒙商）资方"):
         db.update_api_flow_all_table(funds_code, user_id)
         logging.info(f"数据库更新资方完毕")
         time.sleep(5)
@@ -124,11 +125,6 @@ def test_xiaomi_loan_success_api_flow():
         # 发起授信结果轮询请求
         resp = loop_result().loop_api_flow_sx_result(sx_cx_data, credit_apply_no, channel_code)
         logging.info(f"当前授信结果返回数据为：{resp}")
-
-    with allure.step("推送客户中心"):
-        execute_xxl_job().push_credit_info_to_customer_center(credit_apply_no)
-        time.sleep(5)
-        logging.info("授信成功后推送客户中心成功！")
 
     with allure.step("绑卡申请"):
         # 请求鉴权数据
@@ -163,6 +159,10 @@ def test_xiaomi_loan_success_api_flow():
         # 解密试算返回结果
         pass
 
+    with allure.step("推送客户中心"):
+        execute_xxl_job().push_credit_info_to_customer_center(credit_apply_no)
+        time.sleep(5)
+
     with allure.step("借款申请"):
         # 借款申请数据
         jk_sq_need_encry_data = {"loanTime": apply_time, "productCode": product_code, "repayMethod": "01",
@@ -193,14 +193,14 @@ def test_xiaomi_loan_success_api_flow():
         logging.info(f"借款返回的查询参数是：{jk_success_resp}")
 
 
-# API全流程-小米消金D0批扣还款成功
+# API全流程-苏商（蒙商）D0批扣还款成功
 @pytest.mark.run(order=11)
-@allure.epic("360沙盒渠道-小米消金资方-API全流程")
+@allure.epic("360沙盒渠道-苏商（蒙商）资方-API全流程")
 @allure.feature("360沙盒渠道-还款模块-API全流程")
 @allure.title("360沙盒渠道-到期D0还款成功-API全流程")
-@allure.story("360沙盒渠道-小米消金资方还款案例-API全流程")
+@allure.story("360沙盒渠道-苏商（蒙商）资方还款案例-API全流程")
 @allure.severity(allure.severity_level.CRITICAL)
-def test_xiaomi_repay_d0_success_api_flow():
+def test_sushang_repay_d0_success_api_flow():
     with allure.step("数据初始化"):
         api = core_api_flow_api()
         enc = encrypt_decrypt()
@@ -216,10 +216,10 @@ def test_xiaomi_repay_d0_success_api_flow():
 
         # 获取风控加白了的手机号，读取本地txt文件
         mobile_no = read_risk_phone()
-        # 修改对应的缩写或其他标志：小米消金  ==  XM
-        loanApplyNo = get_req_seq_no("XM")
+        # 修改对应的缩写或其他标志：苏商（蒙商）  ==  MSS
+        loanApplyNo = get_req_seq_no("MSS")
         # 资金方，修改成对应需要放款的资金方funds_code
-        funds_code = "XIAO_MI"
+        funds_code = "M_SU_SHANG"
         # 渠道方，修改成对应需要走的渠道方channel_code
         channel_code = "ICE_ZLSK_36"
         # 借款金额
@@ -232,8 +232,8 @@ def test_xiaomi_repay_d0_success_api_flow():
     with allure.step("更新为限流模式"):
         Update_Sql_Result().update_api_chanel_non_funds("ICE_ZLSK_36")
 
-    with allure.step("更新为MOCK环境"):
-        Update_Sql_Result().update_xiaomi_zjly_mock()
+    # with allure.step("更新为MOCK环境"):
+    #     Update_Sql_Result().update_sushang_zjly_mock()
 
     with allure.step("用户撞库"):
         # 撞库数据,以手机号为主
@@ -282,7 +282,7 @@ def test_xiaomi_repay_d0_success_api_flow():
         partner_creditNo = sx_decry_data["partnerCreditNo"]
         logging.info(f"解密后的授信申请返回结果为：======{sx_decry_data}")
 
-    with allure.step("更新授信相关表为小米消金资方"):
+    with allure.step("更新授信相关表为苏商（蒙商）资方"):
         db.update_api_flow_all_table(funds_code, user_id)
         logging.info(f"数据库更新资方完毕")
         time.sleep(5)
@@ -293,11 +293,6 @@ def test_xiaomi_repay_d0_success_api_flow():
         # 发起授信结果轮询请求
         resp = loop_result().loop_api_flow_sx_result(sx_cx_data, credit_apply_no, channel_code)
         logging.info(f"当前授信结果返回数据为：{resp}")
-
-    with allure.step("推送客户中心"):
-        execute_xxl_job().push_credit_info_to_customer_center(credit_apply_no)
-        time.sleep(5)
-        logging.info("授信成功后推送客户中心成功！")
 
     with allure.step("绑卡申请"):
         # 请求鉴权数据
@@ -382,36 +377,37 @@ def test_xiaomi_repay_d0_success_api_flow():
         pass
 
 
-# API全流程-小米消金主动还款成功
+# API全流程-苏商（蒙商）主动还款成功
 @pytest.mark.run(order=11)
-@allure.epic("360沙盒渠道-小米消金资方-API全流程")
+@allure.epic("360沙盒渠道-苏商（蒙商）资方-API全流程")
 @allure.feature("360沙盒渠道-还款模块-API全流程")
 @allure.title("360沙盒渠道-到期主动还款成功-API全流程")
-@allure.story("360沙盒渠道-小米消金资方还款案例-API全流程")
+@allure.story("360沙盒渠道-苏商（蒙商）资方还款案例-API全流程")
 @allure.severity(allure.severity_level.CRITICAL)
-def test_xiaomi_repay_success_api_flow():
+def test_sushang_repay_success_api_flow():
     with allure.step("数据初始化"):
         api = core_api_flow_api()
         enc = encrypt_decrypt()
         credit_apply_no = get_credit_apply_no()
         db = Update_Sql_Result()
         apply_time = get_time_stand_api()
+        select_db = Select_Sql_Result()
         id_no, birthday = get_zx_user_id_no()
-        user_name = "刘波"
-        bank_card_no = "6217001730945144159"
-        user_id = "ZL173094514415"
+        user_name = "勾云航"
+        bank_card_no = "6217001732097398000"
+        user_id = "SUR2040924028"
         certificationApplyNo = get_api_bk_id()
         logging = Logger().init_logger()
 
         # 获取风控加白了的手机号，读取本地txt文件
-        mobile_no = "15944836909"
-        # 修改对应的缩写或其他标志：小米消金  ==  XM
-        loanApplyNo = "XM1730945144159"
-        repayApplyNo = get_credit_apply_no("XM")
+        mobile_no = "15957813161"
+        # 修改对应的缩写或其他标志：苏商（蒙商）  ==  MSS
+        loanApplyNo = "SLN0047080252"
+        repayApplyNo = get_credit_apply_no("REPAY")
         # 资金方，修改成对应需要放款的资金方funds_code
-        funds_code = "XIAO_MI"
+        funds_code = "M_SU_SHANG"
         # 渠道方，修改成对应需要走的渠道方channel_code
-        channel_code = "ICE_ZLSK_36"
+        channel_code = "RP"
         # 借款金额
         loan_amt = "2000"
         # 借款期数
@@ -422,8 +418,8 @@ def test_xiaomi_repay_success_api_flow():
     # with allure.step("更新为限流模式"):
     #     Update_Sql_Result().update_api_chanel_non_funds("ICE_ZLSK_36")
     #
-    # with allure.step("更新为MOCK环境"):
-    #     Update_Sql_Result().update_xiaomi_zjly_mock()
+    # # with allure.step("更新为MOCK环境"):
+    # #     Update_Sql_Result().update_sushang_zjly_mock()
     #
     # with allure.step("用户撞库"):
     #     # 撞库数据,以手机号为主
@@ -472,7 +468,7 @@ def test_xiaomi_repay_success_api_flow():
     #     partner_creditNo = sx_decry_data["partnerCreditNo"]
     #     logging.info(f"解密后的授信申请返回结果为：======{sx_decry_data}")
     #
-    # with allure.step("更新授信相关表为小米消金资方"):
+    # with allure.step("更新授信相关表为苏商（蒙商）资方"):
     #     db.update_api_flow_all_table(funds_code, user_id)
     #     logging.info(f"数据库更新资方完毕")
     #     time.sleep(5)
@@ -483,11 +479,6 @@ def test_xiaomi_repay_success_api_flow():
     #     # 发起授信结果轮询请求
     #     resp = loop_result().loop_api_flow_sx_result(sx_cx_data, credit_apply_no, channel_code)
     #     logging.info(f"当前授信结果返回数据为：{resp}")
-    #
-    # with allure.step("推送客户中心"):
-    #     execute_xxl_job().push_credit_info_to_customer_center(credit_apply_no)
-    #     time.sleep(5)
-    #     logging.info("授信成功后推送客户中心成功！")
     #
     # with allure.step("绑卡申请"):
     #     # 请求鉴权数据
@@ -561,11 +552,12 @@ def test_xiaomi_repay_success_api_flow():
     #     db.update_api_core_fr_api_order_info_d0(loanApplyNo)
     #     logging.info(f"修改批发还款计划表、API订单表成功")
 
+
     with allure.step("查询相关表取数"):
-        partnerLoanNo = "1854344813940453376"
-        bankCode = "0004"
-        idCardNo = "440103197505310775"
-        sharePayAgreementId = "1202411071007101400001524634"
+        # 查询合作方借款流水(合作方内部借款申请单号，多用于问题排查)
+        partnerLoanNo = select_db.select_partner_loan_no_apply_record(loanApplyNo)
+        # 查询支付通道、共享协议号，取资方绑卡的那条记录
+        pmcCode, sharePayAgreementId = select_db.select_greement_id_pay_channel(user_id)
 
     with allure.step("还款计划查询"):
         plan_query_data = {"userId": user_id, "loanApplyNo": loanApplyNo, "partnerLoanNo": partnerLoanNo}
@@ -581,7 +573,8 @@ def test_xiaomi_repay_success_api_flow():
         # type：1 按期还款  2 提前还款  3 按金额还款
         repay_try_need_encry_data = {"userId": user_id, "repayApplyNo": repayApplyNo,
                                      "loanApplyNo": loanApplyNo, "partnerLoanNo": partnerLoanNo,
-                                     "repayType": "1", "repayTime": apply_time}
+                                     "repayType": "2", "repayTime": apply_time}
+        print(repay_try_need_encry_data)
         # 加密还款试算数据
         repay_try_encry_data = api.api_param_encry(repay_try_need_encry_data, channel_code)
         # 发送还款试算请求
@@ -594,12 +587,12 @@ def test_xiaomi_repay_success_api_flow():
         # 主动还款数据
         repay_need_encry_data = {"userId": user_id, "repayApplyNo": repayApplyNo,
                                  "loanApplyNo": loanApplyNo, "partnerLoanNo": partnerLoanNo,
-                                 "repayType": "1", "repayMethod": "0", "repayTime": apply_time, "withholdFlag": "Y",
-                                 "bankCardInfo": {"bankCode": bankCode, "idCardNo": idCardNo,
+                                 "repayType": "2", "repayMethod": "0", "repayTime": apply_time, "withholdFlag": "Y",
+                                 "bankCardInfo": {"bankCode": "0004", "idCardNo": id_no,
                                                   "userMobile": mobile_no,
                                                   "userName": user_name, "bankCardNo": bank_card_no,
                                                   "sharePayAgreementId": sharePayAgreementId,
-                                                  "pmcCode": "BF"}}
+                                                  "pmcCode": pmcCode}}
         # 加密还款数据
         repay_encry_data = api.api_param_encry(repay_need_encry_data, channel_code)
         # 发送试算请求
@@ -612,11 +605,11 @@ def test_xiaomi_repay_success_api_flow():
         execute_xxl_job().single_repay()
 
     with allure.step("执行单笔还款查询任务"):
-        time.sleep(10)
+        time.sleep(15)
         execute_xxl_job().single_query_result()
 
     with allure.step("查询还款结果"):
-        time.sleep(3)
+        time.sleep(15)
         # 查询还款数据
         repay_query_need_encry_data = {"userId": user_id, "repayApplyNo": repayApplyNo}
         # 加密还款查询数据

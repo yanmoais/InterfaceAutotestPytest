@@ -24,6 +24,14 @@ class loop_result:
         if test_db == "api":
             self.api = core_api_flow_api()
 
+    # 调度任务
+    def __perform_task(self, loanApplyNo, task_type):
+        """执行任务的辅助函数"""
+        if task_type == "loan":
+            execute_xxl_job().apply_loan_xxljob(loanApplyNo)
+        elif task_type == "loan_sign":
+            execute_xxl_job().apply_loan_sign_xxljob()
+
     # 资金路由授信结果查询轮询
     def loop_sxcx_result(self, data, channel=None):
         # 轮训判断授信查询结果，为"授信成功"则跳出
@@ -31,7 +39,7 @@ class loop_result:
         while True:
             # 等待2秒后发起授信状态查询请求
             count += 1
-            time.sleep(15)
+            time.sleep(20)
             resp = None
             if count < 20:
                 try:
@@ -232,13 +240,13 @@ class loop_result:
                                     if sql_result['risk_status'] == "" or sql_result['risk_status'] == "W" or \
                                             sql_result['risk_status'] == "P":
                                         # 执行授信处理任务
-                                        execute_xxl_job().apply_credit_xxljob(credit_applyNo)
+                                        self.__perform_task(credit_applyNo, "loan")
                                         time.sleep(6)
                                     else:
                                         if sql_result['sign_status'] == '' or sql_result['sign_status'] == "W" or \
                                                 sql_result['sign_status'] == "P":
                                             # 执行签章任务
-                                            execute_xxl_job().apply_credit_sign_xxljob()
+                                            self.__perform_task(credit_applyNo, "loan_sign")
                                             time.sleep(20)
                                 elif resp_decry["status"] == "F":
                                     self.logging.info("申请失败，请检查落库原因！")
@@ -366,12 +374,12 @@ class loop_result:
                                             if sql_result["sign_status"] == "P" or sql_result["sign_status"] == "W" or \
                                                     sql_result["sign_status"] == "P1":
                                                 # 执行放款签章任务
-                                                execute_xxl_job().apply_loan_sign_xxljob()
+                                                self.__perform_task(loanApplyNo, "loan_sign")
                                                 time.sleep(15)
                                             elif sql_result["sign_status"] == "PSC" or sql_result[
                                                 "sign_status"] == "PSL":
                                                 # 执行放款处理任务
-                                                execute_xxl_job().apply_loan_xxljob(loanApplyNo)
+                                                self.__perform_task(loanApplyNo, "loan")
                                                 time.sleep(15)
                                 elif resp_decry["loanStatus"] == "F":
                                     self.logging.info(
@@ -380,7 +388,7 @@ class loop_result:
                                 elif resp_decry["loanStatus"] == "S":
                                     self.logging.info(f"借款成功！")
                                     # 执行放款处理任务
-                                    execute_xxl_job().apply_loan_xxljob(loanApplyNo)
+                                    self.__perform_task(loanApplyNo, "loan")
                                     return resp_decry
                                 else:
                                     self.logging.info("系统错误,掉单,请重新尝试！！")
@@ -521,7 +529,7 @@ class loop_result:
                                 if sql_result["risk_status"] == "" or sql_result["risk_status"] == "W" or \
                                         sql_result["risk_status"] == "P":
                                     # 执行放款处理任务，调取风控系统
-                                    execute_xxl_job().apply_loan_xxljob(loanApplyNo)
+                                    self.__perform_task(loanApplyNo, "loan")
                                     self.logging.info("开始暂停60S。。。。。")
                                     time.sleep(60)
                                     self.logging.info("暂停结束。。。。。")
@@ -530,12 +538,12 @@ class loop_result:
                                         if sql_result["sign_status"] == "P" or sql_result["sign_status"] == "W" or \
                                                 sql_result["sign_status"] == "P1" or sql_result["sign_status"] == "":
                                             # 执行放款签章任务
-                                            execute_xxl_job().apply_loan_sign_xxljob()
+                                            self.__perform_task(loanApplyNo, "loan_sign")
                                             time.sleep(15)
                                         elif sql_result["sign_status"] == "PSC" or sql_result[
                                             "sign_status"] == "PSL":
                                             # 执行放款处理任务
-                                            execute_xxl_job().apply_loan_xxljob(loanApplyNo)
+                                            self.__perform_task(loanApplyNo, "loan")
                                             time.sleep(15)
                             elif sql_result["loan_status"] == "F":
                                 self.logging.info(
@@ -544,7 +552,7 @@ class loop_result:
                             elif sql_result["loan_status"] == "S":
                                 self.logging.info(f"借款成功！")
                                 # 执行放款签章任务
-                                execute_xxl_job().apply_loan_sign_xxljob()
+                                self.__perform_task(loanApplyNo, "loan_sign")
                                 return sql_result
                             else:
                                 self.logging.info("系统错误,掉单,请重新尝试！！")

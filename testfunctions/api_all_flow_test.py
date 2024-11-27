@@ -4,12 +4,18 @@
 # Them：Pyhon自动化
 # @Time :  上午10:12
 from testcase.test_api_flow.test_ZxRepay_Api_Flow import *
+from testcase.test_api_flow.test_XiaoMiLoanRepay_Api_Flow import *
 from common.Update_Database_Result import Update_Sql_Result
 
 
 # api全流程振兴放款成功
 def test_zx_loan_success():
     test_zx_loan_success_api_flow()
+
+
+# api全流程小米放款成功
+def test_xm_loan_success():
+    test_xiaomi_loan_success_api_flow()
 
 
 # api全流程振兴D0批扣还款第一期

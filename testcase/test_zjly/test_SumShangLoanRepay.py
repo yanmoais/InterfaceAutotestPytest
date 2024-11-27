@@ -8,6 +8,7 @@
 """
 from testdata.assert_data.banding_assert_data import banding_card_assert_data
 from testdata.assert_data.loan_assert_data import loan_success_assert_data
+from testfunctions.core_zjly_test import *
 from util_tools.Loop_result import loop_result
 from util_tools.Public_Assert import banding_card_success_assert, loan_success_assert
 from util_tools.logger import Logger
@@ -17,24 +18,24 @@ from common.Encrypt_Decrypt import encrypt_decrypt
 import allure
 
 
-@allure.epic("蒙商资方")
+@allure.epic("苏商蒙商资方")
 @allure.feature("授信模块")
-@allure.story("蒙商资方授信放款案例")
+@allure.story("苏商蒙商资方授信放款案例")
 @allure.title("放款成功")
 def test_mengshang_loan_success():
     with allure.step("数据初始化"):
-        id_no, birthday = "440104197211011813", "1972-11-01"
-        user_name = "杜东"
-        mobile_no = "13898239227"
-        acct_no = "6217001732173078909"
-        custid = "ZL173217307890"
+        id_no, birthday = "440114197601103679", "1976-01-10"
+        user_name = "陆虎"
+        mobile_no = "15978291031"
+        acct_no = "6217001732171164400"
+        custid = "ZL173217974399"
         bank_name = "建设银行"
         loan_amt = "2000"
         reqPeriods = "12"
         bk_no = get_bank_id()
         repay_no = get_repay_no()
-        apiKey = "ZLSK-MS"
-        channel = "mengShang"
+        apiKey = "CSSUSHANG"
+        channel = "suShang"
 
         loan_sqe_no = get_req_seq_no()
         req_no = get_req_no()
@@ -44,10 +45,17 @@ def test_mengshang_loan_success():
         bink_no = get_bink_no()
         logging = Logger().init_logger()
 
+    # 绑定支付通道
+    with allure.step("绑定支付通道"):
+        resp = test_zfzt_bank_apply(ACCOUNT_NAME=user_name, TEL=mobile_no, ID=id_no, CREDIT_ACCTNO=acct_no)
+        resp_confirm = test_zfzt_bank_confirm(resp[0])
+        signProtocolId = resp_confirm['AGRMNO']
+        logging.info(f"当前绑卡状态为： {resp_confirm}")
+
     # 每次请求前需要进行加密，得到的返回结果需要传给下游接口时候需要解密出来，下次使用又需要加密
     with allure.step("发起授信"):
         # 1.授信申请加密
-        sx_need_encry_data = {'apiKey': apiKey, 'params':json_dumps_cn({"gender":"F","birthday":birthday,"guaranteeInfo":{"guarOdIntRate":"0.00022037","guarRate":"0.079333","guarTime":"12","guarAmt":"237.96"},"nation":"汉","loanseqno":loan_sqe_no,"idNo":id_no,"merchantName":"大商户","monthlySalary":"1000","idExpireDate":"2037-11-30","merchantId":"69355551222","companyPhone":"02061959111","childrenNum":"2","custId":custid,"fromChannel":"01","regAddress":{"area":"440106","address":"广东省广州市天河区冼村街道珠江东路11号","province":"440000","city":"440100"},"liveAddress":{"area":"440106","address":"广东省广州市天河区冼村街道珠江东路11号","province":"440000","city":"440100"},"applyDt":"2024-09-04","emergencyContact":[{"relation":"01","mobileNo":"18197269653","name":"毛不易"},{"relation":"02","mobileNo":"18197269659","name":"李文忠"}],"idStartDate":"2017-11-30","signOffice":"罗定市公安局","mobileNo":mobile_no,"userName":user_name,"fileIDs":"cedd3e995c184f72a3056d3b1fbe4a321727076310700,d54691c092f64c3493ee89348e8a8dfe1727076309153,e14ede19ac3b498686f25407c86da2101727076307942","occupationInfo":{"companyAddInfo":{"area":"440106","address":"广东省广州市天河区冼村街道珠江东路11号","province":"440000","city":"440100"},"profession":"0","companyPhone":"02035949111","companyName":"测试科技有限公司","industry":"A","position":"01"},"loanInfo":{"priceAcc":"0.2395","loanFreq":"1M","rateType":"1","loanType":"PZ","reqPeriods":reqPeriods,"reqAmount":loan_amt,"dueDayOpt":"1","custDayRate":"0.2394","reqPurpose":"1"},"maxDegree":"10","accInfoList":[{"acctKind":"01","acctTyp":"01","acctBankCode":"0105","bankName":bank_name,"acctNo":acct_no,"acctName":user_name,"idNo":id_no,"acctPhone":mobile_no,"phoneBelongAddr":"云浮"},{"acctKind":"02","acctTyp":"01","acctBankCode":"0105","bankName":bank_name,"acctNo":acct_no,"acctName":user_name,"idNo":id_no,"acctPhone":mobile_no,"phoneBelongAddr":"云浮"}],"maritalStatus":"10"}), 'requestNo': req_no}
+        sx_need_encry_data = {'apiKey': apiKey,'params':json_dumps_cn({"riskInfo":{"creditLimitAmt":"20000.00","loanAmount":loan_amt,"overdue":"0","current_due_money":"0.00","maxOverDueDay":"0","guaranteeRateIrr":"0.000175"},"gender":"F","birthday":birthday,"guaranteeInfo":{"guarOdIntRate":"0.00022037","guarRate":"0.079333","guarTime":"12","guarAmt":"237.96"},"nation":"汉","loanseqno":loan_sqe_no,"idNo":id_no,"merchantName":"大商户","monthlySalary":"1000","idExpireDate":"2037-11-30","merchantId":"69355551222","companyPhone":"02061959111","childrenNum":"2","custId":custid,"fromChannel":"01","regAddress":{"area":"440106","address":"广东省广州市天河区冼村街道珠江东路11号","province":"440000","city":"440100"},"liveAddress":{"area":"440106","address":"广东省广州市天河区冼村街道珠江东路11号","province":"440000","city":"440100"},"applyDt":"2024-09-04","emergencyContact":[{"relation":"01","mobileNo":"18197269653","name":"毛不易"},{"relation":"02","mobileNo":"18197269659","name":"李文忠"}],"idStartDate":"2017-11-30","signOffice":"罗定市公安局","mobileNo":mobile_no,"userName":user_name,"fileIDs":"ef4cfdde418f4aa58ddb266ba905d9871731916380657,aaee76137d934f6daf73f9256fc61c8d1731916380870,3ed601982d294380881b2f5fa45252dc1731916381114,b8d92eef19ad4293b770c1e7db3ba8e51731916381227","occupationInfo":{"companyAddInfo":{"area":"440106","address":"广东省广州市天河区冼村街道珠江东路11号","province":"440000","city":"440100"},"profession":"0","companyPhone":"02035949111","companyName":"测试科技有限公司","industry":"A","position":"01"},"loanInfo":{"priceAcc":"0.2395","loanFreq":"1M","rateType":"1","loanType":"PZ","reqPeriods":reqPeriods,"reqAmount":loan_amt,"dueDayOpt":"1","custDayRate":"0.2394","reqPurpose":"1"},"maxDegree":"10","accInfoList":[{"acctKind":"01","acctTyp":"01","acctBankCode":"0105","bankName":bank_name,"acctNo":acct_no,"acctName":user_name,"idNo":id_no,"acctPhone":mobile_no,"phoneBelongAddr":"云浮"},{"acctKind":"02","acctTyp":"01","acctBankCode":"0105","bankName":bank_name,"acctNo":acct_no,"acctName":user_name,"idNo":id_no,"acctPhone":mobile_no,"phoneBelongAddr":"云浮"}],"maritalStatus":"10"}), 'requestNo': req_no}
         # 加密数据
         sx_encry_data = encrypt_decrypt().param_encry_by_channel(sx_need_encry_data, channel)
         # 1.授信申请请求,获取返回数据
@@ -94,7 +102,7 @@ def test_mengshang_loan_success():
 
     with allure.step("发起借款"):
         # 5.放款申请加密
-        fk_encry_data = {"apiKey":apiKey,"params":json_dumps_cn({"requestNo":fk_no,"loanseqno":loan_sqe_no,"bindid":bink_no,"amt":loan_amt,"guarAmt":"237.96","guarRate":"0.079333","guarTime":"12","guarOdIntRate":"0.00022037","guarSignTime":"2024-09-07","guarEndTime":"2025-09-07","guarContNo":dbht_no,"guarContAddr":"广东","contractNo":contract_no,"fileIDs":"","accInfoDto":{"acctKind":"01","acctTyp":"01","acctBankCode":"0105","acct_no":acct_no,"acctName":user_name,"id_no":id_no,"acctPhone":mobile_no,"phoneBelongAddr":"云浮","bankName":bank_name},"guaranteeList":[{"perdNo":"1","guarDate":"2024-10-07","perGuarFee":"19.83"},{"perdNo":"2","guarDate":"2024-11-07","perGuarFee":"19.83"},{"perdNo":"3","guarDate":"2024-12-07","perGuarFee":"19.83"},{"perdNo":"4","guarDate":"2025-01-07","perGuarFee":"19.83"},{"perdNo":"5","guarDate":"2025-02-07","perGuarFee":"19.83"},{"perdNo":"6","guarDate":"2025-03-07","perGuarFee":"19.83"},{"perdNo":"7","guarDate":"2025-04-07","perGuarFee":"19.83"},{"perdNo":"8","guarDate":"2025-05-07","perGuarFee":"19.83"},{"perdNo":"9","guarDate":"2025-06-07","perGuarFee":"19.83"},{"perdNo":"10","guarDate":"2025-07-07","perGuarFee":"19.83"},{"perdNo":"11","guarDate":"2025-08-07","perGuarFee":"19.83"},{"perdNo":"12","guarDate":"2025-09-07","perGuarFee":"19.83"}]}),"requestNo":req_no}
+        fk_encry_data = {"apiKey":apiKey,"params":json_dumps_cn({"payChannel":"BF","signProtocolId":signProtocolId,"requestNo":fk_no,"loanseqno":loan_sqe_no,"bindid":bink_no,"amt":loan_amt,"guarAmt":"237.96","guarRate":"0.079333","guarTime":"12","guarOdIntRate":"0.00022037","guarSignTime":"2024-09-07","guarEndTime":"2025-09-07","guarContNo":dbht_no,"guarContAddr":"广东","contractNo":contract_no,"fileIDs":"","accInfoDto":{"acctKind":"01","acctTyp":"01","acctBankCode":"0105","acct_no":acct_no,"acctName":user_name,"id_no":id_no,"acctPhone":mobile_no,"phoneBelongAddr":"云浮","bankName":bank_name},"guaranteeList":[{"perdNo":"1","guarDate":"2024-10-07","perGuarFee":"19.83"},{"perdNo":"2","guarDate":"2024-11-07","perGuarFee":"19.83"},{"perdNo":"3","guarDate":"2024-12-07","perGuarFee":"19.83"},{"perdNo":"4","guarDate":"2025-01-07","perGuarFee":"19.83"},{"perdNo":"5","guarDate":"2025-02-07","perGuarFee":"19.83"},{"perdNo":"6","guarDate":"2025-03-07","perGuarFee":"19.83"},{"perdNo":"7","guarDate":"2025-04-07","perGuarFee":"19.83"},{"perdNo":"8","guarDate":"2025-05-07","perGuarFee":"19.83"},{"perdNo":"9","guarDate":"2025-06-07","perGuarFee":"19.83"},{"perdNo":"10","guarDate":"2025-07-07","perGuarFee":"19.83"},{"perdNo":"11","guarDate":"2025-08-07","perGuarFee":"19.83"},{"perdNo":"12","guarDate":"2025-09-07","perGuarFee":"19.83"}]}),"requestNo":req_no}
         # 加密数据
         logging.info(f"需要加密的放款申请数据为：======{fk_encry_data}")
         fksq_encry = encrypt_decrypt().param_encry_by_channel(fk_encry_data, channel)

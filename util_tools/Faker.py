@@ -341,18 +341,18 @@ def generate_valid_id_card_number(year_s=1970, year_e=1976):
 # 拼接天源花的H5链接
 def tyh_h5_loan_repay(credit_apply_no, user_id, loan_apply_no):
     loan_h5 = f"\nhttp://gzdev.zhonglishuke.com:15008/pages/loan/loan?creditApplyNo={credit_apply_no}&returnUrl=http%3A%2F%2Flocalhost%3A3000%2Fmicro-loans%2F&loanApplyNo={get_req_seq_no("JMX")}&userId={user_id}&channelCode=TYH_HY\n"
-    repay_h5 = f"\nhttp://gzdev.zhonglishuke.com:15008/pages/repayOrder/repayPlan?channelCode=TYH_HY&userId={user_id}&loanApplyNo={loan_apply_no}&returnUrl=https://nxdrd-dbg-new.vfuturetec.com/micro-loans/bills/status/dcc4a5a546404d018ef550e921c03f68?result=pending&loanGid=dcc4a5a546404d018ef550e921c03f68&apiChannel=50048&repayApplyNo={get_repay_no('REPAY')}\n"
+    repay_h5 = f"\nhttp://gzdev.zhonglishuke.com:15008/pages/repayList/index?returnUrl=https%3A%2F%2Fnxdrd-dbg-new.vfuturetec.com%2Fmicro-loans%2Fbills%2Fstatus%2Fdcc4a5a546404d018ef550e921c03f68%3Fresult%3Dpending%26loanGid%3Ddcc4a5a546404d018ef550e921c03f68%26apiChannel%3D50048&loanApplyNo={loan_apply_no}&userId={user_id}&repayApplyNo={get_repay_no("repay")}&channelCode=TYH_HY\n"
     return loan_h5, repay_h5
 
 
 if __name__ == '__main__':
     # certificationApplyNo = get_api_bk_id()
     id_no, birthday = get_zx_user_id_no()
-    ccb = get_baofu_ccb_num(('0', '2', '4', '6'))
+    ccb = get_baofu_ccb_num(('0'))
     phone = read_risk_phone()
     # print(id_no, birthday)
-    loan, repay = tyh_h5_loan_repay("TYH_202411041730710546726", "ZL173071054678","JMX1730710546789")
-    print(id_no, birthday, ccb, phone, loan, repay)
+    # loan, repay = tyh_h5_loan_repay("TYH_202411041730710546726", "ZL173071054678","JMX1730710546789")
+    print(id_no, birthday, ccb, phone)
     # print(get_credit_apply_no("")XM)
     # 请求鉴权数据
     # bk_jq_need_encry_data = { "certificationApplyNo": "SC00565656","SFAF":"SFASFAF"}

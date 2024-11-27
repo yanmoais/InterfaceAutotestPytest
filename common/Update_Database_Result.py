@@ -177,6 +177,7 @@ class Update_Sql_Result(Mysql):
             # 关闭redis
             finally:
                 redis_clinet.close_db()
+            self.logging.info("已切换为为Mock环境！")
             return result
         else:
             self.logging.info("当前模式为Mock环境，无需切换！")
@@ -202,9 +203,10 @@ class Update_Sql_Result(Mysql):
             redis_clinet.delete_redis_key("zijinluyou:api:param_config:::haiXia")
             # 关闭redis
             redis_clinet.close_db()
+            self.logging.info("已切换为为资金方测试环境！")
             return result
         else:
-            self.logging.info("当前模式为资方测试环境，无需切换！")
+            self.logging.info("当前模式为资金方测试环境，无需切换！")
 
     # 修改中原提前花走Mock环境
     def update_zytqh_zjly_mock(self):
