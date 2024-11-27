@@ -6,6 +6,8 @@
 import time
 import pytest
 import allure
+
+from common.Select_Database_Result import Select_Sql_Result
 from testdata.assert_data.banding_assert_data import *
 from testdata.assert_data.loan_assert_data import *
 from testdata.assert_data.loan_credit_amt_assert_data import credit_amt_query_success_data
@@ -31,18 +33,30 @@ from util_tools.Xxl_Job_Executor import execute_xxl_job
 @allure.severity(allure.severity_level.CRITICAL)
 def test_new_cy_bf_loan_success_api_flow():
     with allure.step("数据初始化"):
+        # 核心api的基类
         api = core_api_flow_api()
+        # 加解密基类
         enc = encrypt_decrypt()
+        # 随机借据授信申请流水号
         credit_apply_no = get_credit_apply_no()
+        # 数据库更新基类
         db = Update_Sql_Result()
+        # 当前标准时间
         apply_time = get_time_stand_api()
+        # 数据库查询基类
+        select_db = Select_Sql_Result()
+        # 身份证生成
         id_no, birthday = get_zx_user_id_no()
+        # 用户名生成
         user_name = get_user_name()
-        bank_card_no = get_tl_bank_ccb_num()
+        # 宝付规则卡号生成
+        bank_card_no = get_baofu_ccb_num()
+        # custID生成
         user_id = get_cust_id()
+        # 绑卡ID生成
         certificationApplyNo = get_api_bk_id()
+        # 日志基类
         logging = Logger().init_logger()
-        repayApplyNo = get_repay_no()
 
         # 获取风控加白了的手机号，读取本地txt文件
         mobile_no = read_risk_phone()
@@ -193,16 +207,29 @@ def test_new_cy_bf_loan_success_api_flow():
 @allure.severity(allure.severity_level.CRITICAL)
 def test_new_cy_repay_d0_success_api_flow():
     with allure.step("数据初始化"):
+        # 核心api的基类
         api = core_api_flow_api()
+        # 加解密基类
         enc = encrypt_decrypt()
+        # 随机借据授信申请流水号
         credit_apply_no = get_credit_apply_no()
+        # 数据库更新基类
         db = Update_Sql_Result()
+        # 当前标准时间
         apply_time = get_time_stand_api()
-        id_no, birthday = get_user_idNo()
+        # 数据库查询基类
+        select_db = Select_Sql_Result()
+        # 身份证生成
+        id_no, birthday = get_zx_user_id_no()
+        # 用户名生成
         user_name = get_user_name()
-        bank_card_no = get_tl_bank_ccb_num()
+        # 宝付规则卡号生成
+        bank_card_no = get_baofu_ccb_num()
+        # custID生成
         user_id = get_cust_id()
+        # 绑卡ID生成
         certificationApplyNo = get_api_bk_id()
+        # 日志基类
         logging = Logger().init_logger()
 
         # 获取风控加白了的手机号，读取本地txt文件

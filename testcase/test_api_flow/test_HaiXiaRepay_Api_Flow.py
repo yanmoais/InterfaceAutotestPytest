@@ -7,6 +7,7 @@ import time
 import pytest
 import allure
 
+from common.Select_Database_Result import Select_Sql_Result
 from config.testconfig import channel_codes
 from testdata.assert_data.banding_assert_data import *
 from testdata.assert_data.loan_assert_data import *
@@ -33,19 +34,32 @@ from util_tools.Loop_result import loop_result
 @allure.severity(allure.severity_level.CRITICAL)
 def test_haixia_loan_success_api_flow():
     with allure.step("数据初始化"):
+        # 核心api的基类
         api = core_api_flow_api()
+        # 加解密基类
         enc = encrypt_decrypt()
+        # 随机借据授信申请流水号
         credit_apply_no = get_credit_apply_no()
+        # 数据库更新基类
         db = Update_Sql_Result()
+        # 当前标准时间
         apply_time = get_time_stand_api()
+        # 数据库查询基类
+        select_db = Select_Sql_Result()
+        # 身份证生成
         id_no, birthday = get_zx_user_id_no()
+        # 用户名生成
         user_name = get_user_name()
+        # 宝付规则卡号生成
+        bank_card_no = get_baofu_ccb_num()
+        # custID生成
+        user_id = get_cust_id()
+        # 绑卡ID生成
+        certificationApplyNo = get_api_bk_id()
+        # 日志基类
+        logging = Logger().init_logger()
         # 获取风控加白了的手机号，读取本地txt文件
         mobile_no = read_risk_phone()
-        bank_card_no = get_tl_bank_ccb_num()
-        user_id = get_cust_id()
-        certificationApplyNo = get_api_bk_id()
-        logging = Logger().init_logger()
 
         # 修改对应的缩写或其他标志：海峡  ==  HX
         loanApplyNo = get_req_seq_no("HX")
