@@ -9,6 +9,7 @@ config = {
     "test_tyh_hy_host": "http://192.168.1.168:6801/api/1.0",
     "test_tyh_hy_end_host": "http://192.168.1.168:6803",
     "test_api_end_host": "http://192.168.1.167:8804",
+    "risk_host": "http://120.77.248.212:9090"
 }
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # 测试文件路径列表（请根据实际情况修改）

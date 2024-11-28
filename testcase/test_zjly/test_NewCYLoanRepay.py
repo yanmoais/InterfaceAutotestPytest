@@ -382,9 +382,9 @@ def test_new_cy_bf_loan_success():
     if loanType == "PZ02":
         with allure.step("发起支付平台宝付绑卡"):
             # 发起协议平台绑卡申请
-            bind_resp = Core_zjly_test_function().test_zfzt_bank_apply(user_name, mobile_no, id_no, acct_no)
+            bind_resp = test_zfzt_bank_apply(user_name, mobile_no, id_no, acct_no)
             # 发起协议平台绑卡确认
-            confirm_resp = Core_zjly_test_function().test_zfzt_bank_confirm(bind_resp[0])
+            confirm_resp = test_zfzt_bank_confirm(bind_resp[0])
             # 获取协议号
             signProtocolId = confirm_resp["AGRMNO"]
             logging.info(f"宝付协议绑卡成功，协议号为： {signProtocolId} 。")

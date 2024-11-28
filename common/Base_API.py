@@ -28,6 +28,8 @@ class Base_Api:
             self.uri = config['test_api_host']
         elif ENV == "TYH_HY":
             self.uri = config['test_tyh_hy_host']
+        elif ENV == 'RISK':
+            self.uri = config['risk_host']
         else:
             self.uri = config['test_zjly_host']
         self.headers = {"Content-Type": "application/json"}
@@ -61,5 +63,5 @@ class Base_Api:
 
 
 if __name__ == '__main__':
-    ss = Base_Api()
+    ss = Base_Api("RISK")
     print(ss.uri)
