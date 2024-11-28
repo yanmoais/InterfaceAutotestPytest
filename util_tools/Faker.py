@@ -340,8 +340,8 @@ def generate_valid_id_card_number(year_s=1970, year_e=1976):
 
 # 拼接天源花的H5链接
 def tyh_h5_loan_repay(credit_apply_no, user_id, loan_apply_no):
-    loan_h5 = f"\nhttp://gzdev.zhonglishuke.com:15008/pages/loan/loan?creditApplyNo={credit_apply_no}&returnUrl=http%3A%2F%2Flocalhost%3A3000%2Fmicro-loans%2F&loanApplyNo={get_req_seq_no("JMX")}&userId={user_id}&channelCode=TYH_HY\n"
-    repay_h5 = f"\nhttp://gzdev.zhonglishuke.com:15008/pages/repayList/index?returnUrl=https%3A%2F%2Fnxdrd-dbg-new.vfuturetec.com%2Fmicro-loans%2Fbills%2Fstatus%2Fdcc4a5a546404d018ef550e921c03f68%3Fresult%3Dpending%26loanGid%3Ddcc4a5a546404d018ef550e921c03f68%26apiChannel%3D50048&loanApplyNo={loan_apply_no}&userId={user_id}&repayApplyNo={get_repay_no("repay")}&channelCode=TYH_HY\n"
+    loan_h5 = f"\nhttp://gzdev.zhonglishuke.com:15008/pages/loan/loan?creditApplyNo={credit_apply_no}&returnUrl=http%3A%2F%2Flocalhost%3A3000%2Fmicro-loans%2F&loanApplyNo={get_req_seq_no('JMX')}&userId={user_id}&channelCode=TYH_HY\n"
+    repay_h5 = f"\nhttp://gzdev.zhonglishuke.com:15008/pages/repayList/index?returnUrl=https%3A%2F%2Fnxdrd-dbg-new.vfuturetec.com%2Fmicro-loans%2Fbills%2Fstatus%2Fdcc4a5a546404d018ef550e921c03f68%3Fresult%3Dpending%26loanGid%3Ddcc4a5a546404d018ef550e921c03f68%26apiChannel%3D50048&loanApplyNo={loan_apply_no}&userId={user_id}&repayApplyNo={get_repay_no('repay')}&channelCode=TYH_HY\n"
     return loan_h5, repay_h5
 
 
