@@ -284,7 +284,7 @@ def get_user_idNo(sex='girl'):  # 1. 生成身份证号码的前17位
 
 
 # 振兴、金美信、中原、海峡身份证MOCK规则，尾号为X放款失败,所以排除了尾号X的身份证号码
-def get_zx_user_id_no(year_s=1970, year_e=1976):
+def get_zx_user_id_no(year_s=1970, year_e=2000):
     id_card_number = generate_valid_id_card_number(year_s, year_e)
 
     # 提取生日信息
@@ -349,7 +349,7 @@ if __name__ == '__main__':
     # certificationApplyNo = get_api_bk_id()
     id_no, birthday = get_zx_user_id_no()
     ccb = get_baofu_ccb_num(('0'))
-    phone = read_risk_phone()
+    phone = get_new_cy_phone_mum()
     # print(id_no, birthday)
     # loan, repay = tyh_h5_loan_repay("TYH_202411041730710546726", "ZL173071054678","JMX1730710546789")
     print(id_no, birthday, ccb, phone)

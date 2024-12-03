@@ -88,6 +88,16 @@ class Update_Sql_Result(Mysql):
         self.logging.info(f"数据库执行完成!")
         return result
 
+    # 资金批发路由操作还款前对批发侧fr_api_repayment_plan还款计划进行修改,根据req_seq_no来查询,根据对应期数来修改日期
+    def update_zjly_fr_api_repayment_plan_due_day(self, req_seq_no, term):
+        update_sql1 = f"SELECT ord.order_no FROM finance_router.fr_api_order_info ord WHERE ord.req_seq_no = '{req_seq_no}';"
+        order_no = Mysql().select_db(update_sql1)[0]['order_no']
+        print(order_no)
+        update_sql2 = f"UPDATE finance_router.fr_api_repayment_plan as fr SET fr.ps_due_dt = '{(datetime.datetime.now().strftime('%Y-%m-%d'))}' WHERE fr.order_no = '{order_no}' AND fr.period = '{term}';"
+        result = Mysql().update_db(update_sql2)
+        self.logging.info(f"数据库执行完成!")
+        return result
+
     # 集合更新api侧绑卡前的funds_code
     def update_api_flow_all_table(self, funds_code, user_id, test_db="api"):
         db = Update_Sql_Result()
@@ -370,6 +380,60 @@ class Update_Sql_Result(Mysql):
         else:
             self.logging.info("当前模式为资方测试环境，无需切换！")
 
+    # 修改长银布客走Mock环境
+    def update_cybuke_zjly_mock(self):
+        # 获取当前是否为Mock环境
+        results = Select_Sql_Result().select_fr_channel_config('长银步客Mock')
+        if results['code'] == "changYinBuKeMock":
+            update_sql_1 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'changYinBuKeMock_temp' WHERE fr.name = '长银步客Mock';"
+            update_sql_2 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'changYinBuKeMock' WHERE fr.name = '长银步客-测试';"
+            update_sql_3 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'changYinBuKe' WHERE fr.name = '长银步客Mock';"
+            Mysql().update_db(update_sql_1)
+            time.sleep(1)
+            Mysql().update_db(update_sql_2)
+            time.sleep(1)
+            result = Mysql().update_db(update_sql_3)
+            self.logging.info(f"数据库执行完成!")
+
+            # 实例化Redis连接
+            redis_clinet = Redis()
+            # 删除润楼Redis的Key值
+            try:
+                redis_clinet.delete_redis_key("zijinluyou:api:param_config:::changYinBuKe")
+            except Exception as e:
+                self.logging.error(f"请求发生错误：{e}")
+            # 关闭redis
+            finally:
+                redis_clinet.close_db()
+            return result
+        else:
+            self.logging.info("当前模式为Mock环境，无需切换！")
+
+    # 修改长银布客走资方测试环境
+    def update_cybuke_zjly_test(self):
+        # 获取当前是否为Mock环境
+        results = Select_Sql_Result().select_fr_channel_config('长银步客Mock')
+        if results['code'] == "changYinBuKe":
+            update_sql_1 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'changYinBuKeMock_temp' WHERE fr.name = '长银步客Mock';"
+            update_sql_2 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'changYinBuKe' WHERE fr.name = '长银步客-测试';"
+            update_sql_3 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'changYinBuKeMock' WHERE fr.name = '长银步客Mock';"
+            Mysql().update_db(update_sql_1)
+            time.sleep(1)
+            Mysql().update_db(update_sql_2)
+            time.sleep(1)
+            result = Mysql().update_db(update_sql_3)
+            self.logging.info(f"数据库执行完成!")
+
+            # 实例化Redis连接
+            redis_clinet = Redis()
+            # 删除润楼Redis的Key值
+            redis_clinet.delete_redis_key("zijinluyou:api:param_config:::changYinBuKe")
+            # 关闭redis
+            redis_clinet.close_db()
+            return result
+        else:
+            self.logging.info("当前模式为资方测试环境，无需切换！")
+
     # 修改Api侧对应渠道为限流模式
     def update_api_chanel_non_funds(self, channel_code, test_db="api"):
         # 获取当前是否为限流模式
@@ -414,5 +478,5 @@ class Update_Sql_Result(Mysql):
 if __name__ == '__main__':
     user_id = "ZLTEST_202410161729069481126"
     funds_code = "FR_RUN_LOU"
-    print(Update_Sql_Result().update_api_flow_all_table(funds_code, user_id, "tyh"))
+    Update_Sql_Result().update_zjly_fr_api_repayment_plan_due_day("ZLTEST1733205612439", "1")
     # print((datetime.datetime.now() - relativedelta(months=1)).strftime("%Y-%m-%d %H:%M:%S"))

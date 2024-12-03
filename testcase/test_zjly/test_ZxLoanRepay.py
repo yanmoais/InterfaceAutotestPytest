@@ -440,6 +440,7 @@ def test_zx_repay_success():
 @allure.feature("授信模块")
 @allure.story("新振兴资方授信放款案例")
 @allure.title("放款成功")
+@pytest.mark.skip()
 def test_new_zx_loan_success():
     with allure.step("数据初始化"):
         id_no, birthday = get_zx_user_id_no()

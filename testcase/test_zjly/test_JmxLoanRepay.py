@@ -9,6 +9,7 @@
 
 
 """
+from common.Update_Database_Result import Update_Sql_Result
 from testdata.assert_data.loan_credit_amt_assert_data import *
 from util_tools.Loop_result import loop_result
 from util_tools.logger import Logger
@@ -28,7 +29,7 @@ import allure
 @allure.severity(allure.severity_level.CRITICAL)
 def test_jmx_credit_success():
     with allure.step("数据初始化"):
-        id_no, birthday = get_zx_user_id_no()
+        id_no, birthday = get_zx_user_id_no(1976, 2000)
         user_name = get_user_name()
         mobile_no = get_phone_mum()
         acct_no = get_jmx_ccb_num()
@@ -45,6 +46,9 @@ def test_jmx_credit_success():
         logging = Logger().init_logger()
         apiKey = "JMXTEST"
         channel = "jinMeiXin"
+
+    with allure.step("切换成MOCK模式"):
+        Update_Sql_Result().update_jmx_zjly_mock()
 
     # 每次请求前需要进行加密，得到的返回结果需要传给下游接口时候需要解密出来，下次使用又需要加密
     with allure.step("发起授信"):
@@ -81,7 +85,7 @@ def test_jmx_credit_success():
 @allure.severity(allure.severity_level.CRITICAL)
 def test_jmx_credit_amt_query_success():
     with allure.step("数据初始化"):
-        id_no, birthday = get_zx_user_id_no()
+        id_no, birthday = get_zx_user_id_no(1976, 2000)
         user_name = get_user_name()
         mobile_no = get_phone_mum()
         acct_no = get_jmx_ccb_num()
@@ -98,6 +102,9 @@ def test_jmx_credit_amt_query_success():
         logging = Logger().init_logger()
         apiKey = "JMXTEST"
         channel = "jinMeiXin"
+
+    with allure.step("切换成MOCK模式"):
+        Update_Sql_Result().update_jmx_zjly_mock()
 
     # 每次请求前需要进行加密，得到的返回结果需要传给下游接口时候需要解密出来，下次使用又需要加密
     with allure.step("发起授信"):
@@ -171,7 +178,7 @@ def test_jmx_credit_amt_query_success():
 @allure.severity(allure.severity_level.CRITICAL)
 def test_jmx_loan_success():
     with allure.step("数据初始化"):
-        id_no, birthday = get_zx_user_id_no()
+        id_no, birthday = get_zx_user_id_no(1976, 2000)
         user_name = get_user_name()
         mobile_no = get_phone_mum()
         acct_no = get_jmx_ccb_num()
@@ -189,6 +196,9 @@ def test_jmx_loan_success():
         logging = Logger().init_logger()
         apiKey = "JMXTEST"
         channel = "jinMeiXin"
+
+    with allure.step("切换成MOCK模式"):
+        Update_Sql_Result().update_jmx_zjly_mock()
 
     # 每次请求前需要进行加密，得到的返回结果需要传给下游接口时候需要解密出来，下次使用又需要加密
     with allure.step("发起授信"):
@@ -253,11 +263,12 @@ def test_jmx_loan_success():
     with allure.step("断言授信订单表"):
         loan_success_assert(loan_sqe_no, loan_success_assert_data)
 
-
-    # hk_loan_seq_no = "ZLTEST1723016460195"
+    # with allure.step("修改对应还款计划"):
+    #     Update_Sql_Result().update_zjly_fr_api_repayment_plan_due_day(loan_sqe_no, '1')
+    #
     # with allure.step("还款试算"):
     #     # 8.还款试算加密
-    #     hkss_encry_data = {"apiKey": apiKey,"params":json_dumps_cn({"loanseqno":hk_loan_seq_no,"type":"01","period":"1"}),"requestNo":req_no}
+    #     hkss_encry_data = {"apiKey": apiKey,"params":json_dumps_cn({"loanseqno":loan_sqe_no,"type":"01","period":"1"}),"requestNo":req_no}
     #     # 需要将数据再次格式化成带转义符并且去除空格
     #     data = json_dumps_format(hkss_encry_data)
     #     logging.info(f"需要加密的还款试算数据为：======{data}")
@@ -300,5 +311,4 @@ def test_jmx_loan_success():
     #     logging.info(f"加密后的还款状态数据为：======{hkzt_encry}")
     #     # 10.轮询还款状态查询申请
     #     loop_result().loop_hkcx_result(hkzt_encry, channel)
-
 

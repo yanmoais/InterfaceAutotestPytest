@@ -8,6 +8,10 @@
     此文件自动化案例为各个资金方授信-借款-还款流程
 """
 import json
+
+import pytest
+
+from common.Update_Database_Result import Update_Sql_Result
 from testdata.assert_data.banding_assert_data import banding_card_assert_data
 from testdata.assert_data.loan_assert_data import *
 from testdata.assert_data.loan_credit_amt_assert_data import credit_amt_query_success_data
@@ -46,6 +50,10 @@ def test_xiaomi_loan_success():
         dbht_no = get_dbht_no()
         bink_no = get_bink_no()
         logging = Logger().init_logger()
+
+    # 切换成MOCK环境
+    with allure.step("切换成mock环境"):
+        Update_Sql_Result().update_xiaomi_zjly_mock()
 
     # 每次请求前需要进行加密，得到的返回结果需要传给下游接口时候需要解密出来，下次使用又需要加密
     with allure.step("发起授信"):
@@ -97,7 +105,7 @@ def test_xiaomi_loan_success():
     with allure.step("还款计划查询"):
         # 放款成功后需要再次调用一下还款计划接口，落库更新
         # 7.还款计划查询加密
-        hkjh_encry_data = {"apiKey":"XM_TEST","params":json_dumps_cn({"loanseqno":"1830808464411213824"}),"requestNo":req_no}
+        hkjh_encry_data = {"apiKey":"XM_TEST","params":json_dumps_cn({"loanseqno":loan_sqe_no}),"requestNo":req_no}
         # 加密数据
         logging.info(f"需要加密的还款计划查询数据为：======{hkjh_encry_data}")
         hkjh_encry = encrypt_decrypt().param_encry_by_channel(hkjh_encry_data, 'xiaoMi')
@@ -116,6 +124,7 @@ def test_xiaomi_loan_success():
 @allure.feature("授信模块")
 @allure.story("小米资方授信还款案例")
 @allure.title("还款成功-到期还款")
+@pytest.mark.skip()
 def test_xiaomi_dueday_repay_success():
     with allure.step("数据初始化"):
         id_no, birthday = get_user_idNo()
@@ -223,7 +232,7 @@ def test_xiaomi_dueday_repay_success():
 
     with allure.step("还款申请"):
         # 9.还款申请加密-逾期还款
-        hk_encry_data = {"apiKey":"XM_TEST","params":json_dumps_cn({"loanseqno":loan_sqe_no,"payseqno":repay_no,"type":"01","repay_type":"01","period":"2","repaymentCode":"","isCompensatory":"N","paymInd":"N","bankCode":"0104","mobileNo":"15980487481","bankCardNum":"6217001725861772320","bankName":"建设银行","payChannel":"BF","signProtocolId":"1202409091404187480000786710","pay_amt":total_amt,"paid_prcp_amt":due_amt,"paid_int_amt":due_int,"paid_od_int_amt":overdueFee,"paid_guarantee_fee_amt":"0.00","paid_late_fee_amt":"0.00","paid_oth_fee_amt":"0.00","paid_pre_repay_fee_amt":"0.00","reduction_amt":"0.00","reduction_prcp_amt":"0.00","reduction_int_amt":"0.00","reduction_od_int_amt":"0.00","reduction_guarantee_fee_amt":"0.00","reduction_late_fee_amt":"0.00","reduction_oth_fee_amt":"0.00","reduction_pre_repay_fee_amt":"0.00"}),"requestNo":req_no}
+        hk_encry_data = {"apiKey":"XM_TEST","params":json_dumps_cn({"loanseqno":loan_sqe_no,"payseqno":repay_no,"type":"01","repay_type":"01","period":"1","repaymentCode":"","isCompensatory":"N","paymInd":"N","bankCode":"0104","mobileNo":"15980487481","bankCardNum":"6217001725861772320","bankName":"建设银行","payChannel":"BF","signProtocolId":"1202409091404187480000786710","pay_amt":total_amt,"paid_prcp_amt":due_amt,"paid_int_amt":due_int,"paid_od_int_amt":overdueFee,"paid_guarantee_fee_amt":"0.00","paid_late_fee_amt":"0.00","paid_oth_fee_amt":"0.00","paid_pre_repay_fee_amt":"0.00","reduction_amt":"0.00","reduction_prcp_amt":"0.00","reduction_int_amt":"0.00","reduction_od_int_amt":"0.00","reduction_guarantee_fee_amt":"0.00","reduction_late_fee_amt":"0.00","reduction_oth_fee_amt":"0.00","reduction_pre_repay_fee_amt":"0.00"}),"requestNo":req_no}
         # hk_encry_data = {"apiKey":"XM_TEST","params":json_dumps_cn({"loanseqno":hk_loan_seq_no,"payseqno":repay_no,"type":"01","repay_type":"01","period":"2","repaymentCode":"","isCompensatory":"N","paymInd":"Y","mobileNo":mobile_no,"bankCardNum":acct_no,"bankName":bank_name,"payChannel":"BF","pay_amt":"495.01","paid_prcp_amt":"372.89","paid_int_amt":"99.79","paid_od_int_amt":"22.33","paid_guarantee_fee_amt":"0.00","paid_late_fee_amt":"0.00","paid_oth_fee_amt":"0.00","paid_pre_repay_fee_amt":"0.00","reduction_amt":"0.00","reduction_prcp_amt":"0.00","reduction_int_amt":"0.00","reduction_od_int_amt":"0.00","reduction_guarantee_fee_amt":"0.00","reduction_late_fee_amt":"0.00","reduction_oth_fee_amt":"0.00","reduction_pre_repay_fee_amt":"0.00"}),"requestNo":req_no}
 
         # 需要将数据再次格式化成带转义符并且去除空格

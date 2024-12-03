@@ -24,11 +24,11 @@ import allure
 @allure.title("放款成功")
 def test_mengshang_loan_success():
     with allure.step("数据初始化"):
-        id_no, birthday = "440114197601103679", "1976-01-10"
-        user_name = "陆虎"
-        mobile_no = "15978291031"
-        acct_no = "6217001732171164400"
-        custid = "ZL173217974399"
+        id_no, birthday = get_zx_user_id_no()
+        user_name = get_user_name()
+        mobile_no = get_phone_mum()
+        acct_no = get_baofu_ccb_num()
+        custid = get_cust_id()
         bank_name = "建设银行"
         loan_amt = "2000"
         reqPeriods = "12"

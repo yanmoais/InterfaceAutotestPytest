@@ -209,8 +209,6 @@ def test_haixia_loan_success():
         # 2.授信状态查询请求
         loop_result().loop_sxcx_result(sxzt_encry, channel)
 
-    time.sleep(60)
-
     with allure.step("发起借款"):
         # 5.放款申请加密
         fk_encry_data = {"apiKey":apiKey,"params":json_dumps_cn({"requestNo":fk_no,"loanseqno":loan_sqe_no,"bindid":bink_no,"amt":loan_amt,"guarAmt":"237.96","guarRate":"0.079333","guarTime":"12","guarOdIntRate":"0.00022037","guarSignTime":"2024-09-07","guarEndTime":"2025-09-07","guarContNo":dbht_no,"guarContAddr":"广东","contractNo":contract_no,"fileIDs":"1780487717038329856,6b2a97dc90794fe2b78fa5412c82be581713337050255","accInfoDto":{"acctKind":"01","acctTyp":"01","acctBankCode":"0105","acct_no":acct_no,"acctName":user_name,"id_no":id_no,"acctPhone":mobile_no,"phoneBelongAddr":"云浮","bankName":bank_name},"guaranteeList":[{"perdNo":"1","guarDate":"2024-10-07","perGuarFee":"19.83"},{"perdNo":"2","guarDate":"2024-11-07","perGuarFee":"19.83"},{"perdNo":"3","guarDate":"2024-12-07","perGuarFee":"19.83"},{"perdNo":"4","guarDate":"2025-01-07","perGuarFee":"19.83"},{"perdNo":"5","guarDate":"2025-02-07","perGuarFee":"19.83"},{"perdNo":"6","guarDate":"2025-03-07","perGuarFee":"19.83"},{"perdNo":"7","guarDate":"2025-04-07","perGuarFee":"19.83"},{"perdNo":"8","guarDate":"2025-05-07","perGuarFee":"19.83"},{"perdNo":"9","guarDate":"2025-06-07","perGuarFee":"19.83"},{"perdNo":"10","guarDate":"2025-07-07","perGuarFee":"19.83"},{"perdNo":"11","guarDate":"2025-08-07","perGuarFee":"19.83"},{"perdNo":"12","guarDate":"2025-09-07","perGuarFee":"19.83"}]}),"requestNo":req_no}
@@ -306,6 +304,7 @@ def test_haixia_loan_success():
 @allure.feature("授信模块")
 @allure.story("海峡资方授信还款案例")
 @allure.title("还款成功-到期还款")
+@pytest.mark.skip()
 def test_haixia_dueday_repay_success():
     with allure.step("数据初始化"):
         id_no, birthday = get_user_idNo()

@@ -53,7 +53,7 @@ def test_zfzt_banked_query():
 
 # 支付中台绑卡申请
 def test_zfzt_bank_apply(ACCOUNT_NAME="胡斌", TEL="15932943620", ID="440106197404139496",
-                         CREDIT_ACCTNO="6217001732763194480", PRODUCT_CODE="TL"):
+                         CREDIT_ACCTNO="6217001732763194480", PRODUCT_CODE="BF"):
     ACCOUNT_NAME = ACCOUNT_NAME
     TEL = TEL
     ID = ID
@@ -132,12 +132,12 @@ def test_zfzt_agrm_no_sync():
 
 # 支付中台扣款申请 ACCOUNT_NAME="胡斌", TEL="15932943620", ID="440106197404139496",
 #                          CREDIT_ACCTNO="6217001732763194480", PRODUCT_CODE="TL"
-def test_zfzt_withhold_apply(ccb_account="6217001732763194480", tel="15932943620", id_no="440106197404139496", product_code="TL", amount="30000"):
+def test_zfzt_withhold_apply(ccb_account="6217001732872646040", tel="15917853170", id_no="440111199912223459", product_code="BF", amount="30000"):
     reqsn = get_zfpt_req_no()
     businessChannel = 101
     ccb_account = ccb_account
     if product_code == "BF":
-        REPAY_PRODUCT_CODE = "repay_baofu_09"
+        REPAY_PRODUCT_CODE = "repay_mock"
     elif product_code == "TL":
         REPAY_PRODUCT_CODE = "repay_tonglian_09"
     else:
@@ -159,6 +159,7 @@ def test_zfzt_withhold_apply(ccb_account="6217001732763194480", tel="15932943620
         })
     }
     datas = test_zjl_jiami(req_data)
+    print(datas)
     resp = core_zfpt_api().zfzt_withhold_apply(reqsn, businessChannel, datas)
     decry_resp = test_zjly_jiemi(resp)
     Logger().init_logger().info(f"解密后的数据为：{decry_resp}")
@@ -185,7 +186,7 @@ def test_zfzt_together_withhold_apply():
 
 
 # 支付中台扣款查询
-def test_zfzt_withhold_query(reqsn="APP20241128144424685149"):
+def test_zfzt_withhold_query(reqsn="APP20241129173150392150"):
     reqsn = reqsn
     businessChannel = 101
     req_data = {
@@ -197,9 +198,3 @@ def test_zfzt_withhold_query(reqsn="APP20241128144424685149"):
     decry_resp = test_zjly_jiemi(resp)
     Logger().init_logger().info(f"解密后的数据为：{decry_resp}")
     return decry_resp
-
-
-if __name__ == '__main__':
-    resp = test_zfzt_bank_apply(PRODUCT_CODE="BF")
-    resp_confirm = test_zfzt_bank_confirm(resp[0])
-    print(resp[0], resp_confirm["AGRMNO"])

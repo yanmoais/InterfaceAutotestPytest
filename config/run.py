@@ -9,6 +9,7 @@ from config.testconfig import BASE_DIR,test_files
 DINGTALK_WEBHOOK_URL = 'https://oapi.dingtalk.com/robot/send?access_token=4e2f50c867fd6781742498e58c0174c36c4240ba372c6c699d1ede1cc06da2c5'
 
 ALLURE_SERVE_PORT = 63342
+report_dir = f"{BASE_DIR}/report/result"
 
 
 def allure_report(test_files, report_dir, event):
@@ -79,21 +80,19 @@ def send_to_dingtalk(text):
 
 
 if __name__ == '__main__':
-    report_dir = f"{BASE_DIR}/report/result"
 
     event = Event()
 
     # 创建并启动进程
     p1 = Process(target=allure_report, args=(test_files, report_dir, event))
-    # p2 = Process(target=send_ding, args=(report_dir, event))
+    p2 = Process(target=send_ding, args=(report_dir, event))
 
     p1.start()
-    # p2.start()
+    p2.start()
 
     p1.join()
-    # p2.join()
+    p2.join()
     # 在本地启动一个Web服务器以查看Allure报告（可选）
     # 注意：这需要在本地机器上安装Allure命令行工具
-    # os.system(f'allure serve {report_dir}/result')
-
-    # os.system(f'allure serve -h 192.168.3.88 -p {ALLURE_SERVE_PORT} {report_dir}/result')
+    os.system(f'allure serve {report_dir}/result')
+    os.system(f'allure serve -h 192.168.3.88 -p {ALLURE_SERVE_PORT} {report_dir}/result')

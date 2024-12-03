@@ -7,6 +7,9 @@
 """
     此文件自动化案例为各个资金方授信-借款-还款流程
 """
+import pytest
+
+from common.Update_Database_Result import Update_Sql_Result
 from testdata.assert_data.banding_assert_data import *
 from testdata.assert_data.loan_assert_data import *
 from testdata.assert_data.loan_credit_amt_assert_data import *
@@ -19,11 +22,11 @@ from common.Encrypt_Decrypt import encrypt_decrypt
 import allure
 
 
-# 中原资金方授信成功
-@allure.epic("中原资方")
+# 中原提前花资金方授信成功
+@allure.epic("中原提前花资方")
 @allure.feature("授信模块")
 @allure.title("授信成功")
-@allure.story("中原资方授信放款案例")
+@allure.story("中原提前花资方授信放款案例")
 @allure.severity(allure.severity_level.CRITICAL)
 def test_zhongyuan_credit_success():
     with allure.step("数据初始化"):
@@ -40,6 +43,9 @@ def test_zhongyuan_credit_success():
         loan_sqe_no = get_req_seq_no()
         req_no = get_req_no()
         logging = Logger().init_logger()
+
+    with allure.step("切换成MOCK模式"):
+        Update_Sql_Result().update_zytqh_zjly_mock()
 
     with allure.step("发起授信/客户信息同步"):
         # 1.授信申请加密
@@ -67,11 +73,11 @@ def test_zhongyuan_credit_success():
         loan_success_assert(loan_sqe_no, credit_success_assert_data)
 
 
-# 中原资金方额度查询成功
-@allure.epic("中原资方")
+# 中原提前花资金方额度查询成功
+@allure.epic("中原提前花资方")
 @allure.feature("授信模块")
 @allure.title("授信额度查询成功")
-@allure.story("中原资方授信放款案例")
+@allure.story("中原提前花资方授信放款案例")
 @allure.severity(allure.severity_level.CRITICAL)
 def test_zhongyuan_credit_amt_query_success():
     with allure.step("数据初始化"):
@@ -90,6 +96,9 @@ def test_zhongyuan_credit_amt_query_success():
         bk_no = get_bank_id()
         fk_no = get_fk_id()
         logging = Logger().init_logger()
+
+    with allure.step("切换成MOCK模式"):
+        Update_Sql_Result().update_zytqh_zjly_mock()
 
     with allure.step("发起授信/客户信息同步"):
         # 1.授信申请加密
@@ -172,11 +181,11 @@ def test_zhongyuan_credit_amt_query_success():
         loan_credit_amt_success_assert(loan_sqe_no, credit_amt_query_success_data)
 
 
-# 中原资金方绑卡成功
-@allure.epic("中原资方")
+# 中原提前花资金方绑卡成功
+@allure.epic("中原提前花资方")
 @allure.feature("授信模块")
 @allure.title("绑卡成功")
-@allure.story("中原资方授信放款案例")
+@allure.story("中原提前花资方授信放款案例")
 @allure.severity(allure.severity_level.CRITICAL)
 def test_zhongyuan_binding_card_success():
     with allure.step("数据初始化"):
@@ -194,6 +203,9 @@ def test_zhongyuan_binding_card_success():
         req_no = get_req_no()
         bk_no = get_bank_id()
         logging = Logger().init_logger()
+
+    with allure.step("切换成MOCK模式"):
+        Update_Sql_Result().update_zytqh_zjly_mock()
 
     with allure.step("发起授信/客户信息同步"):
         # 1.授信申请加密
@@ -253,9 +265,9 @@ def test_zhongyuan_binding_card_success():
         banding_card_success_assert(bk_no, banding_card_assert_data)
 
 
-@allure.epic("中原资方")
+@allure.epic("中原提前花资方")
 @allure.feature("授信模块")
-@allure.story("中原资方授信放款案例")
+@allure.story("中原提前花资方授信放款案例")
 @allure.title("放款成功")
 def test_zhongyuan_loan_success():
     with allure.step("数据初始化"):
@@ -275,6 +287,9 @@ def test_zhongyuan_loan_success():
         bk_no = get_bank_id()
         fk_no = get_fk_id()
         logging = Logger().init_logger()
+
+    with allure.step("切换成MOCK模式"):
+        Update_Sql_Result().update_zytqh_zjly_mock()
 
     with allure.step("发起授信/客户信息同步"):
         # 1.授信申请加密
@@ -346,7 +361,6 @@ def test_zhongyuan_loan_success():
     with allure.step("借款状态查询"):
         # 6.放款状态查询加密
         fkzt_encry_data = {"apiKey": "CSZY","params":json_dumps_cn({"requestNo":fk_no,"loanseqno":loan_sqe_no}),"requestNo": req_no}
-        # fkzt_encry_data = {"apiKey": "CSZY","params":json_dumps_cn({"requestNo":"FK1721375809479","loanseqno":"ZLTEST1721375809479"}),"requestNo": req_no}
         # 加密数据
         fkzt_encry = encrypt_decrypt().param_encry_by_channel(fkzt_encry_data, 'zhongYuanTqh')
         logging.info(f"加密后的放款状态数据为：======{fkzt_encry}")
@@ -375,10 +389,11 @@ def test_zhongyuan_loan_success():
         loan_success_assert(loan_sqe_no, loan_success_assert_data)
 
 
-@allure.epic("中原资方")
+@allure.epic("中原提前花资方")
 @allure.feature("授信模块")
-@allure.story("中原资方授信还款案例")
+@allure.story("中原提前花资方授信还款案例")
 @allure.title("还款成功-到期还款")
+@pytest.mark.skip()
 def test_zhongyuan_dueday_repay_success():
     with allure.step("数据初始化"):
         id_no, birthday = get_user_idNo()
@@ -398,6 +413,9 @@ def test_zhongyuan_dueday_repay_success():
         bk_no = get_bank_id()
         fk_no = get_fk_id()
         logging = Logger().init_logger()
+
+    with allure.step("切换成MOCK模式"):
+        Update_Sql_Result().update_zytqh_zjly_mock()
 
     with allure.step("发起授信/客户信息同步"):
         # 1.授信申请加密

@@ -45,6 +45,9 @@ def test_cy_bk_credit_success():
         fk_no = get_fk_id()
         logging = Logger().init_logger()
 
+    with allure.step("切换成MOCK模式"):
+        Update_Sql_Result().update_cybuke_zjly_mock()
+
     with allure.step("发起授信/客户信息同步"):
         # 1.授信申请加密
         sx_need_encry_data = {'apiKey': 'CYBUKE', 'params':json_dumps_cn({"monthlySalary":"1000","birthday":birthday,"applyDt":current_date,"maxDegree":"10","maritalStatus":"10","idStartDate":"2023-11-30","signOffice":"罗定市公安局","mobileNo":mobile_no,"gender":"F","userName":user_name,"loanseqno":loan_sqe_no,"idNo":id_no,"idExpireDate":"2043-11-30","custId":custid,"fromChannel":"01","fileIDs":"2cbe60ee87c04a4a8157546bb9eae7201721714755548,15a77e528c574cfd97887312dfd62ff11721714757215,c1565b0e3b844cb4beaa1f823c529b361721715260280,3db022318aba42389125af725fda1b151721718784024,32c60737dc624a318bbb51ccb207bcd01721714758712,3844840339a74d33ad8e2ab02458c8d81721714758960,f01427fc71f64f50a6dce7412c00a3981721714759218,5576a532f7c747a3b0c4a4842a5cfc941721714759339","regAddress":{"area":"440106","address":"广东省广州市天河区冼村街道珠江东路11号","province":"440000","city":"440100"},"liveAddress":{"area":"440106","address":"广东省广州市天河区冼村街道珠江东路11号","province":"440000","city":"440100"},"emergencyContact":[{"relation":"01","mobileNo":"18197269653","name":"毛不易"},{"relation":"02","mobileNo":"18197269659","name":"李文忠"}],"guaranteeInfo":{"guarOdIntRate":"0.00022037","guarRate":"0.079333","guarTime":"12","guarAmt":"237.96"},"occupationInfo":{"companyAddInfo":{"area":"440106","address":"广东省广州市天河区冼村街道珠江东路11号","province":"440000","city":"440100"},"profession":"0","companyPhone":"02035949111","companyName":"测试科技有限公司","industry":"A","position":"01"},"loanInfo":{"priceAcc":"0.2395","loanFreq":"1M","rateType":"1","loanType":"PZ","reqPeriods":reqPeriods,"reqAmount":loan_amt,"dueDayOpt":"1","custDayRate":"0.2395","reqPurpose":"1"},"accInfoList":[{"acctKind":"01","acctTyp":"01","acctBankCode":"0105","bankName":bank_name,"acctNo":acct_no,"acctName":user_name,"idNo":id_no,"acctPhone":mobile_no,"phoneBelongAddr":"云浮"},{"acctKind":"02","acctTyp":"01","acctBankCode":"0105","bankName":bank_name,"acctNo":acct_no,"acctName":user_name,"idNo":id_no,"acctPhone":mobile_no,"phoneBelongAddr":"云浮"}]}), 'requestNo': req_no}
@@ -92,6 +95,9 @@ def test_cy_bk_binding_card_success():
         bk_id = get_bank_id()
         fk_no = get_fk_id()
         logging = Logger().init_logger()
+
+    with allure.step("切换成MOCK模式"):
+        Update_Sql_Result().update_cybuke_zjly_mock()
 
     with allure.step("发起授信/客户信息同步"):
         # 1.授信申请加密
@@ -165,6 +171,9 @@ def test_cy_bk_credit_amt_query_success():
         bk_id = get_bank_id()
         fk_no = get_fk_id()
         logging = Logger().init_logger()
+
+    with allure.step("切换成MOCK模式"):
+        Update_Sql_Result().update_cybuke_zjly_mock()
 
     with allure.step("发起授信/客户信息同步"):
         # 1.授信申请加密
@@ -261,6 +270,9 @@ def test_cy_bk_loan_success():
         bk_id = get_bank_id()
         fk_no = get_fk_id()
         logging = Logger().init_logger()
+
+    with allure.step("切换成MOCK模式"):
+        Update_Sql_Result().update_cybuke_zjly_mock()
 
     with allure.step("发起授信/客户信息同步"):
         # 1.授信申请加密

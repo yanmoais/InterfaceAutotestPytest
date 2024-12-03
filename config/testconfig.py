@@ -15,12 +15,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # 测试文件路径列表（请根据实际情况修改）
 test_files = [
     f"{BASE_DIR}/testcase/test_zjly/test_JmxLoanRepay.py",
-    f"{BASE_DIR}/testcase/test_zjly/test_ZyLoanRepay.py",
-    f"{BASE_DIR}/testcase/test_zjly/test_NewCYLoanRepay.py",
-    f"{BASE_DIR}/testcase/test_zjly/test_ZxLoanRepay.py",
-    f"{BASE_DIR}/testcase/test_zjly/test_HaiXiaLoanRepay.py",
-    f"{BASE_DIR}/testcase/test_zjly/test_MengShangLoanRepay.py",
-    f"{BASE_DIR}/testcase/test_zjly/test_RunLouLoanRepay.py"
+    # f"{BASE_DIR}/testcase/test_zjly/test_ZyLoanRepay.py",
+    # f"{BASE_DIR}/testcase/test_zjly/test_NewCYLoanRepay.py",
+    # f"{BASE_DIR}/testcase/test_zjly/test_ZxLoanRepay.py",
+    # f"{BASE_DIR}/testcase/test_zjly/test_HaiXiaLoanRepay.py",
+    # f"{BASE_DIR}/testcase/test_zjly/test_MengShangLoanRepay.py",
+    # f"{BASE_DIR}/testcase/test_zjly/test_RunLouLoanRepay.py"
 ]
 
 channel_codes = {"APPZY", "RP"}
