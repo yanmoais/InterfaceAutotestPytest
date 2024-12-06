@@ -6,12 +6,8 @@
 """
     此文件自动化案例为各个资金方授信-借款-还款流程
 """
-import time
 import allure
-import pytest
-
 from common.Update_Database_Result import Update_Sql_Result
-from testdata.assert_data.banding_assert_data import banding_card_assert_data_new_cy
 from testdata.assert_data.loan_assert_data import *
 from testdata.assert_data.banding_assert_data import *
 from testdata.assert_data.loan_credit_amt_assert_data import *
