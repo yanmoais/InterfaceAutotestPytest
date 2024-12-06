@@ -28,7 +28,7 @@ import allure
 @allure.severity(allure.severity_level.CRITICAL)
 def test_zx_credit_success():
     with allure.step("数据初始化"):
-        id_no, birthday = get_zx_user_id_no()
+        id_no, birthday = get_zx_user_id_no(year_s=1970, year_e=1977)
         user_name = get_user_name()
         mobile_no = get_phone_mum()
         acct_no = get_ccb_num()
@@ -79,7 +79,7 @@ def test_zx_credit_success():
 @allure.severity(allure.severity_level.CRITICAL)
 def test_zx_credit_amt_query_success():
     with allure.step("数据初始化"):
-        id_no, birthday = get_zx_user_id_no()
+        id_no, birthday = get_zx_user_id_no(year_s=1970, year_e=1977)
         user_name = get_user_name()
         mobile_no = get_phone_mum()
         acct_no = get_ccb_num()
@@ -178,7 +178,7 @@ def test_zx_credit_amt_query_success():
 @allure.severity(allure.severity_level.CRITICAL)
 def test_zx_binding_card_success():
     with allure.step("数据初始化"):
-        id_no, birthday = get_zx_user_id_no()
+        id_no, birthday = get_zx_user_id_no(year_s=1970, year_e=1977)
         user_name = get_user_name()
         mobile_no = get_phone_mum()
         acct_no = get_ccb_num()
@@ -252,7 +252,7 @@ def test_zx_binding_card_success():
 @allure.title("放款成功")
 def test_zx_loan_success():
     with allure.step("数据初始化"):
-        id_no, birthday = get_zx_user_id_no()
+        id_no, birthday = get_zx_user_id_no(year_s=1970, year_e=1977)
         user_name = get_user_name()
         mobile_no = get_phone_mum()
         acct_no = get_ccb_num()
@@ -367,7 +367,7 @@ def test_zx_loan_success():
 @pytest.mark.skip()
 def test_zx_repay_success():
     with allure.step("数据初始化"):
-        id_no, birthday = get_zx_user_id_no()
+        id_no, birthday = get_zx_user_id_no(year_s=1970, year_e=1977)
         user_name = get_user_name()
         mobile_no = get_phone_mum()
         acct_no = get_ccb_num()
@@ -443,7 +443,7 @@ def test_zx_repay_success():
 @pytest.mark.skip()
 def test_new_zx_loan_success():
     with allure.step("数据初始化"):
-        id_no, birthday = get_zx_user_id_no()
+        id_no, birthday = get_zx_user_id_no(year_s=1970, year_e=1977)
         user_name = get_user_name()
         mobile_no = get_phone_mum()
         acct_no = get_ccb_num()

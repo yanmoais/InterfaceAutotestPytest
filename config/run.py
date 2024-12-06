@@ -6,9 +6,9 @@ import time
 from config.testconfig import BASE_DIR,test_files
 
 # 替换为您的钉钉机器人的Webhook URL
-DINGTALK_WEBHOOK_URL = 'https://oapi.dingtalk.com/robot/send?access_token=4e2f50c867fd6781742498e58c0174c36c4240ba372c6c699d1ede1cc06da2c5'
+DINGTALK_WEBHOOK_URL = 'https://oapi.dingtalk.com/robot/send?access_token=70996a6d738bb7a45cd9bbac13c8ff7d25f38da0edc3ab2e1601621f82b21b0f'
 
-ALLURE_SERVE_PORT = 63342
+ALLURE_SERVE_PORT = 33435
 report_dir = f"{BASE_DIR}/report/result"
 
 

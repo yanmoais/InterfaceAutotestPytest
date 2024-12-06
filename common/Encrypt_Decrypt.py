@@ -43,7 +43,7 @@ class encrypt_decrypt(Base_Api):
         try:
             # 需要将数据再次格式化成带转义符并且去除空格
             data = json_dumps_format(request_data)
-            logging.info(f"需要加密的代偿后还款计划同步数据为：======{data}")
+            logging.info(f"需要加密的数据为：======{data}")
             self.logging.info(f"开始加密请求数据==========,{data}")
             encry_data = self.dubbo_api.post(apis, data)
             return encry_data

@@ -47,8 +47,8 @@ def test_mengshang_loan_success():
 
     # 绑定支付通道
     with allure.step("绑定支付通道"):
-        resp = test_zfzt_bank_apply(ACCOUNT_NAME=user_name, TEL=mobile_no, ID=id_no, CREDIT_ACCTNO=acct_no)
-        resp_confirm = test_zfzt_bank_confirm(resp[0])
+        resp = core_zjly_func().test_zfzt_bank_apply(ACCOUNT_NAME=user_name, TEL=mobile_no, ID=id_no, CREDIT_ACCTNO=acct_no)
+        resp_confirm = core_zjly_func().test_zfzt_bank_confirm(resp[0])
         signProtocolId = resp_confirm['AGRMNO']
         logging.info(f"当前绑卡状态为： {resp_confirm}")
 

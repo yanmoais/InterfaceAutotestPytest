@@ -12,7 +12,7 @@ class Select_Sql_Result(Mysql):
 
     # 查询批发侧fr_api_order_info表订单信息,根据借款流水号来查询
     def select_api_order_info_result(self, req_seq_no):
-        select_sql = f"SELECT ord.loan_state, ord.trans_result, ord.trans_result_msg, ord.up_appl_sts, ord.settle_status, ord.is_compensatory, ord.delete_flag, ord.notify FROM finance_router.fr_api_order_info ord WHERE ord.req_seq_no = '{req_seq_no}'"
+        select_sql = f"SELECT ord.loan_state, ord.trans_result_msg, ord.up_appl_sts, ord.settle_status, ord.is_compensatory, ord.delete_flag, ord.notify FROM finance_router.fr_api_order_info ord WHERE ord.req_seq_no = '{req_seq_no}'"
         result = Mysql().select_db(select_sql)[0]
         self.logging.info(f"数据库查询返回数据为：==={result}")
         return result
