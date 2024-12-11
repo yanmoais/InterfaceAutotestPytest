@@ -28,6 +28,8 @@ class Base_Api:
             self.headers = {"Content-Type": "application/json"}
         elif ENV == 'api':
             self.uri = config['test_api_host']
+        elif ENV == 'RISK':
+            self.uri = config['risk_host']
         elif ENV == "TYH_HY":
             self.uri = config['test_tyh_hy_host']
         elif ENV == "TYH_APP":

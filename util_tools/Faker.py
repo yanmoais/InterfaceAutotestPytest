@@ -192,7 +192,7 @@ def get_ccb_num():
 def get_new_cy_ccb_num():
     while True:
         timestamp_part = str(int(time.time() * 1000)).zfill(1)
-        data = "621700" + timestamp_part
+        data = "621720" + timestamp_part
         if data.endswith(('0', '4', '8', '9')):
             return data
 
@@ -201,7 +201,7 @@ def get_new_cy_ccb_num():
 def get_jmx_ccb_num():
     while True:
         timestamp_part = str(int(time.time() * 1000)).zfill(1)
-        data = "621700" + timestamp_part
+        data = "621720" + timestamp_part
         if data.endswith(('1', '2', '4', '5', '7', '9', '0')):
             return data
 
@@ -210,7 +210,7 @@ def get_jmx_ccb_num():
 def get_zy_ccb_num():
     while True:
         timestamp_part = str(int(time.time() * 1000)).zfill(1)
-        data = "621700" + timestamp_part
+        data = "621720" + timestamp_part
         if data.endswith(('1', '2', '4', '5', '6', '7', '9', '0')):
             return data
 
@@ -219,7 +219,7 @@ def get_zy_ccb_num():
 def get_haixia_ccb_num():
     while True:
         timestamp_part = str(int(time.time() * 1000)).zfill(1)
-        data = "621700" + timestamp_part
+        data = "621720" + timestamp_part
         if data.endswith(('3', '4', '5', '6', '7', '8', '9', '0')):
             return data
 
@@ -228,7 +228,7 @@ def get_haixia_ccb_num():
 def get_baofu_ccb_num(rule=('0', '2', '4', '6', '8')):
     while True:
         timestamp_part = str(int(time.time() * 1000)).zfill(1)
-        data = "621700" + timestamp_part
+        data = "621720" + timestamp_part
         if data.endswith((rule)):
             return data
 
@@ -237,7 +237,7 @@ def get_baofu_ccb_num(rule=('0', '2', '4', '6', '8')):
 def get_tl_bank_ccb_num():
     while True:
         timestamp_part = str(int(time.time() * 1000)).zfill(1)
-        data = "621700" + timestamp_part
+        data = "621720" + timestamp_part
         if data.endswith(('0')):
             return data  # 返回找到的数据
 
@@ -347,7 +347,7 @@ def tyh_h5_loan_repay(credit_apply_no, user_id, loan_apply_no):
 
 if __name__ == '__main__':
     # certificationApplyNo = get_api_bk_id()
-    id_no, birthday = get_zx_user_id_no()
+    id_no, birthday = get_zx_user_id_no(year_s=1994, year_e=1994)
     ccb = get_baofu_ccb_num()
     phone = read_risk_phone()
     # print(id_no, birthday)

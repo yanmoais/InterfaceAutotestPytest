@@ -51,7 +51,7 @@ class core_zjly_func:
         ID = ID
         CREDIT_ACCTNO = CREDIT_ACCTNO
         if PRODUCT_CODE == "BF":
-            BIND_PRODUCT_CODE = "bind_mock"
+            BIND_PRODUCT_CODE = "bind_baofu_9"
         elif PRODUCT_CODE == "TL":
             BIND_PRODUCT_CODE = "bind_tonglian_09"
         else:
@@ -186,3 +186,4 @@ class core_zjly_func:
         decry_resp = self.test_zjly_jiemi(resp)
         Logger().init_logger().info(f"解密后的数据为：{decry_resp}")
         return decry_resp
+
