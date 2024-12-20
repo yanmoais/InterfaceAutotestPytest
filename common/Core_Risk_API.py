@@ -23,9 +23,14 @@ class core_risk_api(Base_Api):
     # 风控手机号白名单加白
     def test_risk_add_phone(self, encry_request_data):
         try:
+            data = {
+                "data": [
+                    encry_request_data
+                ]
+            }
             self.logging.info(f"开始发送风控加白请求：========，请求数据为{encry_request_data}")
             resp = self.base_api.api_post("/drms/risk_management/white/add",
-                                          json_dumps_cn(encry_request_data))
+                                          json_dumps_cn(data))
             self.logging.info(f"返回结果数据为：=======，{json_dumps_cn(resp)}")
             return json_dumps_cn(resp)
         except Exception as e:

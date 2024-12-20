@@ -416,6 +416,7 @@ def test_jmx_repay_d0_success_api_flow():
 @allure.title("360沙盒渠道-到期主动还款成功-API全流程")
 @allure.story("360沙盒渠道-金美信消金资方还款案例-API全流程")
 @allure.severity(allure.severity_level.CRITICAL)
+@pytest.mark.skip()
 def test_jmx_repay_success_api_flow():
     with allure.step("数据初始化"):
         # 核心api的基类

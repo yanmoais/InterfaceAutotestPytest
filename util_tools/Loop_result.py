@@ -222,7 +222,7 @@ class loop_result:
             resp = None
             if count < 10:
                 try:
-                    time.sleep(15)
+                    time.sleep(10)
                     # 加密授信查询数据
                     encry_data = self.api.api_param_encry(data, channel_code)
                     # 查询授信结果

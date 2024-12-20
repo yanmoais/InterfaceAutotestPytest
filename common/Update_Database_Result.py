@@ -132,6 +132,7 @@ class Update_Sql_Result(Mysql):
                 self.logging.error(f"请求发生错误：{e}")
             # 关闭redis
             finally:
+                self.logging.info("当前已切换为Mock环境！")
                 redis_clinet.close_db()
             return result
         else:
@@ -158,6 +159,7 @@ class Update_Sql_Result(Mysql):
             redis_clinet.delete_redis_key("zijinluyou:api:param_config:::jinMeiXin")
             # 关闭redis
             redis_clinet.close_db()
+            self.logging.info("当前已切为资方测试环境！")
             return result
         else:
             self.logging.info("当前模式为资方测试环境，无需切换！")
@@ -478,5 +480,5 @@ class Update_Sql_Result(Mysql):
 if __name__ == '__main__':
     user_id = "ZLTEST_202410161729069481126"
     funds_code = "FR_RUN_LOU"
-    Update_Sql_Result().update_zjly_fr_api_repayment_plan_due_day("ZLTEST1733205612439", "1")
+    Update_Sql_Result().update_jmx_zjly_test()
     # print((datetime.datetime.now() - relativedelta(months=1)).strftime("%Y-%m-%d %H:%M:%S"))

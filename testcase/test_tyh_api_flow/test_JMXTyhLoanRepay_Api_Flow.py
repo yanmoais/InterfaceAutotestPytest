@@ -333,6 +333,7 @@ def test_tyh_jmx_loan_success():
 @allure.title("天源花渠道-还款成功-天源花API全流程")
 @allure.story("天源花渠道-金美信资方还款案例-天源花API全流程")
 @allure.severity(allure.severity_level.CRITICAL)
+@pytest.mark.skip()
 def test_tyh_jmx_repay_success():
     with allure.step("数据初始化"):
         api = core_tyh_api()

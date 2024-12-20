@@ -79,6 +79,9 @@ def test_zy_loan_success_api_flow():
     with allure.step("更新为限流模式"):
         Update_Sql_Result().update_api_chanel_non_funds("ICE_ZLSK_36")
 
+    with allure.step("更新为MOCK环境"):
+        Update_Sql_Result().update_zytqh_zjly_mock()
+
     with allure.step("用户撞库"):
         # 撞库数据,以手机号为主
         zk_need_encry_data = {"params": {"md5": enc.param_encry_by_md5(mobile_no), "mode": "M"}}

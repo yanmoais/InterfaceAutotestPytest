@@ -40,8 +40,8 @@ def get_credit_apply_no(channel="ZLTEST_"):
 
 # 获取支付平台随机申请编号
 def get_zfpt_req_no():
-    return str("APP" + datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d%H%M%S") + str(
-        random.randint(100000, 999999)))
+    return str(datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d%H%M%S%S") + str(
+        random.randint(1000000, 9999999)))
 
 
 # 获取随机绑卡订单号
@@ -225,7 +225,7 @@ def get_haixia_ccb_num():
 
 
 # 获取随机建设银行卡号,宝付MOCK规则-银行卡
-def get_baofu_ccb_num(rule=('0', '2', '4', '6', '8')):
+def get_baofu_ccb_num(rule=('0')):
     while True:
         timestamp_part = str(int(time.time() * 1000)).zfill(1)
         data = "621720" + timestamp_part
@@ -284,7 +284,7 @@ def get_user_idNo(sex='girl'):  # 1. 生成身份证号码的前17位
 
 
 # 振兴、金美信、中原、海峡身份证MOCK规则，尾号为X放款失败,所以排除了尾号X的身份证号码
-def get_zx_user_id_no(year_s=1970, year_e=2000):
+def get_zx_user_id_no(year_s=1982, year_e=2000):
     id_card_number = generate_valid_id_card_number(year_s, year_e)
 
     # 提取生日信息
@@ -347,7 +347,7 @@ def tyh_h5_loan_repay(credit_apply_no, user_id, loan_apply_no):
 
 if __name__ == '__main__':
     # certificationApplyNo = get_api_bk_id()
-    id_no, birthday = get_zx_user_id_no(year_s=1994, year_e=1994)
+    id_no, birthday = get_zx_user_id_no(year_s=1990, year_e=2019)
     ccb = get_baofu_ccb_num()
     phone = read_risk_phone()
     # print(id_no, birthday)

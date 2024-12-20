@@ -1,15 +1,18 @@
 import os
 import json
+import sys
+object_path = os.path.join(os.path.abspath(os.path.dirname(os.path.dirname(__file__))))
+sys.path.append(object_path)
 from common.Base_API import Base_Api
 from multiprocessing import Process, Event
 import time
-from config.testconfig import BASE_DIR,test_files
+from config.testconfig import BASE_DIR, test_files
 
 # 替换为您的钉钉机器人的Webhook URL
 DINGTALK_WEBHOOK_URL = 'https://oapi.dingtalk.com/robot/send?access_token=70996a6d738bb7a45cd9bbac13c8ff7d25f38da0edc3ab2e1601621f82b21b0f'
 
-ALLURE_SERVE_PORT = 33435
-report_dir = f"{BASE_DIR}/report/result"
+ALLURE_SERVE_PORT = 40463
+report_dir = f"{BASE_DIR}/report"
 
 
 def allure_report(test_files, report_dir, event):
@@ -52,7 +55,7 @@ def send_ding(report_dir, event):
 
             # 构建钉钉消息内容
         report_url = f"http://192.168.3.88:{ALLURE_SERVE_PORT}/index.html"
-
+        # report_url = f"http://localhost:8085/me/my-views/view/all/job/interface-autotest-pytest/allure/"
         text = f"测试用例执行情况:\n" \
                f"通过率：{case_rate}%\n" \
                f"执行用例数：{case_all}个\n" \
@@ -80,7 +83,6 @@ def send_to_dingtalk(text):
 
 
 if __name__ == '__main__':
-
     event = Event()
 
     # 创建并启动进程
@@ -94,5 +96,5 @@ if __name__ == '__main__':
     p2.join()
     # 在本地启动一个Web服务器以查看Allure报告（可选）
     # 注意：这需要在本地机器上安装Allure命令行工具
-    os.system(f'allure serve {report_dir}/result')
-    os.system(f'allure serve -h 192.168.3.88 -p {ALLURE_SERVE_PORT} {report_dir}/result')
+    # os.system(f'allure serve {report_dir}/result')
+    # os.system(f'allure serve -h 192.168.3.88 -p {ALLURE_SERVE_PORT} {report_dir}/result')

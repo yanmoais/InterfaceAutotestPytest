@@ -16,6 +16,7 @@ config = {
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # 测试文件路径列表（请根据实际情况修改）
 test_files = [
+    # f"{BASE_DIR}/testcase/test_zjly/test_jenkins.py"
     f"{BASE_DIR}/testcase/test_zjly/test_CYBKLoanRepay.py",
     f"{BASE_DIR}/testcase/test_zjly/test_HaiXiaLoanRepay.py",
     f"{BASE_DIR}/testcase/test_zjly/test_MengShangLoanRepay.py",
@@ -26,7 +27,16 @@ test_files = [
     f"{BASE_DIR}/testcase/test_zjly/test_XiaoMiLoanRepay.py",
     f"{BASE_DIR}/testcase/test_zjly/test_ZxLoanRepay.py",
     f"{BASE_DIR}/testcase/test_zjly/test_ZyLoanRepay.py",
-    f"{BASE_DIR}/testcase/test_zjly/test_JmxLoanRepay.py"
+    f"{BASE_DIR}/testcase/test_zjly/test_JmxLoanRepay.py",
+    f"{BASE_DIR}/testcase/test_api_flow/test_HaiXiaRepay_Api_Flow.py",
+    f"{BASE_DIR}/testcase/test_api_flow/test_JmxLoanRepay_Api_Flow.py",
+    f"{BASE_DIR}/testcase/test_api_flow/test_NewCY_BF_LoanRepay_Api_Flow.py",
+    f"{BASE_DIR}/testcase/test_api_flow/test_NewCYLoanRepay_Api_Flow.py",
+    f"{BASE_DIR}/testcase/test_api_flow/test_RunLouLoanRepay_Api_Flow.py",
+    f"{BASE_DIR}/testcase/test_api_flow/test_SuShangLoanRepay_Api_Flow.py",
+    f"{BASE_DIR}/testcase/test_api_flow/test_XiaoMiLoanRepay_Api_Flow.py",
+    f"{BASE_DIR}/testcase/test_api_flow/test_ZxRepay_Api_Flow.py",
+    f"{BASE_DIR}/testcase/test_api_flow/test_ZyRepay_Api_Flow.py"
 
 ]
 

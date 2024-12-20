@@ -1,5 +1,11 @@
+import os
+import sys
+object_path = os.path.join(os.path.abspath(os.path.dirname(os.path.dirname(__file__))))
+sys.path.append(object_path)
 from config.Base_Env import BASE_DIR
 import subprocess
+
+
 
 
 def run_script():

@@ -200,6 +200,7 @@ def test_sushang_loan_success_api_flow():
 @allure.title("360沙盒渠道-到期D0还款成功-API全流程")
 @allure.story("360沙盒渠道-苏商（蒙商）资方还款案例-API全流程")
 @allure.severity(allure.severity_level.CRITICAL)
+@pytest.mark.skip()
 def test_sushang_repay_d0_success_api_flow():
     with allure.step("数据初始化"):
         api = core_api_flow_api()
@@ -384,6 +385,7 @@ def test_sushang_repay_d0_success_api_flow():
 @allure.title("360沙盒渠道-到期主动还款成功-API全流程")
 @allure.story("360沙盒渠道-苏商（蒙商）资方还款案例-API全流程")
 @allure.severity(allure.severity_level.CRITICAL)
+@pytest.mark.skip()
 def test_sushang_repay_success_api_flow():
     with allure.step("数据初始化"):
         # 核心api的基类

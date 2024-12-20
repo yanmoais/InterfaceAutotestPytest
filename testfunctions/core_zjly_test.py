@@ -44,8 +44,8 @@ class core_zjly_func:
         return decry_resp
 
     # 支付中台绑卡申请
-    def test_zfzt_bank_apply(self, ACCOUNT_NAME="胡斌", TEL="15932943620", ID="440106197404139496",
-                             CREDIT_ACCTNO="6217001732763194480", PRODUCT_CODE="BF"):
+    def test_zfzt_bank_apply(self, ACCOUNT_NAME="马人性", TEL="13434961367", ID="440511197204245174",
+                             CREDIT_ACCTNO="6227000031095868410", PRODUCT_CODE="BF"):
         ACCOUNT_NAME = ACCOUNT_NAME
         TEL = TEL
         ID = ID
@@ -163,8 +163,8 @@ class core_zjly_func:
             "reqSn": reqsn,
             "businessChannel": businessChannel,
             "params": json_dumps_cn({
-                "REPAY_PRODUCT_CODE": "WECHAT_REPAY",
-                "AMOUNT": "1"
+                "REPAY_PRODUCT_CODE": "ALI_REPAY",
+                "AMOUNT": "30000"
             })
         }
         datas = self.test_zjl_jiami(req_data)
@@ -187,3 +187,10 @@ class core_zjly_func:
         Logger().init_logger().info(f"解密后的数据为：{decry_resp}")
         return decry_resp
 
+
+if __name__ == '__main__':
+    api = core_zjly_func()
+    # resp = api.test_zfzt_together_withhold_apply()
+    # print(resp)
+    rsp = api.test_zfzt_withhold_query("20241216170943432106685")
+    print(rsp)
