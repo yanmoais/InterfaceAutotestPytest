@@ -339,6 +339,7 @@ class loop_result:
     # api全流程借款轮询查询
     def loop_api_flow_loan_result(self, data, loanApplyNo, channel_code):
         # 轮训判断 借款查询结果，为"成功"则跳出
+        times = 30
         count = 0
         while True:
             count += 1
@@ -366,8 +367,8 @@ class loop_result:
                                             sql_result["risk_status"] == "P":
                                         # 执行放款处理任务，调取风控系统
                                         self.__perform_task(loanApplyNo, "loan")
-                                        self.logging.info("开始暂停60S。。。。。")
-                                        time.sleep(30)
+                                        self.logging.info(f"开始暂停{times}S。。。。。")
+                                        time.sleep(times)
                                         self.logging.info("暂停结束。。。。。")
                                     else:
                                         if sql_result["sign_status"]:
@@ -509,6 +510,7 @@ class loop_result:
     # 仅供天源花侧查询API借款数据使用
     def loop_tyh_api_loan_result(self, loanApplyNo):
         # 轮训判断 借款查询结果，为"成功"则跳出
+        times = 30
         count = 0
         while True:
             count += 1
@@ -530,8 +532,8 @@ class loop_result:
                                         sql_result["risk_status"] == "P":
                                     # 执行放款处理任务，调取风控系统
                                     self.__perform_task(loanApplyNo, "loan")
-                                    self.logging.info("开始暂停60S。。。。。")
-                                    time.sleep(60)
+                                    self.logging.info(f"开始暂停{times}S。。。。。")
+                                    time.sleep(times)
                                     self.logging.info("暂停结束。。。。。")
                                 else:
                                     if sql_result["sign_status"]:

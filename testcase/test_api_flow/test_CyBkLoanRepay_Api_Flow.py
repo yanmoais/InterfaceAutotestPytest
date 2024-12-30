@@ -6,8 +6,6 @@
 import time
 import pytest
 import allure
-
-from common.Select_Database_Result import Select_Sql_Result
 from testdata.assert_data.banding_assert_data import *
 from testdata.assert_data.loan_assert_data import *
 from testdata.assert_data.loan_credit_amt_assert_data import credit_amt_query_success_data
@@ -20,18 +18,20 @@ from common.Encrypt_Decrypt import encrypt_decrypt
 from util_tools.Read_photo import *
 from util_tools.Read_Yaml import read_risk_phone
 from common.Update_Database_Result import Update_Sql_Result
+from common.Select_Database_Result import Select_Sql_Result
 from util_tools.Loop_result import loop_result
 from util_tools.Xxl_Job_Executor import execute_xxl_job
+from config.testconfig import channel_codes
 
 
-# API全流程-新长银宝付放款成功
+# API全流程-长银布客放款成功
 @pytest.mark.run(order=10)
-@allure.epic("360沙盒渠道-新长银宝付资方-API全流程")
+@allure.epic("360沙盒渠道-长银布客资方-API全流程")
 @allure.feature("360沙盒渠道-授信模块-API全流程")
 @allure.title("360沙盒渠道-借款成功-API全流程")
-@allure.story("360沙盒渠道-新长银宝付资方授信案例-API全流程")
+@allure.story("360沙盒渠道-长银布客资方授信案例-API全流程")
 @allure.severity(allure.severity_level.CRITICAL)
-def test_new_cy_bf_loan_success_api_flow():
+def test_new_cy_loan_success_api_flow():
     with allure.step("数据初始化"):
         # 核心api的基类
         api = core_api_flow_api()
@@ -60,10 +60,10 @@ def test_new_cy_bf_loan_success_api_flow():
 
         # 获取风控加白了的手机号，读取本地txt文件
         mobile_no = read_risk_phone()
-        # 修改对应的缩写或其他标志：新长银宝付  ==  NCY
-        loanApplyNo = get_req_seq_no("NCYBF")
+        # 修改对应的缩写或其他标志：长银布客  ==  CYBK
+        loanApplyNo = get_req_seq_no("CYBK")
         # 资金方，修改成对应需要放款的资金方funds_code
-        funds_code = "CHANG_YIN_BF"
+        funds_code = "BK_CHANG_YIN"
         # 渠道方，修改成对应需要走的渠道方channel_code
         channel_code = "ICE_ZLSK_36"
         # 借款金额
@@ -115,7 +115,7 @@ def test_new_cy_bf_loan_success_api_flow():
                                   "city": "110100",
                                   "district": "110108",
                                   "companyAddr": "北京市海淀区三里河路15号"},
-                              "agreementTime": apply_time, "loanType": "PZ02"}
+                              "agreementTime": apply_time}
         logging.info(f"{json_dumps_cn(sx_need_encry_data)}")
         # 加密授信数据
         sx_encry_data = api.api_param_encry(sx_need_encry_data, channel_code)
@@ -126,7 +126,7 @@ def test_new_cy_bf_loan_success_api_flow():
         partner_creditNo = sx_decry_data["partnerCreditNo"]
         logging.info(f"解密后的授信申请返回结果为：======{sx_decry_data}")
 
-    with allure.step("更新授信相关表为新长银宝付资方"):
+    with allure.step("更新授信相关表为长银布客资方"):
         db.update_api_flow_all_table(funds_code, user_id)
         logging.info(f"数据库更新资方完毕")
         time.sleep(5)
@@ -138,6 +138,11 @@ def test_new_cy_bf_loan_success_api_flow():
         resp = loop_result().loop_api_flow_sx_result(sx_cx_data, credit_apply_no, channel_code)
         logging.info(f"当前授信结果返回数据为：{resp}")
 
+    with allure.step("推送客户中心"):
+        execute_xxl_job().push_credit_info_to_customer_center(credit_apply_no)
+        time.sleep(5)
+        logging.info("授信成功后推送客户中心成功！")
+
     with allure.step("绑卡申请"):
         # 请求鉴权数据
         bk_jq_need_encry_data = {"userId": user_id, "certificationApplyNo": certificationApplyNo, "bankCode": "0004",
@@ -148,13 +153,13 @@ def test_new_cy_bf_loan_success_api_flow():
         # 绑卡轮询，并且绑卡两次
         # 此处需要优化，360的话不需要指定bindType,直接绑两次卡就好
         with allure.step("第一次绑卡"):
-            if channel_code == "APPZY":
+            if channel_code in channel_codes:
                 bk_jq_need_encry_data["bindType"] = "fundsChannel"
             else:
                 pass
             loop_result().loop_api_flow_bk_result(bk_jq_need_encry_data, channel_code)
         with allure.step("第二次绑卡"):
-            if channel_code == "APPZY" or channel_code == "XL":
+            if channel_code in channel_codes:
                 bk_jq_need_encry_data["bindType"] = "payChannel"
             else:
                 pass
@@ -201,12 +206,12 @@ def test_new_cy_bf_loan_success_api_flow():
         logging.info(f"借款成功返回的查询参数是：{jk_success_resp}")
 
 
-# API全流程-新长银宝付D0批扣还款成功
+# API全流程-长银布客D0批扣还款成功
 @pytest.mark.run(order=11)
-@allure.epic("360沙盒渠道-新长银宝付资方-API全流程")
+@allure.epic("360沙盒渠道-长银布客资方-API全流程")
 @allure.feature("360沙盒渠道-还款模块-API全流程")
 @allure.title("360沙盒渠道-到期D0还款成功-API全流程")
-@allure.story("360沙盒渠道-新长银宝付资方还款案例-API全流程")
+@allure.story("360沙盒渠道-长银布客资方还款案例-API全流程")
 @allure.severity(allure.severity_level.CRITICAL)
 @pytest.mark.skip()
 def test_new_cy_repay_d0_success_api_flow():
@@ -238,10 +243,10 @@ def test_new_cy_repay_d0_success_api_flow():
 
         # 获取风控加白了的手机号，读取本地txt文件
         mobile_no = read_risk_phone()
-        # 修改对应的缩写或其他标志：新长银宝付  ==  NCY
-        loanApplyNo = get_req_seq_no("NCY")
+        # 修改对应的缩写或其他标志：长银布客  ==  CYBK
+        loanApplyNo = get_req_seq_no("CYBK")
         # 资金方，修改成对应需要放款的资金方funds_code
-        funds_code = "CHANG_YIN_BF"
+        funds_code = "BK_CHANG_YIN"
         # 渠道方，修改成对应需要走的渠道方channel_code
         channel_code = "ICE_ZLSK_36"
         # 借款金额
@@ -253,6 +258,9 @@ def test_new_cy_repay_d0_success_api_flow():
 
     with allure.step("更新为限流模式"):
         Update_Sql_Result().update_api_chanel_non_funds("ICE_ZLSK_36")
+
+    with allure.step("更新为MOCK环境"):
+        Update_Sql_Result().update_cynew_zjly_mock()
 
     with allure.step("用户撞库"):
         # 撞库数据,以手机号为主
@@ -290,7 +298,7 @@ def test_new_cy_repay_d0_success_api_flow():
                                   "city": "110100",
                                   "district": "110108",
                                   "companyAddr": "北京市海淀区三里河路15号"},
-                              "agreementTime": apply_time, "loanType": "PZ02"}
+                              "agreementTime": apply_time}
         logging.info(f"{json_dumps_cn(sx_need_encry_data)}")
         # 加密授信数据
         sx_encry_data = api.api_param_encry(sx_need_encry_data, channel_code)
@@ -301,7 +309,7 @@ def test_new_cy_repay_d0_success_api_flow():
         partner_creditNo = sx_decry_data["partnerCreditNo"]
         logging.info(f"解密后的授信申请返回结果为：======{sx_decry_data}")
 
-    with allure.step("更新授信相关表为新长银宝付资方"):
+    with allure.step("更新授信相关表为长银布客资方"):
         db.update_api_flow_all_table(funds_code, user_id)
         logging.info(f"数据库更新资方完毕")
         time.sleep(5)
@@ -313,6 +321,11 @@ def test_new_cy_repay_d0_success_api_flow():
         resp = loop_result().loop_api_flow_sx_result(sx_cx_data, credit_apply_no, channel_code)
         logging.info(f"当前授信结果返回数据为：{resp}")
 
+    with allure.step("推送客户中心"):
+        execute_xxl_job().push_credit_info_to_customer_center(credit_apply_no)
+        time.sleep(5)
+        logging.info("授信成功后推送客户中心成功！")
+
     with allure.step("绑卡申请"):
         # 请求鉴权数据
         bk_jq_need_encry_data = {"userId": user_id, "certificationApplyNo": certificationApplyNo, "bankCode": "0004",
@@ -323,13 +336,13 @@ def test_new_cy_repay_d0_success_api_flow():
         # 绑卡轮询，并且绑卡两次
         # 此处需要优化，360的话不需要指定bindType,直接绑两次卡就好
         with allure.step("第一次绑卡"):
-            if channel_code == "APPZY":
+            if channel_code in channel_codes:
                 bk_jq_need_encry_data["bindType"] = "fundsChannel"
             else:
                 pass
             loop_result().loop_api_flow_bk_result(bk_jq_need_encry_data, channel_code)
         with allure.step("第二次绑卡"):
-            if channel_code == "APPZY" or channel_code == "XL":
+            if channel_code in channel_codes:
                 bk_jq_need_encry_data["bindType"] = "payChannel"
             else:
                 pass

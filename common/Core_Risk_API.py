@@ -41,10 +41,5 @@ if __name__ == '__main__':
     api = core_risk_api()
     print(api.uri)
     phone = read_risk_phone()
-    data = {
-        "data": [
-            "15915370822"
-        ]
-    }
-    resp = api.test_risk_add_phone(data)
+    resp = api.test_risk_add_phone("17015370866")
     print(resp)

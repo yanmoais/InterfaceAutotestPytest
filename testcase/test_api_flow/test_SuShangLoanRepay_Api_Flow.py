@@ -64,8 +64,8 @@ def test_sushang_loan_success_api_flow():
     with allure.step("更新为限流模式"):
         Update_Sql_Result().update_api_chanel_non_funds("ICE_ZLSK_36")
 
-    # with allure.step("更新为MOCK环境"):
-    #     Update_Sql_Result().update_sushang_zjly_mock()
+    with allure.step("更新为MOCK环境"):
+        Update_Sql_Result().update_sushang_zjly_mock()
 
     with allure.step("用户撞库"):
         # 撞库数据,以手机号为主
