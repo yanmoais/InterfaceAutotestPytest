@@ -33,7 +33,7 @@ def test_tyh_jmx_credit_success():
         credit_apply_no = get_credit_apply_no("TYH_")
         db = Update_Sql_Result()
         apply_time = get_time_stand_api()
-        id_no, birthday = get_zx_user_id_no(1990, 1998)
+        id_no, birthday = get_zx_user_id_no(year_s=1990, year_e=2019)
         user_name = get_user_name()
         user_id = get_cust_id()
         bank_card_no = get_baofu_ccb_num(('0', '2', '4', '6'))
@@ -47,16 +47,16 @@ def test_tyh_jmx_credit_success():
         # 资金方，修改成对应需要放款的资金方funds_code
         funds_code = "JMX"
         # 渠道方，修改成对应需要走的渠道方channel_code
-        channel_code = "TYH_HY"
+        channel_code = "TYH_SD"
         # 借款金额
         loan_amt = "2000"
         # 借款期数
         reqPeriods = "12"
         # 产品信息
-        product_code = "TYH_HY"
+        product_code = "TYH_SD"
 
     with allure.step("更新为限流模式"):
-        Update_Sql_Result().update_api_chanel_non_funds("TYH_HY")
+        Update_Sql_Result().update_api_chanel_non_funds("TYH_SD")
 
     with allure.step("用户撞库"):
         # 撞库数据,以手机号为主
@@ -155,16 +155,16 @@ def test_tyh_jmx_loan_success():
         # 资金方，修改成对应需要放款的资金方funds_code
         funds_code = "JMX"
         # 渠道方，修改成对应需要走的渠道方channel_code
-        channel_code = "TYH_HY"
+        channel_code = "TYH_SD"
         # 借款金额
         loan_amt = "2000"
         # 借款期数
         reqPeriods = "12"
         # 产品信息
-        product_code = "TYH_HY"
+        product_code = "TYH_SD"
 
     with allure.step("更新为限流模式"):
-        Update_Sql_Result().update_api_chanel_non_funds("TYH_HY")
+        Update_Sql_Result().update_api_chanel_non_funds("TYH_SD")
 
     with allure.step("用户撞库"):
         # 撞库数据,以手机号为主
@@ -352,13 +352,13 @@ def test_tyh_jmx_repay_success():
         # 资金方，修改成对应需要放款的资金方funds_code
         funds_code = "JMX"
         # 渠道方，修改成对应需要走的渠道方channel_code
-        channel_code = "TYH_HY"
+        channel_code = "TYH_SD"
         # 借款金额
         loan_amt = "2000"
         # 借款期数
         reqPeriods = "12"
         # 产品信息
-        product_code = "TYH_HY"
+        product_code = "TYH_SD"
 
         # 借款申请单号
         loanApplyNo = "7b83fa01bfe54cfd813461ff103bea35"
