@@ -328,6 +328,35 @@ class Update_Sql_Result(Mysql):
         else:
             self.logging.info("当前模式为资方测试环境，无需切换！")
 
+    # 修改蒙商走Mock环境
+    def update_mengshang_zjly_mock(self):
+        # 获取当前是否为Mock环境
+        results = Select_Sql_Result().select_fr_channel_config('小米mock')
+        if results['code'] == "xiaoMi_mock":
+            update_sql_1 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'xiaoMi_temp' WHERE fr.name = '小米mock';"
+            update_sql_2 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'xiaoMi_mock' WHERE fr.name = '小米测试';"
+            update_sql_3 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'xiaoMi' WHERE fr.name = '小米mock';"
+            Mysql().update_db(update_sql_1)
+            time.sleep(1)
+            Mysql().update_db(update_sql_2)
+            time.sleep(1)
+            result = Mysql().update_db(update_sql_3)
+            self.logging.info(f"数据库执行完成!")
+
+            # 实例化Redis连接
+            redis_clinet = Redis()
+            # 删除润楼Redis的Key值
+            try:
+                redis_clinet.delete_redis_key("zijinluyou:api:param_config:::xiaoMi")
+            except Exception as e:
+                self.logging.error(f"请求发生错误：{e}")
+            # 关闭redis
+            finally:
+                redis_clinet.close_db()
+            return result
+        else:
+            self.logging.info("当前模式为Mock环境，无需切换！")
+
     # 修改小米走Mock环境
     def update_xiaomi_zjly_mock(self):
         # 获取当前是否为Mock环境
@@ -436,6 +465,60 @@ class Update_Sql_Result(Mysql):
         else:
             self.logging.info("当前模式为资方测试环境，无需切换！")
 
+    # 修改新长银走Mock环境
+    def update_cynew_zjly_mock(self):
+        # 获取当前是否为Mock环境
+        results = Select_Sql_Result().select_fr_channel_config('长银Mock')
+        if results['code'] == "changYinMock":
+            update_sql_1 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'changYinNew_temp' WHERE fr.name = '长银Mock';"
+            update_sql_2 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'changYinMock' WHERE fr.name = '长银新模式';"
+            update_sql_3 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'changYinNew' WHERE fr.name = '长银Mock';"
+            Mysql().update_db(update_sql_1)
+            time.sleep(1)
+            Mysql().update_db(update_sql_2)
+            time.sleep(1)
+            result = Mysql().update_db(update_sql_3)
+            self.logging.info(f"数据库执行完成!")
+
+            # 实例化Redis连接
+            redis_clinet = Redis()
+            # 删除润楼Redis的Key值
+            try:
+                redis_clinet.delete_redis_key("zijinluyou:api:param_config:::changYinNew")
+            except Exception as e:
+                self.logging.error(f"请求发生错误：{e}")
+            # 关闭redis
+            finally:
+                redis_clinet.close_db()
+            return result
+        else:
+            self.logging.info("当前模式为Mock环境，无需切换！")
+
+    # 修改新长银走资方测试环境
+    def update_cynew_zjly_test(self):
+        # 获取当前是否为Mock环境
+        results = Select_Sql_Result().select_fr_channel_config('长银步客Mock')
+        if results['code'] == "changYinBuKe":
+            update_sql_1 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'changYinBuKeMock_temp' WHERE fr.name = '长银步客Mock';"
+            update_sql_2 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'changYinBuKe' WHERE fr.name = '长银步客-测试';"
+            update_sql_3 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'changYinBuKeMock' WHERE fr.name = '长银步客Mock';"
+            Mysql().update_db(update_sql_1)
+            time.sleep(1)
+            Mysql().update_db(update_sql_2)
+            time.sleep(1)
+            result = Mysql().update_db(update_sql_3)
+            self.logging.info(f"数据库执行完成!")
+
+            # 实例化Redis连接
+            redis_clinet = Redis()
+            # 删除润楼Redis的Key值
+            redis_clinet.delete_redis_key("zijinluyou:api:param_config:::changYinBuKe")
+            # 关闭redis
+            redis_clinet.close_db()
+            return result
+        else:
+            self.logging.info("当前模式为资方测试环境，无需切换！")
+
     # 修改Api侧对应渠道为限流模式
     def update_api_chanel_non_funds(self, channel_code, test_db="api"):
         # 获取当前是否为限流模式
@@ -478,7 +561,13 @@ class Update_Sql_Result(Mysql):
 
 
 if __name__ == '__main__':
-    user_id = "ZLTEST_202410161729069481126"
-    funds_code = "FR_RUN_LOU"
-    Update_Sql_Result().update_jmx_zjly_test()
+    # user_id = "ZLTEST_202410161729069481126"
+    # funds_code = "FR_RUN_LOU"
+    # Update_Sql_Result().update_cynew_zjly_mock()
+    results = Select_Sql_Result().select_fr_channel_config('中原提钱花MOCK')
+    print()
+    if 'mock'.lower() not in results['code'].lower():
+        print("当前是mock环境")
+    else:
+        print("当前是测试环境")
     # print((datetime.datetime.now() - relativedelta(months=1)).strftime("%Y-%m-%d %H:%M:%S"))

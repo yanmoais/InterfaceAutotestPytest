@@ -8,6 +8,7 @@ import time
 import pytest
 import allure
 from common.Encrypt_Decrypt import encrypt_decrypt
+from config.testconfig import channel_codes
 from util_tools.logger import Logger
 from util_tools.Faker import *
 from common.Core_Tyh_Api import core_tyh_api
@@ -36,7 +37,7 @@ def test_tyh_jmx_credit_success():
         id_no, birthday = get_zx_user_id_no(year_s=1990, year_e=2019)
         user_name = get_user_name()
         user_id = get_cust_id()
-        bank_card_no = get_baofu_ccb_num(('0', '2', '4', '6'))
+        bank_card_no = get_baofu_ccb_num()
         certificationApplyNo = get_api_bk_id()
         logging = Logger().init_logger()
 
@@ -47,16 +48,16 @@ def test_tyh_jmx_credit_success():
         # 资金方，修改成对应需要放款的资金方funds_code
         funds_code = "JMX"
         # 渠道方，修改成对应需要走的渠道方channel_code
-        channel_code = "TYH_SD"
+        channel_code = "TYH_HY"
         # 借款金额
         loan_amt = "2000"
         # 借款期数
         reqPeriods = "12"
         # 产品信息
-        product_code = "TYH_SD"
+        product_code = "TYH_HY"
 
     with allure.step("更新为限流模式"):
-        Update_Sql_Result().update_api_chanel_non_funds("TYH_SD")
+        Update_Sql_Result().update_api_chanel_non_funds("TYH_HY")
 
     with allure.step("用户撞库"):
         # 撞库数据,以手机号为主
@@ -144,7 +145,7 @@ def test_tyh_jmx_loan_success():
         id_no, birthday = get_zx_user_id_no(1990, 1998)
         user_name = get_user_name()
         user_id = get_cust_id()
-        bank_card_no = get_baofu_ccb_num(('0', '2', '4', '6'))
+        bank_card_no = get_baofu_ccb_num()
         certificationApplyNo = get_api_bk_id()
         logging = Logger().init_logger()
 
@@ -155,16 +156,16 @@ def test_tyh_jmx_loan_success():
         # 资金方，修改成对应需要放款的资金方funds_code
         funds_code = "JMX"
         # 渠道方，修改成对应需要走的渠道方channel_code
-        channel_code = "TYH_SD"
+        channel_code = "TYH_HY"
         # 借款金额
         loan_amt = "2000"
         # 借款期数
         reqPeriods = "12"
         # 产品信息
-        product_code = "TYH_SD"
+        product_code = "TYH_HY"
 
     with allure.step("更新为限流模式"):
-        Update_Sql_Result().update_api_chanel_non_funds("TYH_SD")
+        Update_Sql_Result().update_api_chanel_non_funds("TYH_HY")
 
     with allure.step("用户撞库"):
         # 撞库数据,以手机号为主
@@ -245,13 +246,13 @@ def test_tyh_jmx_loan_success():
         # 绑卡轮询，并且绑卡两次
         # 此处需要优化，360的话不需要指定bindType,直接绑两次卡就好
         with allure.step("第一次绑卡"):
-            if channel_code == "APPZY":
+            if channel_code in channel_codes:
                 bk_jq_need_encry_data["bindType"] = "fundsChannel"
             else:
                 pass
             loop_result_tyh().loop_tyh_bk_result(bk_jq_need_encry_data, channel_code)
         with allure.step("第二次绑卡"):
-            if channel_code == "APPZY" or channel_code == "XL":
+            if channel_code in channel_codes:
                 bk_jq_need_encry_data["bindType"] = "payChannel"
             else:
                 pass
@@ -352,13 +353,13 @@ def test_tyh_jmx_repay_success():
         # 资金方，修改成对应需要放款的资金方funds_code
         funds_code = "JMX"
         # 渠道方，修改成对应需要走的渠道方channel_code
-        channel_code = "TYH_SD"
+        channel_code = "TYH_HY"
         # 借款金额
         loan_amt = "2000"
         # 借款期数
         reqPeriods = "12"
         # 产品信息
-        product_code = "TYH_SD"
+        product_code = "TYH_HY"
 
         # 借款申请单号
         loanApplyNo = "7b83fa01bfe54cfd813461ff103bea35"

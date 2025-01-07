@@ -468,7 +468,7 @@ class loop_result:
         MAX_RETRIES = 10
         QUERY_INTERVAL = 15  # 主查询间隔
         SIGN_WAIT_TIME = 20  # 签章等待时间
-        CREDIT_WAIT_TIME = 6  # 授信处理等待时间
+        CREDIT_WAIT_TIME = 15  # 授信处理等待时间
         count = 0
         while True:
             count += 1
@@ -484,29 +484,29 @@ class loop_result:
                     return False
                 # 获取状态
                 status = sql_result.get("status")
+                risk_status = sql_result.get('risk_status', '')
+                sign_status = sql_result.get("sign_status")
                 if not status:
                     self.logging.info(f"系统发生错误！请检查返回数据：{sql_result}")
                     return False
-                # 处理成功状态 - 立即退出
-                if status == "S":
+                # 处理成功状态 - 只有当status和risk_status都为S时才算授信成功
+                if status == "S" and risk_status == "S" and sign_status == "S":
                     self.logging.info("授信成功！")
-                    break  # 使用 break 而不是 return
+                    break
                 # 处理失败状态 - 立即退出
                 elif status == "F":
                     self.logging.info("申请失败，请检查落库原因！")
                     return False
                 # 处理中间状态
-                elif status in ["P", "W", "U"]:
+                elif status in ["S", "P", "W", "U"]:
                     self.logging.info("授信处理中，执行相应任务...")
                     # 处理风控状态
-                    risk_status = sql_result.get('risk_status', '')
                     if risk_status in ["", "W", "P"]:
                         self.logging.info("执行授信处理任务")
                         execute_xxl_job().apply_credit_xxljob(credit_applyNo)
                         time.sleep(CREDIT_WAIT_TIME)
                     else:
                         # 处理签章状态
-                        sign_status = sql_result.get('sign_status', '')
                         if sign_status in ["", "W", "P"]:
                             self.logging.info("执行签章任务")
                             execute_xxl_job().apply_credit_sign_xxljob()

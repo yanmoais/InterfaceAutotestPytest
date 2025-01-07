@@ -26,8 +26,8 @@ class loop_result_tyh:
         :param credit_applyNo: 授信申请编号
         :return: bool 是否查询成功
         """
-        MAX_RETRIES = 10  # 最大重试次数
-        SLEEP_INTERVAL = 5  # 轮询间隔时间(秒)
+        MAX_RETRIES = 15  # 最大重试次数
+        SLEEP_INTERVAL = 15  # 轮询间隔时间(秒)
         count = 0
         while True:
             count += 1

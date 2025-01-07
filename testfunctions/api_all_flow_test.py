@@ -36,4 +36,9 @@ def test_api_to_funds_router(channel_code='ICE_ZLSK_36'):
 
 # 风控白名单加白
 def test_risk_phone_pass():
-    core_risk_api().test_risk_add_phone('18083178893')
+    core_risk_api().test_risk_add_phone("15001060001",
+                                        "15001060002",
+                                        "15001060003",
+                                        "15001060004",
+                                        "15001060005",
+                                        "15001060006")
