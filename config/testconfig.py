@@ -40,7 +40,7 @@ test_files = [
 
 ]
 
-channel_codes = {"APPZY", "RP", "TYH_SD"}
+channel_codes = {"APPZY", "TYH_SD"}
 
 config_cookies = {
     "cookies": " rememberMe=true; Admin-Expires-In=30; username=admin; os-username=wanglei@te; sidebarStatus=1; SECKEY_ABVK=rfgKMqeIunBW8wtCLN6UW07HVpsjePY4bJ9Rc5ljnwQ%3D; BMAP_SECKEY=MRM1DwwOiO5mRCCD7jpBBYWagWydoQJDX8r2Uhb8lkdnl4QgdXwv1zKGu8gF_FVIgTp08Xy2Z11rwLy-NirTx4VKw1HMzf7bpBQIyDneXNaz7SrUholDRcDkprBRwPc3POfwk9FsIGbUpckkvHhtNx-Jsdg7zqHl7O-Nws0GwlvKxTPpzvF-I6a02rt1eWZC; os-Token=eyJhbGciOiJIUzUxMiJ9.eyJ1c2VyX2lkIjoxMDAxMjAsInVzZXJfa2V5IjoiZDc5YTQwMGMtNmU2MC00NWJkLWFjZDEtOWRmOGQ0NmVhYTlmIiwidXNlcm5hbWUiOiJ3YW5nbGVpIn0.kAlC8fBvDdK08m_7fSz4I1DDXkRXfZQg3H1SgiBGRW_kqsKZ5E8kDgJYK9YmsRGERkT4vCH4s0G-YORK_-F33A; password=JTvSaQceXp5QTwRZ+pBOSdjCWXjPBroinn5/3YhMsMRqxKNrXG+G4MxcFSdrSLuS8twEeW7pElqyLXetKjLB9A==; Admin-Token=eyJhbGciOiJIUzUxMiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX2tleSI6IjUwYTAwNDgyLTRiNTAtNDJlNC04YTNkLTFmZWMzZTcxODRjOSIsInVzZXJuYW1lIjoiYWRtaW4ifQ.d1UVUihE1QdERb3_zlOSvWTEZTwA2M7_PVPpha0A0aRJPHA4h61MJqCsrYNo1hSfeSt3yQkkF93G2_qGvGOHEQ",

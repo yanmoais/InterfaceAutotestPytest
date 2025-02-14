@@ -187,7 +187,7 @@ def test_jmx_loan_success():
         bank_name = "建设银行"
         loan_amt = "2000"
         reqPeriods = "12"
-        loan_sqe_no = "1870313248830668800"
+        loan_sqe_no = "1877623671821058048  "
         req_no = get_req_no()
         fk_no = get_fk_id()
         contract_no = get_contract_no()

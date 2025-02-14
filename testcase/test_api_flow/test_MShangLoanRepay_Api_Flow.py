@@ -6,7 +6,7 @@
 import time
 import pytest
 import allure
-
+from conftest import get_channel
 from common.Select_Database_Result import Select_Sql_Result
 from config.testconfig import channel_codes
 from testdata.assert_data.banding_assert_data import *
@@ -32,7 +32,7 @@ from util_tools.Xxl_Job_Executor import execute_xxl_job
 @allure.title("360沙盒渠道-借款成功-API全流程")
 @allure.story("360沙盒渠道-蒙商资方授信案例-API全流程")
 @allure.severity(allure.severity_level.CRITICAL)
-def test_sushang_loan_success_api_flow():
+def test_sushang_loan_success_api_flow(get_channel):
     with allure.step("数据初始化"):
         api = core_api_flow_api()
         enc = encrypt_decrypt()
@@ -53,16 +53,17 @@ def test_sushang_loan_success_api_flow():
         # 资金方，修改成对应需要放款的资金方funds_code
         funds_code = "MENG_SHANG"
         # 渠道方，修改成对应需要走的渠道方channel_code
-        channel_code = "ICE_ZLSK_36"
+        channel_code = get_channel
         # 借款金额
         loan_amt = "2000"
         # 借款期数
         reqPeriods = "12"
         # 产品信息
         product_code = "KN_HALF"
+        logging.info(f"开始执行测试方法中渠道 {channel_code} 的测试")
 
     with allure.step("更新为限流模式"):
-        Update_Sql_Result().update_api_chanel_non_funds("ICE_ZLSK_36")
+        Update_Sql_Result().update_api_chanel_non_funds(get_channel)
     #
     # with allure.step("更新为MOCK环境"):
     #     Update_Sql_Result().update_sushang_zjly_mock()
@@ -192,6 +193,25 @@ def test_sushang_loan_success_api_flow():
         jk_success_resp = loop_result().loop_api_flow_loan_result(loan_query_need_encry_data, loanApplyNo, channel_code)
         logging.info(f"借款返回的查询参数是：{jk_success_resp}")
 
+    with allure.step("借款成功断言"):
+        pass
+
+    with allure.step("生成测试结果"):
+        # 生成测试结果
+        test_result = {
+            "userId": user_id,
+            "loanApplyNo": loanApplyNo,
+            "fundsCode": funds_code,
+            "loanAmount": loan_amt,
+            "loanDate": datetime.datetime.now().strftime("%Y-%m-%d"),
+            "phoneNumber": mobile_no,
+            "userName": user_name,
+            "idCard": id_no,
+            "bankCard": bank_card_no
+        }
+        # 输出测试结果 - 确保只输出一行
+        print(f"TEST_RESULT:{json.dumps(test_result, ensure_ascii=False)}")
+
 
 # API全流程-蒙商D0批扣还款成功
 @pytest.mark.run(order=11)
@@ -201,7 +221,7 @@ def test_sushang_loan_success_api_flow():
 @allure.story("360沙盒渠道-蒙商资方还款案例-API全流程")
 @allure.severity(allure.severity_level.CRITICAL)
 @pytest.mark.skip()
-def test_sushang_repay_d0_success_api_flow():
+def test_sushang_repay_d0_success_api_flow(get_channel):
     with allure.step("数据初始化"):
         api = core_api_flow_api()
         enc = encrypt_decrypt()
@@ -222,16 +242,17 @@ def test_sushang_repay_d0_success_api_flow():
         # 资金方，修改成对应需要放款的资金方funds_code
         funds_code = "MENG_SHANG"
         # 渠道方，修改成对应需要走的渠道方channel_code
-        channel_code = "ICE_ZLSK_36"
+        channel_code = get_channel
         # 借款金额
         loan_amt = "2000"
         # 借款期数
         reqPeriods = "12"
         # 产品信息
         product_code = "KN_HALF"
+        logging.info(f"开始执行测试方法中渠道 {channel_code} 的测试")
 
     with allure.step("更新为限流模式"):
-        Update_Sql_Result().update_api_chanel_non_funds("ICE_ZLSK_36")
+        Update_Sql_Result().update_api_chanel_non_funds(get_channel)
 
     # with allure.step("更新为MOCK环境"):
     #     Update_Sql_Result().update_sushang_zjly_mock()
@@ -377,6 +398,22 @@ def test_sushang_repay_d0_success_api_flow():
     with allure.step("还款成功断言"):
         pass
 
+    with allure.step("生成测试结果"):
+        # 生成测试结果
+        test_result = {
+            "userId": user_id,
+            "loanApplyNo": loanApplyNo,
+            "fundsCode": funds_code,
+            "loanAmount": loan_amt,
+            "loanDate": datetime.datetime.now().strftime("%Y-%m-%d"),
+            "phoneNumber": mobile_no,
+            "userName": user_name,
+            "idCard": id_no,
+            "bankCard": bank_card_no
+        }
+        # 输出测试结果 - 确保只输出一行
+        print(f"TEST_RESULT:{json.dumps(test_result, ensure_ascii=False)}")
+
 
 # API全流程-蒙商主动还款成功
 @pytest.mark.run(order=11)
@@ -386,7 +423,7 @@ def test_sushang_repay_d0_success_api_flow():
 @allure.story("360沙盒渠道-蒙商资方还款案例-API全流程")
 @allure.severity(allure.severity_level.CRITICAL)
 @pytest.mark.skip()
-def test_sushang_repay_success_api_flow():
+def test_sushang_repay_success_api_flow(get_channel):
     with allure.step("数据初始化"):
         # 核心api的基类
         api = core_api_flow_api()
@@ -427,9 +464,10 @@ def test_sushang_repay_success_api_flow():
         reqPeriods = "12"
         # 产品信息
         product_code = "KN_HALF"
+        logging.info(f"开始执行测试方法中渠道 {channel_code} 的测试")
 
     with allure.step("更新为限流模式"):
-        Update_Sql_Result().update_api_chanel_non_funds("ICE_ZLSK_36")
+        Update_Sql_Result().update_api_chanel_non_funds(channel_code)
 
     # with allure.step("更新为MOCK环境"):
     #     Update_Sql_Result().update_sushang_zjly_mock()
@@ -631,3 +669,22 @@ def test_sushang_repay_success_api_flow():
         # 解密查询返回数据
         repay_query_decry_data = api.api_param_decry(repay_query_resp)
         logging.info(f"查询返回数据结果为：======={repay_query_decry_data}")
+
+    with allure.step("还款成功断言"):
+        pass
+
+    with allure.step("生成测试结果"):
+        # 生成测试结果
+        test_result = {
+            "userId": user_id,
+            "loanApplyNo": loanApplyNo,
+            "fundsCode": funds_code,
+            "loanAmount": loan_amt,
+            "loanDate": datetime.datetime.now().strftime("%Y-%m-%d"),
+            "phoneNumber": mobile_no,
+            "userName": user_name,
+            "idCard": id_no,
+            "bankCard": bank_card_no
+        }
+        # 输出测试结果 - 确保只输出一行
+        print(f"TEST_RESULT:{json.dumps(test_result, ensure_ascii=False)}")

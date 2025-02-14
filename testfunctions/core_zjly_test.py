@@ -44,8 +44,8 @@ class core_zjly_func:
         return decry_resp
 
     # 支付中台绑卡申请
-    def test_zfzt_bank_apply(self, ACCOUNT_NAME="马人性", TEL="13434961367", ID="440511197204245174",
-                             CREDIT_ACCTNO="6227000031095868410", PRODUCT_CODE="BF"):
+    def test_zfzt_bank_apply(self, ACCOUNT_NAME="机构测试", TEL="13049826549", ID="110101199503069607",
+                             CREDIT_ACCTNO="6217201736413968440", PRODUCT_CODE="BF"):
         ACCOUNT_NAME = ACCOUNT_NAME
         TEL = TEL
         ID = ID
@@ -122,30 +122,34 @@ class core_zjly_func:
     # 支付中台扣款申请 ACCOUNT_NAME="胡斌", TEL="15932943620", ID="440106197404139496",
     #                          CREDIT_ACCTNO="6217001732763194480", PRODUCT_CODE="TL"
     def test_zfzt_withhold_apply(self, ccb_account="6217001732872646040", tel="15917853170", id_no="440111199912223459",
-                                 product_code="BF", amount="30000"):
+                                 product_code="BF", amount="30000", ACCOUNT_NAME="扣款测试"):
         reqsn = get_zfpt_req_no()
         businessChannel = 101
         ccb_account = ccb_account
         if product_code == "BF":
-            REPAY_PRODUCT_CODE = "repay_mock"
+            REPAY_PRODUCT_CODE = "repay_baofu_09"
         elif product_code == "TL":
             REPAY_PRODUCT_CODE = "repay_tonglian_09"
+        elif product_code == "SN":
+            REPAY_PRODUCT_CODE = "SUNING_TEST"
         else:
             return False
         req_data = {
             "reqSn": reqsn,
             "businessChannel": businessChannel,
             "params": json_dumps_cn({
-                "ACCOUNT_NAME": "扣款测试",
-                "BANK_CODE": "0105",
-                "BANK_NAME": "中国建设银行",
+                "ACCOUNT_NAME": ACCOUNT_NAME,
+                "BANK_CODE": "0308",
+                "BANK_NAME": "招商银行",
                 "CREDIT_ACCTNO": ccb_account,
                 "TEL": tel,
                 "ID": id_no,
                 "REPAY_PRODUCT_CODE": REPAY_PRODUCT_CODE,
                 "AMOUNT": amount,
-                "TYPE": 3
-                # "LEDGERS": {"ACCOUNT_SUBJECT": 4, "AMOUNT": "30000", "REMARK": "新浪分账测试"}
+                "PRODUCT_NAME": "砺带",
+                "AGRMNO": "1202501091713242120003491122",
+                "TYPE": 2,
+                "LEDGERS": {"ACCOUNT_SUBJECT": 1, "AMOUNT": amount, "REMARK": "苏宁分账"}
             })
         }
         datas = self.test_zjl_jiami(req_data)
@@ -190,7 +194,13 @@ class core_zjly_func:
 
 if __name__ == '__main__':
     api = core_zjly_func()
-    # resp = api.test_zfzt_together_withhold_apply()
+    # resp = api.test_zfzt_withhold_apply(ccb_account="6214837553903786", tel="15915370864", id_no="360724199402101018",
+    #                                     product_code="SN", amount="1", ACCOUNT_NAME="蓝国剑")
+    # # resp = api.test_zfzt_withhold_apply()
     # print(resp)
-    rsp = api.test_zfzt_withhold_query("20241216170943432106685")
+    rsp = api.test_zfzt_withhold_query("20250207150418187098694")
     print(rsp)
+    # reqsn, resp = api.test_zfzt_bank_apply()
+    # print(resp)
+    # resps = api.test_zfzt_bank_confirm(reqsn)
+    # print(resps)
