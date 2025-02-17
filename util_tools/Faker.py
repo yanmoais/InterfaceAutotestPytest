@@ -13,8 +13,6 @@ import time
 import jsonpath
 from faker import Faker
 from util_tools.Read_Yaml import *
-from common.Encrypt_Decrypt import *
-
 
 # 实例化Faker对象
 def get_fake():
@@ -348,15 +346,15 @@ def tyh_h5_loan_repay(credit_apply_no, user_id, loan_apply_no):
 
 if __name__ == '__main__':
     # certificationApplyNo = get_api_bk_id()
-    enc = encrypt_decrypt()
-    for i in range(1):
-        id_no, birthday = get_zx_user_id_no(year_s=1990, year_e=1996)
-        ccb = get_baofu_ccb_num()
-        phone = read_risk_phone()
-        # print(id_no, birthday)
-        # loan, repay = tyh_h5_loan_repay("TYH_202411041730710546726", "ZL173071054678","JMX1730710546789")
-        print(id_no, birthday, ccb, phone)
-        print(f"{enc.param_encry_by_md5(id_no)}_{enc.param_encry_by_md5(phone)}")
+    id_no, birthday = get_zx_user_id_no(year_s=1990, year_e=2019)
+    ccb = get_baofu_ccb_num()
+    phone = read_risk_phone()
+    # print(id_no, birthday)
+    # loan, repay = tyh_h5_loan_repay("TYH_202411041730710546726", "ZL173071054678","JMX1730710546789")
+    print(get_user_name(),id_no, birthday, ccb, phone)
+    from common.Encrypt_Decrypt import encrypt_decrypt
+    print("身份证MD5：",encrypt_decrypt().param_encry_by_md5(id_no))
+    print("手机号MD5：",encrypt_decrypt().param_encry_by_md5(phone))
     # print(get_credit_apply_no("")XM)
     # 请求鉴权数据
     # bk_jq_need_encry_data = { "certificationApplyNo": "SC00565656","SFAF":"SFASFAF"}

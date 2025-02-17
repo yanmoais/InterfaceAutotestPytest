@@ -1,0 +1,10 @@
+INFO     util_tools.logger:test_JmxLoanRepay.py:91 发起授信/客户信息同步请求数据
+INFO     util_tools.logger:test_JmxLoanRepay.py:95 授信状态查询请求数据
+INFO     util_tools.logger:test_JmxLoanRepay.py:99 发起通联绑卡请求数据
+INFO     util_tools.logger:test_JmxLoanRepay.py:103 绑卡签约确认请求数据
+INFO     util_tools.logger:test_JmxLoanRepay.py:107 发起借款请求数据
+INFO     util_tools.logger:test_JmxLoanRepay.py:111 借款状态查询请求数据
+INFO     util_tools.logger:test_JmxLoanRepay.py:115 还款计划查询请求数据
+INFO     util_tools.logger:test_JmxLoanRepay.py:119 断言绑卡信息表请求数据
+INFO     util_tools.logger:test_JmxLoanRepay.py:123 断言授信订单表请求数据
+INFO     util_tools.logger:test_JmxLoanRepay.py:128 当前实际数据为：======{'loan_state': 'APPLYING', 'trans_result_msg': '授信通过', 'up_appl_sts': '04', 'settle_status': None, 'is_compensatory': 'N', 'delete_flag': '0', 'notify': '0'},预期数据为：======{'loan_state': 'APPLYING', 'trans_result_msg': '授信通过', 'up_appl_sts': '04', 'settle_status': None, 'is_compensatory': 'N', 'delete_flag': '0', 'notify': '0'}

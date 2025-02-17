@@ -9,9 +9,9 @@ import time
 from config.testconfig import BASE_DIR, test_files
 
 # 替换为您的钉钉机器人的Webhook URL
-DINGTALK_WEBHOOK_URL = 'https://oapi.dingtalk.com/robot/send?access_token=70996a6d738bb7a45cd9bbac13c8ff7d25f38da0edc3ab2e1601621f82b21b0f'
 
-ALLURE_SERVE_PORT = 40463
+
+ALLURE_SERVE_PORT = 63343
 report_dir = f"{BASE_DIR}/report"
 
 
@@ -27,14 +27,14 @@ def allure_report(test_files, report_dir, event):
     # 报告生成完成后，设置事件
     event.set()
 
-
+DINGTALK_WEBHOOK_URL = 'https://oapi.dingtalk.com/robot/send?access_token=70996a6d738bb7a45cd9bbac13c8ff7d25f38da0edc3ab2e1601621f82b21b0f'
 def send_ding(report_dir, event):
     # 等待事件被设置，即等待报告生成完成
     event.wait()
     time.sleep(1)  # 可以根据实际情况调整等待时间
 
     # 读取Allure报告的结果json文件并构建消息
-    summary_json_path = os.path.join(report_dir, 'html', 'widgets', 'summary.json')
+    summary_json_path = os.path.join(report_dir, 'widgets', 'summary.json')
     try:
         with open(summary_json_path, 'r', encoding='utf-8') as f:
             data = json.load(f)
@@ -91,9 +91,6 @@ if __name__ == '__main__':
 
     p1.start()
     p2.start()
-
-    p1.join()
-    p2.join()
     # 在本地启动一个Web服务器以查看Allure报告（可选）
     # 注意：这需要在本地机器上安装Allure命令行工具
     # os.system(f'allure serve {report_dir}/result')

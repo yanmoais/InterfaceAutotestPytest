@@ -1,0 +1,16 @@
+body {
+    background-color: #f8f9fa;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    max-width: 600px;
+}
+
+#log-output {
+    font-family: monospace;
+    background-color: #e9ecef;
+    border: 1px solid #ddd;
+    color: #333;
+    padding: 10px;
+}

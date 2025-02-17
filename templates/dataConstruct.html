@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>测试构数</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <style>
+        body { 
+            background-size: cover;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            position: relative;
+            overflow-x: hidden;
+            font-size: 1.1rem;
+        }
+        
+        /* 主内容区域样式 */
+        .main-content {
+            padding: 15px;
+            background-color: rgba(255, 255, 255, 0.85);
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        /* 原有样式保持不变 */
+        .control-panel {
+            background: rgba(248, 249, 250, 0.9);
+            padding: 10.5px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .log-container {
+            background: linear-gradient(to bottom, #1a1a1a, #2d2d2d);
+            border-radius: 15px;
+            padding: 16.5px;
+            flex: 1;
+            min-height: auto;
+            overflow-y: auto;
+            color: #00ff00;
+            font-family: 'Consolas', monospace;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.3);
+            margin-bottom: 15px;
+            height: 360px;
+        }
+        
+        /* 日志容器滚动条样式 */
+        .log-container::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        .log-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+        }
+        
+        .log-container::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .log-container::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, #2980b9, #3498db);
+        }
+        
+        .result-container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            margin: 15px 0;
+            width: 100%;
+        }
+        
+        .result-container h3 {
+            color: #2c3e50;
+            font-weight: 700;
+            margin-bottom: 25px;
+            font-size: 1.35rem;
+            letter-spacing: 0.5px;
+        }
+        
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2.25rem;
+        }
+        
+        .result-item {
+            background: white;
+            padding: 30px;
+            border-radius: 25px;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            min-height: 149px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .result-item:hover {
+            border-color: #3498db;
+            box-shadow: 0 0 20px rgba(52, 152, 219, 0.2);
+            transform: translateY(-3px);
+        }
+        
+        .result-label {
+            display: block;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        
+        .result-value {
+            color: #000000;
+            font-size: 0.9rem;
+            font-weight: 500;
+            line-height: 1.6;
+        }
+        
+        /* 表单控件容器样式 */
+        .control-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+        
+        .control-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #3498db;
+            font-size: 1.2rem;
+            z-index: 2;
+        }
+        
+        /* 下拉框样式优化 */
+        .form-select {
+            height: 42px;
+            border-radius: 25px;
+            border: 2px solid #e0e0e0;
+            padding: 0 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%233498db' d='M6 8.825L1.175 4 2.238 2.938 6 6.7l3.763-3.762L10.825 4z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 20px center;
+            padding-right: 40px;
+        }
+        
+        .form-select:hover {
+            border-color: #3498db;
+            box-shadow: 0 0 15px rgba(52, 152, 219, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .form-select:focus {
+            border-color: #2980b9;
+            box-shadow: 0 0 20px rgba(41, 128, 185, 0.3);
+            outline: none;
+        }
+        
+        /* 下拉选项样式 */
+        select option {
+            padding: 15px;
+            border-radius: 15px;
+            background-color: white;
+            color: #2c3e50;
+            transition: all 0.3s ease;
+        }
+        
+        /* 执行按钮样式优化 */
+        .btn-execute {
+            width: 100%;
+            padding: 12px 30px;
+            font-size: 1.19rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            border-radius: 25px;
+            background: linear-gradient(45deg, #2980b9, #3498db);  /* 统一使用相同的渐变方向 */
+            border: none;
+            color: #ffffff !important;  /* 强制使用白色 */
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);  /* 增强文字阴影 */
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-execute:hover,
+        .btn-execute:focus,
+        .btn-execute:active {
+            background: linear-gradient(45deg, #2980b9, #3498db);
+            color: #ffffff !important;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+        }
+        
+        .btn-execute:active {
+            transform: translateY(1px);
+        }
+        
+        /* 按钮文字容器样式 */
+        .btn-execute span {
+            position: relative;
+            z-index: 2;
+            display: inline-block;
+            color: #ffffff !important;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* 按钮图标样式 */
+        .btn-execute i {
+            margin-right: 10px;
+            font-size: 1.1rem;
+            color: #ffffff !important;
+        }
+        
+        /* 禁用状态样式 */
+        .btn-execute:disabled,
+        .btn-execute:disabled:hover,
+        .btn-execute:disabled:focus,
+        .btn-execute:disabled:active {
+            background: linear-gradient(45deg, #2980b9, #3498db);
+            color: #ffffff !important;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+            opacity: 0.8;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* 确保加载动画时的文字样式一致 */
+        .btn-execute .spinner-border {
+            margin-right: 10px;
+            color: #ffffff !important;
+        }
+        
+        /* 标题样式 */
+        .platform-title {
+            font-size: 2.475rem;
+            font-weight: 600;
+            color: #2c3e50;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 3px solid #3498db;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        
+        .platform-title:hover {
+            transform: translateY(-2px);
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.2);
+        }
+        
+        /* 按钮样式 */
+        .execute-btn-container {
+            margin-top: 2rem;
+            text-align: center;
+        }
+        
+        .btn-execute {
+            padding: 11px 27px;
+            font-size: 1.08rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            border: none;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-execute:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            background: linear-gradient(45deg, #2980b9, #3498db);
+        }
+        
+        .btn-execute:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        
+        /* 日志容器样式 */
+        .log-container {
+            height: 330px;
+            background: linear-gradient(to bottom, #1a1a1a, #2d2d2d);
+            border: 1px solid #3a3a3a;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.3);
+            padding: 16.5px;
+        }
+        
+        .log-entry {
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+        
+        .log-entry:hover {
+            background: rgba(255,255,255,0.05);
+        }
+        
+        /* 表单标签样式 */
+        .form-label {
+            font-weight: 500;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+        
+        /* 表单组样式 */
+        .form-group {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+        
+        /* 表单图标样式 */
+        .form-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #3498db;
+            font-size: 1.2rem;
+            z-index: 2;
+            transition: all 0.3s ease;
+        }
+        
+        /* 按钮样式优化 */
+        .btn-execute {
+            width: 100%;
+            padding: 11px 27px;
+            font-size: 1.08rem;
+            font-weight: 500;
+            border-radius: 25px;
+            background-color: rgba(255, 255, 255, 0.85);  /* 与页面背景一致 */
+            border: 2px solid #3498db;
+            color: #3498db;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-execute:hover {
+            background-color: #3498db;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        .btn-execute:active {
+            transform: translateY(1px);
+        }
+        
+        /* 表单标签样式 */
+        .form-label {
+            font-weight: 500;
+            color: #2c3e50;
+            margin-bottom: 0.8rem;
+        }
+        
+        /* 表单组标签和图标容器 */
+        .form-label-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.8rem;
+        }
+        
+        .form-label-icon {
+            color: #3498db;
+            font-size: 1.2rem;
+            margin-right: 10px;
+        }
+        
+        .form-label {
+            font-weight: 500;
+            color: #2c3e50;
+            margin-bottom: 0;
+        }
+        
+        /* 添加动画关键帧 */
+        @keyframes selectOpen {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* 为下拉框添加动画效果 */
+        .form-select:focus + .select-options {
+            animation: selectOpen 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* 测试结果容器样式优化 */
+        .result-container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            margin: 15px 0;
+            width: 100%;
+        }
+
+        /* 结果标签容器 */
+        .result-labels {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 9.5px;
+            padding: 10px;
+            background: #e3f2fd;
+            border-radius: 10px;
+            margin-bottom: 0;
+        }
+
+        /* 优化结果值容器样式 */
+        .result-values {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 9.5px;
+            padding: 10px;
+            background: transparent;
+            border-radius: 10px;
+            border: none;
+        }
+
+        /* 优化结果标签样式 */
+        .result-label {
+            flex: 1;
+            min-width: 157px;
+            color: #1565c0;
+            font-weight: 600;
+            font-size: 0.88rem;
+            text-align: center;
+            padding: 11px;
+        }
+
+        /* 优化结果值样式 */
+        .result-value {
+            flex: 1;
+            min-width: 157px;
+            color: #000000;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-align: center;
+            padding: 11px;
+            letter-spacing: 0.5px;
+            text-shadow: none;
+        }
+
+        /* 鼠标悬停效果 */
+        .result-value:hover {
+            background-color: #fff;
+            box-shadow: 0 2px 8px rgba(41, 128, 185, 0.1);
+            transform: translateY(-1px);
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .result-label {
+                font-size: 1.025rem;
+                min-width: 125px;
+            }
+            
+            .result-value {
+                font-size: 1.08rem;
+                min-width: 125px;
+                padding: 11px;
+            }
+        }
+
+        /* 停止按钮样式 */
+        .btn-stop {
+            padding: 8px 20px;
+            font-size: 1.08rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            border-radius: 25px;
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+            border: none;
+            color: #ffffff !important;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+            opacity: 0.85;
+        }
+
+        .btn-stop:hover:not(:disabled) {
+            background: linear-gradient(45deg, #c0392b, #e74c3c);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+            opacity: 1;
+        }
+
+        .btn-stop:active:not(:disabled) {
+            transform: translateY(1px);
+            box-shadow: 0 2px 10px rgba(231, 76, 60, 0.3);
+        }
+
+        .btn-stop:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* 按钮图标样式 */
+        .btn-stop i {
+            margin-right: 10px;
+        }
+
+        /* 确保主容器有更多空间 */
+        .main-container {
+            padding-bottom: 60px;  /* 增加底部内边距 */
+        }
+    </style>
+</head>
+<body>
+    <!-- 主内容区域 -->
+    <div class="main-content">
+        <div class="container-fluid">
+            <!-- 控制面板 -->
+            <div class="control-panel">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <div class="form-label-group">
+                                <i class="fas fa-random form-label-icon"></i>
+                                <label class="form-label">渠道选择</label>
+                            </div>
+                            <select class="form-select" id="channel">
+                                <option value="ICE_ZLSK_36">360沙盒</option>
+                                <option value="RP">RP</option>
+                                <option value="TYH_HY">TYH_HY</option>
+                                <option value="TYH_SD">TYH_SD</option>
+                                <option value="APPZY">APPZY</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <div class="form-label-group">
+                                <i class="fas fa-building form-label-icon"></i>
+                                <label class="form-label">资方选择</label>
+                            </div>
+                            <select class="form-select" id="funder">
+                                <option value="金美信">金美信</option>
+                                <option value="小米">小米</option>
+                                <option value="振兴">振兴</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <div class="form-label-group">
+                                <i class="fas fa-tasks form-label-icon"></i>
+                                <label class="form-label">功能选择</label>
+                            </div>
+                            <select class="form-select" id="testType">
+                                <option value="credit">授信</option>
+                                <option value="loan">借款</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 执行按钮行 -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <button id="executeBtn" class="btn btn-execute w-100" onclick="executeTest()">
+                            <span>
+                                <i class="fas fa-play"></i>
+                                执行测试
+                            </span>
+                        </button>
+                    </div>
+                </div>
+                <!-- 停止按钮行 -->
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <button id="stopBtn" class="btn btn-stop w-100" onclick="stopTest()" disabled>
+                            <span>
+                                <i class="fas fa-stop"></i>
+                                停止测试
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 日志输出 -->
+            <div class="log-container" id="log"></div>
+
+            <!-- 测试结果 -->
+            <div class="result-container">
+                <h3>测试结果</h3>
+                <!-- 标签行 -->
+                <div class="result-labels">
+                    <div class="result-label">用户ID</div>
+                    <div class="result-label">借款单号</div>
+                    <div class="result-label">资方编码</div>
+                    <div class="result-label">借款金额</div>
+                    <div class="result-label">借款日期</div>
+                    <div class="result-label">手机号码</div>
+                    <div class="result-label">用户姓名</div>
+                    <div class="result-label">身份证号</div>
+                    <div class="result-label">银行卡号</div>
+                </div>
+                <!-- 值行 -->
+                <div class="result-values">
+                    <div class="result-value" id="userId">-</div>
+                    <div class="result-value" id="loanApplyNo">-</div>
+                    <div class="result-value" id="fundsCode">-</div>
+                    <div class="result-value" id="loanAmount">-</div>
+                    <div class="result-value" id="loanDate">-</div>
+                    <div class="result-value" id="phoneNumber">-</div>
+                    <div class="result-value" id="userName">-</div>
+                    <div class="result-value" id="idCard">-</div>
+                    <div class="result-value" id="bankCard">-</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- 修改 JavaScript 部分，添加测试类型参数 -->
+    <script>
+        let testProcess = null;  // 存储当前测试进程
+        let isTestRunning = false;  // 添加测试运行状态标志
+
+        async function executeTest() {
+            const executeBtn = document.getElementById('executeBtn');
+            const stopBtn = document.getElementById('stopBtn');
+            const log = document.getElementById('log');
+            
+            // 清空日志
+            log.innerHTML = '';
+            
+            // 清空测试结果数据
+            clearTestResults();
+            
+            // 更新按钮状态
+            executeBtn.disabled = true;
+            stopBtn.disabled = false;
+            
+            executeBtn.innerHTML = `
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                测试执行中...
+            `;
+
+            try {
+                // 发送开始测试请求
+                const response = await fetch('/data_construct/execute', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        channel: document.getElementById('channel').value,
+                        funder: document.getElementById('funder').value,
+                        testType: document.getElementById('testType').value
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('测试启动失败');
+                }
+
+                // 建立 SSE 连接
+                const eventSource = new EventSource('/data_construct/logs');
+                testProcess = eventSource;  // 保存 SSE 连接引用
+
+                eventSource.onmessage = function(event) {
+                    const data = JSON.parse(event.data);
+                    
+                    if (data.message) {
+                        const logEntry = document.createElement('div');
+                        logEntry.className = 'log-entry';
+                        logEntry.innerHTML = `
+                            <i class="fas fa-angle-right me-2"></i>${data.message}
+                        `;
+                        log.appendChild(logEntry);
+                        log.scrollTop = log.scrollHeight;
+                    }
+                    
+                    if (data.result) {
+                        document.getElementById('userId').textContent = data.result.userId || '-';
+                        document.getElementById('loanApplyNo').textContent = data.result.loanApplyNo || '-';
+                        document.getElementById('fundsCode').textContent = data.result.fundsCode || '-';
+                        document.getElementById('loanAmount').textContent = data.result.loanAmount || '-';
+                        document.getElementById('loanDate').textContent = data.result.loanDate || '-';
+                        document.getElementById('phoneNumber').textContent = data.result.phoneNumber || '-';
+                        document.getElementById('userName').textContent = data.result.userName || '-';
+                        document.getElementById('idCard').textContent = data.result.idCard || '-';
+                        document.getElementById('bankCard').textContent = data.result.bankCard || '-';
+                    }
+                };
+
+                eventSource.onerror = function() {
+                    resetButtons();
+                    eventSource.close();
+                };
+
+            } catch (error) {
+                console.error('Error:', error);
+                resetButtons();
+            }
+
+            isTestRunning = true;  // 设置测试运行状态
+            document.getElementById('stopBtn').disabled = false;  // 启用停止按钮
+        }
+
+        async function stopTest() {
+            if (!isTestRunning) {
+                return;  // 如果测试未运行，直接返回
+            }
+
+            try {
+                // 发送停止请求到后端
+                const response = await fetch('/data_construct/stop_test', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'stop'
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('停止请求失败');
+                }
+
+                // 关闭SSE连接
+                if (testProcess) {
+                    testProcess.close();
+                    testProcess = null;
+                }
+
+                // 添加停止日志
+                const log = document.getElementById('log');
+                const logEntry = document.createElement('div');
+                logEntry.className = 'log-entry';
+                logEntry.innerHTML = `
+                    <i class="fas fa-stop-circle" style="color: #e74c3c;"></i>
+                    <span style="color: #e74c3c;">测试已手动停止</span>
+                `;
+                log.appendChild(logEntry);
+                log.scrollTop = log.scrollHeight;
+
+                // 重置状态
+                isTestRunning = false;
+                resetButtons();
+
+            } catch (error) {
+                console.error('停止测试失败:', error);
+                alert('停止测试失败，请刷新页面重试');
+            }
+        }
+
+        function resetButtons() {
+            const executeBtn = document.getElementById('executeBtn');
+            const stopBtn = document.getElementById('stopBtn');
+            
+            executeBtn.disabled = false;
+            stopBtn.disabled = true;
+            isTestRunning = false;
+            
+            executeBtn.innerHTML = '<span><i class="fas fa-play"></i> 执行测试</span>';
+        }
+
+        // 添加页面卸载时的清理
+        window.addEventListener('beforeunload', async (event) => {
+            if (isTestRunning) {
+                try {
+                    await fetch('/data_construct/stop_test', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            action: 'stop'
+                        })
+                    });
+                } catch (error) {
+                    console.error('清理失败:', error);
+                }
+            }
+        });
+
+        // 添加错误处理
+        window.addEventListener('error', function(event) {
+            if (isTestRunning) {
+                stopTest();
+            }
+        });
+
+        // 添加清空测试结果的函数
+        function clearTestResults() {
+            const resultFields = [
+                'userId',
+                'loanApplyNo',
+                'fundsCode',
+                'loanAmount',
+                'loanDate',
+                'phoneNumber',
+                'userName',
+                'idCard',
+                'bankCard'
+            ];
+
+            // 将所有结果字段重置为 '-'
+            resultFields.forEach(field => {
+                document.getElementById(field).textContent = '-';
+            });
+        }
+    </script>
+
+    <!-- 添加自定义 JavaScript 以增强下拉框交互 -->
+    <script>
+        // 为所有下拉框添加平滑过渡效果
+        document.querySelectorAll('.form-select').forEach(select => {
+            select.addEventListener('mousedown', function(e) {
+                if (this.options.length > 6) {
+                    this.size = 6;  // 限制显示的选项数量
+                }
+            });
+            
+            select.addEventListener('blur', function(e) {
+                this.size = 0;  // 失去焦点时恢复正常
+            });
+            
+            select.addEventListener('change', function(e) {
+                this.size = 0;  // 选择后恢复正常
+            });
+        });
+    </script>
+</body>
+</html>

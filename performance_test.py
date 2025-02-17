@@ -1,5 +1,6 @@
 # # -*- coding: utf-8 -*-
 import csv
+import json
 import random
 import socket
 from datetime import datetime
@@ -68,10 +69,73 @@ class UserTasks(TaskSet):
     #     reps = self.client.post(url="http://192.168.1.187:8199/v1/withholdQuery", json=query_apply_data,
     #                             headers=headers)
 
+    # @task(1)
+    # def band_card(self):
+    #     # start_time = datetime.datetime.now()
+    #     # print("开始的时间", start_time)
+    #     # # 读取 CSV 文件并加载到内存中
+    #     # with open("user_data.csv", mode="r", encoding='utf-8') as file:
+    #     #     reader = csv.DictReader(file)
+    #     #     users = [row for row in reader]  # 将每行数据存储为字典
+    #     # user_data = random.choice(users)
+    #
+    #     # 使用Faker工具类库生成数据
+    #     # user_name = get_user_name()
+    #     # acct = get_baofu_ccb_num()
+    #     # phone = get_phone_mum()
+    #     # id_no, birthday = get_zx_user_id_no()
+    #
+    #     reqSn = get_zfpt_req_no()
+    #     apply_data = {
+    #         "reqSn": reqSn,
+    #         "businessChannel": 101,
+    #         "params": json_dumps_cn({
+    #             "ACCOUNT_NAME": "王婷",
+    #             "BANK_CODE": "0105",
+    #             "BANK_NAME": "建设银行",
+    #             "CREDIT_ACCTNO": "6217201733797738840",
+    #             "TEL": "15955348291",
+    #             "ID": "440113197708128669",
+    #             "BIND_PRODUCT_CODE": "bind_mock"
+    #         })
+    #     }
+    #     request_data = core_zjly_func().test_zjl_jiami(apply_data)
+    #     headers = {"Content-Type": "application/json"}
+    #     apply_request_data = {"reqSn": request_data['reqSn'], "timeStamp": request_data['timeStamp'],
+    #                           "businessChannel": 101,
+    #                           "sign": request_data['sign'],
+    #                           "key": request_data['key'],
+    #                           "requestData": request_data['requestData']}
+    #     # 发送绑卡申请
+    #     # print("发送绑卡申请的流水号", reqSn)
+    #     rep = self.client.post(url="http://192.168.1.187:8199/v1/bindBankApply", json=apply_request_data,
+    #                            headers=headers)
+    #     # 发送绑卡结果查询
+    #     query_data = {
+    #         "reqSn": reqSn,
+    #         "businessChannel": 101,
+    #         "params": json_dumps_cn({
+    #             "VERCODE": "111111"
+    #         })
+    #     }
+    #     # print("发送绑卡查询的流水号", reqSn)
+    #     query_request_data = core_zjly_func().test_zjl_jiami(query_data)
+    #     print("绑卡查询数据加密：", query_request_data)
+    #     query_apply_data = {"reqSn": query_request_data['reqSn'], "timeStamp": query_request_data['timeStamp'],
+    #                         "businessChannel": 101,
+    #                         "sign": query_request_data['sign'],
+    #                         "key": query_request_data['key'],
+    #                         "requestData": query_request_data['requestData']}
+    #     reps = self.client.post(url="http://192.168.1.187:8199/v1/bindBankConfirm", json=query_apply_data,
+    #                             headers=headers)
+    #     # end_time = datetime.datetime.now()
+    #     # print("结束的时间", end_time)
+    #     # # 计算时间差
+    #     # time_difference = start_time - end_time
+    #     # print("相差的时间", time_difference)
+
     @task(1)
-    def band_card(self):
-        # start_time = datetime.datetime.now()
-        # print("开始的时间", start_time)
+    def short_link(self):
         # # 读取 CSV 文件并加载到内存中
         # with open("user_data.csv", mode="r", encoding='utf-8') as file:
         #     reader = csv.DictReader(file)
@@ -83,55 +147,20 @@ class UserTasks(TaskSet):
         # acct = get_baofu_ccb_num()
         # phone = get_phone_mum()
         # id_no, birthday = get_zx_user_id_no()
-
-        reqSn = get_zfpt_req_no()
-        apply_data = {
-            "reqSn": reqSn,
-            "businessChannel": 101,
-            "params": json_dumps_cn({
-                "ACCOUNT_NAME": "王婷",
-                "BANK_CODE": "0105",
-                "BANK_NAME": "建设银行",
-                "CREDIT_ACCTNO": "6217201733797738840",
-                "TEL": "15955348291",
-                "ID": "440113197708128669",
-                "BIND_PRODUCT_CODE": "bind_mock"
-            })
+        numbs = random.randint(0, 999)
+        numb = random.randint(0, 100)
+        payload = {
+            "action": "shorturl",
+            "url": f"http://{numbs}.{numb}.com",
+            "format":"json"
         }
-        request_data = core_zjly_func().test_zjl_jiami(apply_data)
-        headers = {"Content-Type": "application/json"}
-        apply_request_data = {"reqSn": request_data['reqSn'], "timeStamp": request_data['timeStamp'],
-                              "businessChannel": 101,
-                              "sign": request_data['sign'],
-                              "key": request_data['key'],
-                              "requestData": request_data['requestData']}
-        # 发送绑卡申请
+        headers = {
+            "Content-Type": "multipart/form-data; charset=utf-8"
+        }
+        # 发送创建短链请求
         # print("发送绑卡申请的流水号", reqSn)
-        rep = self.client.post(url="http://192.168.1.187:8199/v1/bindBankApply", json=apply_request_data,
-                               headers=headers)
-        # 发送绑卡结果查询
-        query_data = {
-            "reqSn": reqSn,
-            "businessChannel": 101,
-            "params": json_dumps_cn({
-                "VERCODE": "111111"
-            })
-        }
-        # print("发送绑卡查询的流水号", reqSn)
-        query_request_data = core_zjly_func().test_zjl_jiami(query_data)
-        print("绑卡查询数据加密：", query_request_data)
-        query_apply_data = {"reqSn": query_request_data['reqSn'], "timeStamp": query_request_data['timeStamp'],
-                            "businessChannel": 101,
-                            "sign": query_request_data['sign'],
-                            "key": query_request_data['key'],
-                            "requestData": query_request_data['requestData']}
-        reps = self.client.post(url="http://192.168.1.187:8199/v1/bindBankConfirm", json=query_apply_data,
-                                headers=headers)
-        # end_time = datetime.datetime.now()
-        # print("结束的时间", end_time)
-        # # 计算时间差
-        # time_difference = start_time - end_time
-        # print("相差的时间", time_difference)
+        rep = self.client.post(url=f"http://183.6.104.148:1008/api.php?username=test&password=test", data=payload)
+        print(rep.text)
 
 
 class WebUser(HttpUser):
@@ -139,7 +168,7 @@ class WebUser(HttpUser):
     # 最小等待时间和最大等待时间   请求间的间隔时间
     min_wait = 2000
     max_wait = 4000
-# locust -f performance_test.py --host=http://localhost:8082
+# locust -f performance_test.py --host=http://localhost:8089
 # Number of total users to simulate   模拟的用户数
 # Spawn rate (users spawned/second)   每秒产生的用户数
 # locust -f  performance_test.py --web-host=127.0.0.1  --web-port=8083

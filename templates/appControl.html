@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APP工具</title>
+    <style>
+        :root {
+            --primary-color: #1890ff;
+            --success-color: #52c41a;
+            --warning-color: #faad14;
+            --error-color: #f5222d;
+            --text-color: #333333;
+            --border-radius: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f0f2f5;
+            color: var(--text-color);
+            line-height: 1.5;
+            padding: 24px;
+        }
+
+        .page-title {
+            text-align: left;
+            color: var(--text-color);
+            font-size: 24px;
+            font-weight: 600;
+            margin: 16px 24px;
+        }
+
+        .flex-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin: 0 24px;
+            padding: 0;
+        }
+
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+            padding: 16px;
+            min-width: 320px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(24,144,255,0.2);
+            outline: none;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.5;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            cursor: pointer;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            transition: all 0.3s;
+            margin-right: 8px;
+        }
+
+        .btn-primary {
+            color: #fff;
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: #40a9ff;
+            border-color: #40a9ff;
+        }
+
+        .btn-danger {
+            color: #fff;
+            background-color: var(--error-color);
+            border-color: var(--error-color);
+        }
+
+        .btn-danger:hover {
+            background-color: #ff4d4f;
+            border-color: #ff4d4f;
+        }
+
+        .result {
+            margin-top: 16px;
+            padding: 12px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .result.success {
+            background-color: #f6ffed;
+            border: 1px solid #b7eb8f;
+            color: var(--success-color);
+        }
+
+        .result.error {
+            background-color: #fff2f0;
+            border: 1px solid #ffccc7;
+            color: var(--error-color);
+        }
+
+        @media (max-width: 1200px) {
+            .flex-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .flex-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="flex-container">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">修改APP用户可用额度</h2>
+                <button class="btn btn-danger" onclick="clearCreditInput()">清空</button>
+            </div>
+            <div class="form-group">
+                <label class="form-label">环境选择*</label>
+                <select id="creditEnv" class="form-control">
+                    <option value="UAT">UAT</option>
+                    <option value="DEV">DEV</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">手机号</label>
+                <input type="text" id="creditPhone" class="form-control" placeholder="请输入手机号">
+            </div>
+            <div class="form-group">
+                <label class="form-label">金额</label>
+                <input type="number" id="creditAmount" class="form-control" value="20000" min="0">
+            </div>
+            <button class="btn btn-primary" onclick="updateCredit()">提交</button>
+            <div id="creditResult" class="result"></div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">删除APP设备登录信息</h2>
+                <button class="btn btn-danger" onclick="clearLoginInput()">清空</button>
+            </div>
+            <div class="form-group">
+                <label class="form-label">环境选择*</label>
+                <select id="loginEnv" class="form-control">
+                    <option value="UAT">UAT</option>
+                    <option value="DEV">DEV</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">手机号</label>
+                <input type="text" id="loginPhone" class="form-control" placeholder="请输入手机号">
+            </div>
+            <button class="btn btn-primary" onclick="deleteLogin()">提交</button>
+            <div id="loginResult" class="result"></div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">修改APP用户AB面</h2>
+                <button class="btn btn-danger" onclick="clearAbInput()">清空</button>
+            </div>
+            <div class="form-group">
+                <label class="form-label">环境选择*</label>
+                <select id="abEnv" class="form-control">
+                    <option value="UAT">UAT</option>
+                    <option value="DEV">DEV</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">手机号</label>
+                <input type="text" id="abPhone" class="form-control" placeholder="请输入手机号">
+            </div>
+            <div class="form-group">
+                <label class="form-label">AB面选择*</label>
+                <select id="abLabel" class="form-control">
+                    <option value="0">A面</option>
+                    <option value="1">B面</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" onclick="updateAbLabel()">提交</button>
+            <div id="abResult" class="result"></div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">客户信息上报至客户中心</h2>
+                <button class="btn btn-danger" onclick="clearCustomerInput()">清空</button>
+            </div>
+            <div class="form-group">
+                <label class="form-label">姓名</label>
+                <input type="text" id="customerName" class="form-control" placeholder="请输入姓名" maxlength="7" oninput="validateInput(this, 'name')">
+            </div>
+            <div class="form-group">
+                <label class="form-label">身份证</label>
+                <input type="text" id="customerIdCard" class="form-control" placeholder="请输入身份证" maxlength="18" oninput="validateInput(this, 'idCard')">
+            </div>
+            <div class="form-group">
+                <label class="form-label">手机号</label>
+                <input type="text" id="customerPhone" class="form-control" placeholder="请输入手机号">
+            </div>
+            <div class="form-group">
+                <label class="form-label">渠道</label>
+                <input type="text" id="customerChannel" class="form-control" placeholder="请输入渠道" maxlength="15" oninput="validateInput(this, 'channel')">
+            </div>
+            <button class="btn btn-primary" onclick="reportCustomer()">提交</button>
+            <div id="customerResult" class="result"></div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">APP半流程授信</h2>
+                <button class="btn btn-danger" onclick="clearCreditApplyInput()">清空</button>
+            </div>
+            <div class="form-group">
+                <label class="form-label">环境选择*</label>
+                <select id="creditApplyEnv" class="form-control">
+                    <option value="APP_UAT">UAT</option>
+                    <option value="APP_TEST">DEV</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">手机号</label>
+                <input type="text" id="creditApplyPhone" class="form-control" placeholder="请输入手机号">
+            </div>
+            <div class="form-group">
+                <label class="form-label">姓名</label>
+                <input type="text" id="creditApplyName" class="form-control" placeholder="请输入姓名" maxlength="7" oninput="validateInput(this, 'name')">
+            </div>
+            <div class="form-group">
+                <label class="form-label">身份证</label>
+                <input type="text" id="creditApplyIdCard" class="form-control" placeholder="请输入身份证" maxlength="18" oninput="validateInput(this, 'idCard')">
+            </div>
+            <div class="form-group">
+                <label class="form-label">渠道</label>
+                <input type="text" id="creditApplyChannel" class="form-control" placeholder="请输入渠道(如:APPZY)" maxlength="15" oninput="validateInput(this, 'channel')">
+            </div>
+            <button class="btn btn-primary" onclick="applyCreditFlow()">提交</button>
+            <div id="creditApplyResult" class="result"></div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">跳过人脸识别</h2>
+                <button class="btn btn-danger" onclick="clearFaceInput()">清空</button>
+            </div>
+            <div class="form-group">
+                <label class="form-label">环境选择*</label>
+                <select id="faceEnv" class="form-control">
+                    <option value="UAT">UAT</option>
+                    <option value="DEV">DEV</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">手机号</label>
+                <input type="text" id="facePhone" class="form-control" placeholder="请输入手机号">
+            </div>
+            <button class="btn btn-primary" onclick="skipFaceVerification()">提交</button>
+            <div id="faceResult" class="result"></div>
+        </div>
+    </div>
+
+    <script>
+        function updateCredit() {
+            const phone = document.getElementById('creditPhone').value;
+            const amount = document.getElementById('creditAmount').value;
+            const env = document.getElementById('creditEnv').value;
+            
+            if (!validatePhone(phone, 'creditResult')) return;
+            if (!validateAmount(amount)) return;
+
+            fetch('/app_control/update_credit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    phone: phone,
+                    amount: parseInt(amount),
+                    env: env
+                })
+            })
+            .then(response => response.json())
+            .then(result => {
+                showResult('creditResult', result.message, result.code === "200" ? 'success' : 'error');
+            })
+            .catch(error => {
+                showResult('creditResult', '提交失败，请重试', 'error');
+            });
+        }
+
+        function deleteLogin() {
+            const phone = document.getElementById('loginPhone').value;
+            const env = document.getElementById('loginEnv').value;
+            
+            if (!validatePhone(phone, 'loginResult')) return;
+
+            fetch('/app_control/delete_login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    phone: phone,
+                    env: env
+                })
+            })
+            .then(response => response.json())
+            .then(result => {
+                showResult('loginResult', result.message, result.code === "200" ? 'success' : 'error');
+            })
+            .catch(error => {
+                showResult('loginResult', '提交失败，请重试', 'error');
+            });
+        }
+
+        function validatePhone(phone, resultId) {
+            if (!phone.trim()) {
+                showResult(resultId, '请输入手机号', 'error');
+                return false;
+            }
+
+            const phoneRegex = /^1[3-9]\d{9}$/;
+            if (!phoneRegex.test(phone)) {
+                showResult(resultId, '手机号格式不正确', 'error');
+                return false;
+            }
+
+            return true;
+        }
+
+        function validateAmount(amount) {
+            if (!amount || amount < 0) {
+                showResult('creditResult', '请输入有效的金额', 'error');
+                return false;
+            }
+            return true;
+        }
+
+        function clearCreditInput() {
+            document.getElementById('creditPhone').value = '';
+            document.getElementById('creditAmount').value = '20000';
+            document.getElementById('creditEnv').value = 'UAT';
+            document.getElementById('creditResult').innerHTML = '';
+        }
+
+        function clearLoginInput() {
+            document.getElementById('loginPhone').value = '';
+            document.getElementById('loginEnv').value = 'UAT';
+            document.getElementById('loginResult').innerHTML = '';
+        }
+
+        function showResult(elementId, message, type) {
+            const resultDiv = document.getElementById(elementId);
+            resultDiv.className = 'result ' + type;
+            resultDiv.textContent = message;
+        }
+
+        function updateAbLabel() {
+            const phone = document.getElementById('abPhone').value;
+            const env = document.getElementById('abEnv').value;
+            const abLabel = document.getElementById('abLabel').value;
+            
+            if (!validatePhone(phone, 'abResult')) return;
+
+            fetch('/app_control/update_ab_label', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    phone: phone,
+                    env: env,
+                    ab_label: abLabel
+                })
+            })
+            .then(response => response.json())
+            .then(result => {
+                showResult('abResult', result.message, result.code === "200" ? 'success' : 'error');
+            })
+            .catch(error => {
+                showResult('abResult', '提交失败，请重试', 'error');
+            });
+        }
+
+        function clearAbInput() {
+            document.getElementById('abPhone').value = '';
+            document.getElementById('abEnv').value = 'UAT';
+            document.getElementById('abLabel').value = '0';
+            document.getElementById('abResult').innerHTML = '';
+        }
+
+        function reportCustomer() {
+            const name = document.getElementById('customerName').value;
+            const idCard = document.getElementById('customerIdCard').value;
+            const phone = document.getElementById('customerPhone').value;
+            const channel = document.getElementById('customerChannel').value;
+            
+            if (!name.trim() || !idCard.trim() || !phone.trim() || !channel.trim()) {
+                showResult('customerResult', '所有字段都必须填写', 'error');
+                return;
+            }
+            
+            if (!validatePhone(phone, 'customerResult')) return;
+
+            fetch('/app_control/report_customer', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: name,
+                    idCard: idCard,
+                    phone: phone,
+                    channel: channel
+                })
+            })
+            .then(response => response.json())
+            .then(result => {
+                showResult('customerResult', result.message, result.code === "200" ? 'success' : 'error');
+            })
+            .catch(error => {
+                showResult('customerResult', '提交失败，请重试', 'error');
+            });
+        }
+
+        function clearCustomerInput() {
+            document.getElementById('customerName').value = '';
+            document.getElementById('customerIdCard').value = '';
+            document.getElementById('customerPhone').value = '';
+            document.getElementById('customerChannel').value = '';
+            document.getElementById('customerResult').innerHTML = '';
+        }
+
+        function clearCreditApplyInput() {
+            document.getElementById('creditApplyPhone').value = '';
+            document.getElementById('creditApplyName').value = '';
+            document.getElementById('creditApplyIdCard').value = '';
+            document.getElementById('creditApplyChannel').value = '';
+            document.getElementById('creditApplyEnv').value = 'APP_UAT';
+            document.getElementById('creditApplyResult').innerHTML = '';
+        }
+
+        function applyCreditFlow() {
+            const phone = document.getElementById('creditApplyPhone').value;
+            const name = document.getElementById('creditApplyName').value;
+            const idCard = document.getElementById('creditApplyIdCard').value;
+            const channel = document.getElementById('creditApplyChannel').value;
+            const env = document.getElementById('creditApplyEnv').value;
+            
+            if (!validatePhone(phone, 'creditApplyResult')) return;
+            if (!name.trim() || !idCard.trim() || !channel.trim()) {
+                showResult('creditApplyResult', '所有字段都必须填写', 'error');
+                return;
+            }
+
+            fetch('/app_control/apply_credit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    phone: phone,
+                    name: name,
+                    idCard: idCard,
+                    channel: channel,
+                    env: env
+                })
+            })
+            .then(response => response.json())
+            .then(result => {
+                showResult('creditApplyResult', result.message, result.code === "200" ? 'success' : 'error');
+            })
+            .catch(error => {
+                showResult('creditApplyResult', '提交失败，请重试', 'error');
+            });
+        }
+
+        function clearFaceInput() {
+            document.getElementById('facePhone').value = '';
+            document.getElementById('faceEnv').value = 'UAT';
+            document.getElementById('faceResult').innerHTML = '';
+        }
+
+        function skipFaceVerification() {
+            const phone = document.getElementById('facePhone').value;
+            const env = document.getElementById('faceEnv').value;
+            
+            if (!validatePhone(phone, 'faceResult')) return;
+
+            fetch('/app_control/skip_face', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    phone: phone,
+                    env: env
+                })
+            })
+            .then(response => response.json())
+            .then(result => {
+                showResult('faceResult', result.message, result.code === "200" ? 'success' : 'error');
+            })
+            .catch(error => {
+                showResult('faceResult', '提交失败，请重试', 'error');
+            });
+        }
+
+        function validateInput(input, type) {
+            let value = input.value;
+            
+            switch(type) {
+                case 'name':
+                    // 只允许中文和英文字母
+                    value = value.replace(/[^a-zA-Z\u4e00-\u9fa5]/g, '');
+                    break;
+                case 'idCard':
+                    // 只允许数字和X
+                    value = value.replace(/[^0-9Xx]/g, '');
+                    break;
+                case 'channel':
+                    // 只移除空格
+                    value = value.replace(/\s/g, '');
+                    break;
+            }
+            
+            input.value = value;
+        }
+    </script>
+</body>
+</html> 

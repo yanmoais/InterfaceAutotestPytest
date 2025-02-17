@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Delete Redis Key</title>
+  </head>
+  <body>
+    <h1>Delete Redis Key</h1>
+    <form method="post" action="/delredis/delete">
+      <label for="db_index">Database Index:</label>
+      <select id="db_index" name="db_index">
+        {% for index in range(16) %}
+          <option value="{{ index }}">{{ index }}</option>
+        {% endfor %}
+      </select>
+      <br><br>
+      <label for="key">Key:</label>
+      <input type="text" id="key" name="key">
+      <br><br>
+      <button type="submit">Delete</button>
+    </form>
+    {% if message %}
+      <p>{{ message }}</p>
+    {% endif %}
+  </body>
+</html>

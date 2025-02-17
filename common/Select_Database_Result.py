@@ -117,7 +117,7 @@ class Select_Sql_Result(Mysql):
         return result['pay_channel_code'], result['agrmno']
 
     # 查询api侧zx_credit_applicant_result表的credit_apply_no，根据天源花的credit_apply_no来查找apply表在api侧的数据
-    def select_credit_apply_no_by_tyh(self, tyh_credit_apply_no, test_db="tyh", max_retries=10, wait_time=30):
+    def select_credit_apply_no_by_tyh(self, tyh_credit_apply_no, test_db="tyh", max_retries=5, wait_time=20):
         select_sql = f"SELECT credit_apply_no FROM jxym_credit_apply WHERE zx_credit_apply_no = '{tyh_credit_apply_no}';"
         retries = 0
         while retries < max_retries:
@@ -141,7 +141,7 @@ class Select_Sql_Result(Mysql):
         return None
 
     # 查询api侧zx_credit_applicant_result表的user_id，根据天源花的credit_apply_no来查找apply表在api侧的数据
-    def select_user_id_by_tyh(self, tyh_credit_apply_no, test_db="api", max_retries=10, wait_time=30):
+    def select_user_id_by_tyh(self, tyh_credit_apply_no, test_db="api", max_retries=5, wait_time=20):
         select_sql = f"SELECT user_id FROM zx_credit_applicant_result WHERE credit_apply_no = '{tyh_credit_apply_no}';"
         retries = 0
         while retries < max_retries:
@@ -165,7 +165,7 @@ class Select_Sql_Result(Mysql):
         return None
 
     # 查询天源花侧zx_credit_applicant_result表的partner_credit_no，根据天源花的credit_apply_no来查找
-    def select_partner_credit_no_by_tyh(self, credit_apply_no, test_db="tyh", max_retries=5, wait_time=30):
+    def select_partner_credit_no_by_tyh(self, credit_apply_no, test_db="tyh", max_retries=5, wait_time=20):
         select_sql = f"SELECT partner_credit_no FROM zx_credit_applicant_result WHERE credit_apply_no = '{credit_apply_no}';"
         retries = 0
         while retries < max_retries:
@@ -189,7 +189,7 @@ class Select_Sql_Result(Mysql):
         return None
 
     # 查询天源花侧zx_credit_applicant_result表的partner_credit_no，根据天源花的credit_apply_no来查找
-    def select_loan_apply_no_by_tyh(self, zx_loan_apply_no, test_db="tyh", max_retries=5, wait_time=30):
+    def select_loan_apply_no_by_tyh(self, zx_loan_apply_no, test_db="tyh", max_retries=5, wait_time=20):
         # 准备查询 SQL
         select_sql = f"SELECT loan_apply_no FROM jxym_loan_apply WHERE zx_loan_apply_no = '{zx_loan_apply_no}';"
         retries = 0

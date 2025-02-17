@@ -8,7 +8,6 @@ import allure
 from common.Xxl_Job import xxlJob
 from util_tools.Faker import *
 
-
 class execute_xxl_job(xxlJob):
     def __init__(self):
         super().__init__()
@@ -55,19 +54,18 @@ class execute_xxl_job(xxlJob):
 
     # 调用推送客户中心任务，传creditApplyNo
     def push_credit_info_to_customer_center(self, creditApplyNo):
-        param_data = {"limit": 10, "cutTimeStr": f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
-                      "creditApplyNoList": [f"{creditApplyNo}"]}
+        param_data = {"limit":10, "cutTimeStr":f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}", "creditApplyNoList":[f"{creditApplyNo}"]}
         self.excute_xxl_job.trigger_xxl_job(430, f'{json_dump_cn(param_data)}')
         self.logging.info(f"执行推送客户中心任务成功!")
 
     # 调用单笔还款处理任务
-    def single_repay(self, id=199):
-        self.excute_xxl_job.trigger_xxl_job(id)
+    def single_repay(self):
+        self.excute_xxl_job.trigger_xxl_job(199)
         self.logging.info(f"调用单笔还款处理任务成功!")
 
     # 调用单笔还款结果查询
-    def single_query_result(self, id=200):
-        self.excute_xxl_job.trigger_xxl_job(id)
+    def single_query_result(self):
+        self.excute_xxl_job.trigger_xxl_job(200)
         self.logging.info(f"调用单笔还款查询任务成功!")
 
 

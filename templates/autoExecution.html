@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>自动化执行</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <style>
+        body { 
+            background-size: cover;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            position: relative;
+            overflow-x: hidden;
+            font-size: 1.1rem;
+        }
+        
+        .main-content {
+            padding: 15px;
+            background-color: rgba(255, 255, 255, 0.85);
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        .control-panel {
+            background: rgba(248, 249, 250, 0.9);
+            border-radius: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .log-container {
+            background: linear-gradient(to bottom, #1a1a1a, #2d2d2d);
+            border-radius: 15px;
+            padding: 16.5px;
+            flex: 1;
+            min-height: auto;
+            overflow-y: auto;
+            color: #00ff00;
+            font-family: 'Consolas', monospace;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.3);
+            margin-bottom: 15px;
+            height: 350px;
+        }
+        
+        .log-container::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        .log-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+        }
+        
+        .log-container::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .log-container::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, #2980b9, #3498db);
+        }
+        
+        .result-container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            margin: 15px 0;
+            width: 100%;
+        }
+        
+        .result-container h3 {
+            color: #2c3e50;
+            font-weight: 700;
+            margin-bottom: 25px;
+            font-size: 1.35rem;
+            letter-spacing: 0.5px;
+        }
+        
+        .result-labels {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 9.5px;
+            padding: 10px;
+            background: #e3f2fd;
+            border-radius: 10px;
+            margin-bottom: 0;
+        }
+        
+        .result-values {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 9.5px;
+            padding: 10px;
+            background: transparent;
+            border-radius: 10px;
+            border: none;
+        }
+        
+        .result-label {
+            flex: 1;
+            min-width: 157px;
+            color: #1565c0;
+            font-weight: 600;
+            font-size: 0.88rem;
+            text-align: center;
+            padding: 11px;
+        }
+        
+        .result-value {
+            flex: 1;
+            min-width: 157px;
+            color: #000000;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-align: center;
+            padding: 11px;
+            letter-spacing: 0.5px;
+            text-shadow: none;
+        }
+        
+        .form-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.8rem;
+        }
+        
+        .form-label-icon {
+            color: #3498db;
+            font-size: 1.2rem;
+            margin-right: 10px;
+        }
+        
+        .form-label {
+            font-weight: 500;
+            color: #2c3e50;
+            margin-bottom: 0;
+        }
+        
+        .form-select {
+            height: 42px;
+            border-radius: 25px;
+            border: 2px solid #e0e0e0;
+            padding: 0 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%233498db' d='M6 8.825L1.175 4 2.238 2.938 6 6.7l3.763-3.762L10.825 4z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 20px center;
+            padding-right: 40px;
+        }
+        
+        .form-select:hover {
+            border-color: #3498db;
+            box-shadow: 0 0 15px rgba(52, 152, 219, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .btn-execute {
+            width: 100%;
+            padding: 12px 30px;
+            font-size: 1.19rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            border-radius: 25px;
+            background: linear-gradient(45deg, #2980b9, #3498db);
+            border: none;
+            color: #ffffff !important;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        .btn-execute:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+        }
+        
+        .btn-stop {
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+        }
+        
+        .btn-stop:hover {
+            background: linear-gradient(45deg, #c0392b, #e74c3c);
+            box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+        }
+        
+        .log-entry {
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+        
+        .log-entry:hover {
+            background: rgba(255,255,255,0.05);
+        }
+        
+        /* 优化日期选择器样式 */
+        input[type="date"] {
+            height: 42px;
+            border-radius: 25px;
+            border: 2px solid #e0e0e0;
+            padding: 0 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            font-family: inherit;
+            color: #2c3e50;
+            width: 100%;
+            position: relative;
+        }
+
+        /* 自定义日期选择器的各个部分 */
+        input[type="date"]::-webkit-datetime-edit-fields-wrapper {
+            padding: 0;
+            cursor: pointer;
+        }
+
+        input[type="date"]::-webkit-datetime-edit-year-field,
+        input[type="date"]::-webkit-datetime-edit-month-field,
+        input[type="date"]::-webkit-datetime-edit-day-field {
+            padding: 0 5px;
+            cursor: pointer;
+        }
+
+        input[type="date"]::-webkit-datetime-edit-text {
+            color: #3498db;
+            padding: 0 3px;
+            cursor: pointer;
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24'%3E%3Cpath fill='%233498db' d='M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V8h16v13z'/%3E%3C/svg%3E");
+            cursor: pointer;
+            padding: 8px;
+            margin-right: 5px;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator:hover {
+            opacity: 1;
+        }
+
+        /* 日期选择器悬停和焦点状态 */
+        input[type="date"]:hover {
+            border-color: #3498db;
+            box-shadow: 0 0 15px rgba(52, 152, 219, 0.2);
+            transform: translateY(-2px);
+        }
+
+        input[type="date"]:focus {
+            border-color: #2980b9;
+            box-shadow: 0 0 20px rgba(41, 128, 185, 0.3);
+            outline: none;
+        }
+
+        /* 添加禁用按钮样式 */
+        .btn-execute:disabled {
+            background: linear-gradient(45deg, #95a5a6, #7f8c8d);
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+        
+        .btn-stop:disabled {
+            background: linear-gradient(45deg, #95a5a6, #7f8c8d);
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+        
+        /* 多选框样式 */
+        .form-select[multiple] {
+            padding: 10px;
+            height: auto;
+            min-height: 42px;
+            cursor: pointer;
+        }
+        
+        /* 选项样式 */
+        .form-select[multiple] option {
+            padding: 8px 12px;
+            margin: 2px 0;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .form-select[multiple] option:hover {
+            background-color: #e9ecef;
+        }
+        
+        .form-select[multiple] option:checked {
+            background-color: #0d6efd;
+            color: white;
+        }
+        
+        /* 自定义多选框容器 */
+        .custom-multiselect {
+            position: relative;
+        }
+        
+        .multiselect-display {
+            height: 42px;
+            border-radius: 25px;
+            border: 2px solid #e0e0e0;
+            padding: 0 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .multiselect-display:hover {
+            border-color: #0d6efd;
+        }
+        
+        .multiselect-options {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            margin-top: 5px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .multiselect-options.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-content">
+        <div class="container-fluid">
+            <div class="control-panel">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <div class="form-label-group">
+                                <i class="fas fa-code-branch form-label-icon"></i>
+                                <label class="form-label">业务线选择</label>
+                            </div>
+                            <select class="form-select" id="businessLine">
+                                <option value="zjly">资金路由</option>
+                                <option value="api">核心API</option>
+                                <option value="tyh">TYH</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <div class="form-label-group">
+                                <i class="fas fa-building form-label-icon"></i>
+                                <label class="form-label">资方选择</label>
+                            </div>
+                            <div class="custom-multiselect">
+                                <div class="multiselect-display" id="funderDisplay">
+                                    <span>请选择资方</span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                                <div class="multiselect-options">
+                                    <select id="funder" class="form-select" multiple size="4">
+                                        <option value="" disabled>请选择</option>
+                                        <option value="all" data-special="true">全资方</option>
+                                        <option value="jmx">金美信</option>
+                                        <option value="xiaomi">小米</option>
+                                        <option value="zx">振兴</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <div class="form-label-group">
+                                <i class="fas fa-calendar-alt form-label-icon"></i>
+                                <label class="form-label">日期选择</label>
+                            </div>
+                            <input type="date" id="regressionVersion" class="form-control">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <button id="executeBtn" class="btn btn-execute">
+                            <span>
+                                <i class="fas fa-play"></i>
+                                执行回归
+                            </span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <button id="stopBtn" class="btn btn-execute btn-stop" disabled>
+                            <span>
+                                <i class="fas fa-stop"></i>
+                                停止回归
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="log-container" id="logOutput"></div>
+
+            <div class="result-container">
+                <h3>版本回归结果</h3>
+                <div class="result-labels">
+                    <div class="result-label">业务类型</div>
+                    <div class="result-label">回归资方</div>
+                    <div class="result-label">回归版本</div>
+                    <div class="result-label">回归通过率</div>
+                    <div class="result-label">回归用例总数</div>
+                    <div class="result-label">回归测试报告</div>
+                </div>
+                <div class="result-values">
+                    <div class="result-value" id="businessType">-</div>
+                    <div class="result-value" id="regressionFunder">-</div>
+                    <div class="result-value" id="regressionDate">-</div>
+                    <div class="result-value" id="passRate">-</div>
+                    <div class="result-value" id="totalCaseTotal">-</div>
+                    <div class="result-value" id="reportPath">-</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let isTestRunning = false;
+        let eventSource = null;
+
+        // 重置按钮状态函数
+        function resetButtons(testing = false) {
+            const executeBtn = document.getElementById('executeBtn');
+            const stopBtn = document.getElementById('stopBtn');
+            
+            executeBtn.disabled = testing;
+            stopBtn.disabled = !testing;
+            
+            if (testing) {
+                executeBtn.innerHTML = `
+                    <span>
+                        <i class="fas fa-spinner fa-spin"></i>
+                        执行中...
+                    </span>
+                `;
+            } else {
+                executeBtn.innerHTML = `
+                    <span>
+                        <i class="fas fa-play"></i>
+                        执行回归
+                    </span>
+                `;
+            }
+        }
+
+        // 停止测试函数
+        async function stopTest() {
+            try {
+                // 关闭 EventSource 连接
+                if (eventSource) {
+                    eventSource.close();
+                    eventSource = null;
+                }
+
+                // 发送停止请求
+                const response = await fetch('/auto_execution/stop_test', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('停止请求失败');
+                }
+
+                // 添加停止日志
+                const logOutput = document.getElementById('logOutput');
+                const logEntry = document.createElement('div');
+                logEntry.className = 'log-entry';
+                logEntry.innerHTML = `
+                    <i class="fas fa-stop-circle" style="color: #e74c3c;"></i>
+                    <span style="color: #e74c3c;">回归已手动停止</span>
+                `;
+                logOutput.appendChild(logEntry);
+                logOutput.scrollTop = logOutput.scrollHeight;
+
+                // 重置按钮状态
+                isTestRunning = false;
+                resetButtons(false);
+
+            } catch (error) {
+                console.error('停止回归失败:', error);
+                alert('停止回归失败，请刷新页面重试');
+            }
+        }
+
+        // 执行按钮点击事件
+        document.getElementById('executeBtn').addEventListener('click', function() {
+            const businessLine = document.getElementById('businessLine').value;
+            const funderSelect = document.getElementById('funder');
+            let funders = Array.from(funderSelect.selectedOptions)
+                .filter(option => option.value) // 过滤掉空值
+                .map(option => option.value);
+            
+            // 如果选择了"全资方"，则获取所有资方的值（除了"all"和空值）
+            if (funders.includes('all')) {
+                funders = Array.from(funderSelect.options)
+                    .filter(option => option.value && option.value !== 'all')
+                    .map(option => option.value);
+            }
+            
+            const regressionDate = document.getElementById('regressionVersion').value;
+
+            // 验证是否选择了资方
+            if (funders.length === 0) {
+                alert('请选择至少一个资方');
+                return;
+            }
+
+            // 清空之前的结果
+            document.getElementById('businessType').textContent = '-';
+            document.getElementById('regressionFunder').textContent = '-';
+            document.getElementById('regressionDate').textContent = '-';
+            document.getElementById('passRate').textContent = '-';
+            document.getElementById('reportPath').textContent = '-';
+            document.getElementById('totalCaseTotal').textContent = '-';
+            document.getElementById('logOutput').innerHTML = '';
+
+            // 添加执行中的状态
+            this.disabled = true;
+            this.innerHTML = '<span><i class="fas fa-spinner fa-spin"></i> 执行中...</span>';
+
+            // 设置测试运行状态
+            isTestRunning = true;
+            // 启用停止按钮
+            document.getElementById('stopBtn').disabled = false;
+            
+            // 建立 EventSource 连接
+            if (window.eventSource) {
+                window.eventSource.close();
+            }
+            window.eventSource = new EventSource('/auto_execution/logs');
+            
+            window.eventSource.onmessage = function(event) {
+                try {
+                    const data = JSON.parse(event.data);
+                    if (data.result) {
+                        // 更新结果
+                        document.getElementById('businessType').textContent = data.result.businessType || '-';
+                        document.getElementById('regressionFunder').textContent = data.result.regressionFunder || '-';
+                        document.getElementById('regressionDate').textContent = data.result.regressionDate || '-';
+                        document.getElementById('passRate').textContent = data.result.passRate || '-';
+                        document.getElementById('totalCaseTotal').textContent = data.result.totalCaseTotal || '-';
+                        document.getElementById('reportPath').innerHTML = data.result.reportPath && data.result.reportPath !== '-' 
+    ? `<a href="${data.result.reportPath}/index.html" target="_blank" style="color: #1890ff; text-decoration: underline; cursor: pointer;">查看测试报告</a>` 
+    : '-';
+                        
+                        // 重置按钮状态
+                        isTestRunning = false;
+                        resetButtons(false);
+                        
+                        // 关闭 EventSource
+                        window.eventSource.close();
+                    } else if (data.message) {
+                        // 添加日志
+                        const logOutput = document.getElementById('logOutput');
+                        const logEntry = document.createElement('div');
+                        logEntry.className = 'log-entry';
+                        logEntry.innerHTML = `<i class="fas fa-angle-right me-2"></i>${data.message}`;
+                        logOutput.appendChild(logEntry);
+                        logOutput.scrollTop = logOutput.scrollHeight;
+                        
+                        // 如果消息表明测试已完成，重置按钮状态
+                        if (data.message.includes('测试已完成') || data.message.includes('测试已停止')) {
+                            isTestRunning = false;
+                            resetButtons(false);
+                        }
+                    }
+                } catch (error) {
+                    console.error('处理消息时出错:', error);
+                    // 发生错误时也重置按钮状态
+                    isTestRunning = false;
+                    resetButtons(false);
+                }
+            };
+
+            window.eventSource.onerror = function(error) {
+                console.error('EventSource 错误:', error);
+                const executeBtn = document.getElementById('executeBtn');
+                executeBtn.disabled = false;
+                executeBtn.innerHTML = '<span><i class="fas fa-play"></i> 执行回归</span>';
+                if (window.eventSource) {
+                    window.eventSource.close();
+                }
+            };
+
+            // 发送执行请求
+            fetch('/auto_execution/execute', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    businessLine: businessLine,
+                    funders: funders,
+                    regressionDate: regressionDate
+                })
+            }).catch(error => {
+                console.error('执行请求失败:', error);
+                const executeBtn = document.getElementById('executeBtn');
+                executeBtn.disabled = false;
+                executeBtn.innerHTML = '<span><i class="fas fa-play"></i> 执行回归</span>';
+            });
+        });
+
+        // 停止按钮点击事件
+        document.getElementById('stopBtn').addEventListener('click', function() {
+            if (!isTestRunning) return;
+
+            this.disabled = true;
+            
+            fetch('/auto_execution/stop_test', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => response.json())
+            .then(data => {
+                // 关闭 EventSource
+                if (window.eventSource) {
+                    window.eventSource.close();
+                }
+                
+                // 恢复执行按钮状态
+                const executeBtn = document.getElementById('executeBtn');
+                executeBtn.disabled = false;
+                executeBtn.innerHTML = '<span><i class="fas fa-play"></i> 执行回归</span>';
+                
+                // 更新测试运行状态
+                isTestRunning = false;
+                
+                // 添加停止日志
+                const logOutput = document.getElementById('logOutput');
+                const logEntry = document.createElement('div');
+                logEntry.className = 'log-entry';
+                logEntry.innerHTML = '<i class="fas fa-stop-circle me-2"></i>测试已手动停止';
+                logOutput.appendChild(logEntry);
+                logOutput.scrollTop = logOutput.scrollHeight;
+            })
+            .catch(error => {
+                console.error('停止测试失败:', error);
+                this.disabled = false;
+            });
+        });
+
+        // 页面卸载时清理 EventSource
+        window.addEventListener('beforeunload', function() {
+            if (window.eventSource) {
+                window.eventSource.close();
+            }
+        });
+
+        // 初始化按钮状态
+        resetButtons(false);
+
+        // 为所有下拉框添加平滑过渡效果
+        document.querySelectorAll('.form-select').forEach(select => {
+            select.addEventListener('mousedown', function(e) {
+                if (this.options && this.options.length > 6) {
+                    this.size = 6;
+                }
+            });
+            
+            select.addEventListener('blur', function(e) {
+                this.size = 0;
+            });
+            
+            select.addEventListener('change', function(e) {
+                this.size = 0;
+            });
+        });
+
+        // 设置日期选择器默认值为当前日期
+        function setDefaultDate() {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            const dateInput = document.getElementById('regressionVersion');
+            dateInput.value = `${year}-${month}-${day}`;
+        }
+
+        // 页面加载时设置默认日期
+        document.addEventListener('DOMContentLoaded', setDefaultDate);
+
+        // 为日期选择器添加点击事件
+        document.getElementById('regressionVersion').addEventListener('click', function(e) {
+            // 阻止默认事件
+            e.preventDefault();
+            // 显示日期选择器
+            this.showPicker();
+        });
+
+        // 为日期选择器的年月日文本添加点击事件
+        document.getElementById('regressionVersion').addEventListener('keydown', function(e) {
+            // 阻止键盘输入
+            e.preventDefault();
+            // 显示日期选择器
+            this.showPicker();
+        });
+
+        // 添加资方选择逻辑
+        document.addEventListener('DOMContentLoaded', function() {
+            const funderDisplay = document.getElementById('funderDisplay');
+            const multiselect = document.querySelector('.multiselect-options');
+            const funderSelect = document.getElementById('funder');
+            
+            // 点击显示框时切换下拉选项的显示状态
+            funderDisplay.addEventListener('click', function(e) {
+                multiselect.classList.toggle('show');
+                e.stopPropagation();
+            });
+            
+            // 点击页面其他地方时关闭下拉框
+            document.addEventListener('click', function(e) {
+                if (!multiselect.contains(e.target) && !funderDisplay.contains(e.target)) {
+                    multiselect.classList.remove('show');
+                }
+            });
+            
+            // 防止点击下拉选项时关闭下拉框
+            multiselect.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+
+            // 所有资方列表（除了"全资方"选项）
+            const allFunders = Array.from(funderSelect.options)
+                .filter(option => option.value && option.value !== 'all')
+                .map(option => option.value);
+            
+            // 监听选择变化
+            funderSelect.addEventListener('change', function(e) {
+                const allOption = this.querySelector('option[value="all"]');
+                const selectedOptions = Array.from(this.selectedOptions);
+                
+                if (selectedOptions.some(opt => opt.value === 'all')) {
+                    // 如果选择了"全资方"，取消其他所有选择
+                    Array.from(this.options).forEach(opt => {
+                        if (opt.value && opt.value !== 'all') {
+                            opt.selected = false;
+                        }
+                    });
+                } else if (selectedOptions.length > 0) {
+                    // 如果选择了其他资方，取消"全资方"的选择
+                    allOption.selected = false;
+                }
+                
+                updateDisplayText();
+            });
+            
+            // 更新显示文本
+            function updateDisplayText() {
+                const selectedOptions = Array.from(funderSelect.selectedOptions);
+                if (selectedOptions.length === 0) {
+                    funderDisplay.querySelector('span').textContent = '请选择资方';
+                } else {
+                    funderDisplay.querySelector('span').textContent = 
+                        selectedOptions.map(opt => opt.text).join(', ');
+                }
+            }
+
+            // 为所有选项添加点击事件
+            funderSelect.addEventListener('mousedown', function(e) {
+                e.preventDefault();
+                const option = e.target;
+                if (option.tagName === 'OPTION' && !option.disabled) {
+                    if (option.value === 'all') {
+                        // 如果点击的是"全资方"
+                        Array.from(this.options).forEach(opt => {
+                            opt.selected = (opt.value === 'all');
+                        });
+                    } else {
+                        // 如果点击的是其他选项
+                        const allOption = this.querySelector('option[value="all"]');
+                        allOption.selected = false;
+                        option.selected = !option.selected;
+                    }
+                    updateDisplayText();
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

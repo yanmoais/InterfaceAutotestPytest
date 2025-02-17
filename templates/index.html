@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='assets/imgs/system/favicon.ico') }}">
+    <title>众利测试平台</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --nav-bg-start: #1a2634;
+            --nav-bg-end: #243447;
+            --text-color: #fff;
+            --hover-bg: rgba(255,255,255,0.1);
+            --active-bg: rgba(255,255,255,0.2);
+            --nav-width: 220px;
+            --nav-width-collapsed: 61px;
+            --header-height: 61px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            background-color: #f5f6fa;
+            padding-top: var(--header-height);
+        }
+
+        .toggle-nav {
+            cursor: pointer;
+            padding: 0 15px;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .toggle-nav:hover {
+            background: rgba(0,0,0,0.025);
+        }
+
+        .toggle-nav svg {
+            width: 20px;
+            height: 20px;
+            transform: rotate(180deg);
+        }
+
+        .content.expanded .toggle-nav svg {
+            transform: rotate(0deg);
+        }
+
+        .nav.collapsed + .content .toggle-nav svg {
+            transform: rotate(0deg);
+        }
+
+        .nav {
+            width: var(--nav-width);
+            background: linear-gradient(180deg, var(--nav-bg-start) 0%, var(--nav-bg-end) 100%);
+            height: 100vh;
+            padding: 0;
+            color: var(--text-color);
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            overflow-x: hidden;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .nav::-webkit-scrollbar {
+            display: none;
+        }
+
+        .nav.collapsed {
+            width: var(--nav-width-collapsed);
+        }
+
+        .nav.collapsed .search-box,
+        .nav.collapsed .nav-item span:not(.tooltip),
+        .nav.collapsed .nav-title {
+            display: none;
+        }
+
+        .nav.collapsed .nav-item {
+            padding: 12px;
+            justify-content: center;
+        }
+
+        .nav.collapsed .nav-item::before {
+            margin-right: 0;
+        }
+        
+        .content {
+            flex: 1;
+            padding: 0;
+            margin-left: var(--nav-width);
+            transition: margin-left 0.3s ease;
+            height: calc(100vh - var(--header-height));
+            margin-top: 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .content.expanded {
+            margin-left: var(--nav-width-collapsed);
+        }
+        
+        .nav-item {
+            cursor: pointer;
+            padding: 12px 20px;
+            margin: 4px 8px;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            position: relative;
+            user-select: none;
+            border-radius: 6px;
+            white-space: nowrap;
+        }
+        
+        .nav-item:hover {
+            background-color: var(--hover-bg);
+            transform: translateX(2px);
+        }
+
+        .nav-item .tooltip {
+            position: absolute;
+            left: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0,0,0,0.8);
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            margin-left: 10px;
+        }
+
+        .collapsed .nav-item:hover .tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .sub-menu {
+            position: absolute;
+            left: 100%;
+            top: 0;
+            background: var(--nav-bg-end);
+            padding: 10px;
+            border-radius: 4px;
+            min-width: 180px;
+            display: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1001;
+        }
+
+        .sub-menu .nav-item {
+            font-size: 13px;
+            padding: 10px 70px;
+            margin: 2px 0;
+        }
+
+        .sub-menu .nav-item:hover {
+            transform: none;
+            background: var(--hover-bg);
+        }
+
+        /* 移除子菜单项的图标 */
+        .sub-menu .nav-item::before {
+            display: none;
+        }
+
+        .popup-menu {
+            position: fixed;
+            background: var(--nav-bg-end);
+            padding: 10px;
+            border-radius: 4px;
+            min-width: 180px;
+            display: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1002;
+        }
+
+        .popup-menu .menu-title {
+            color: var(--text-color);
+            font-size: 14px;
+            padding: 8px 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 5px;
+        }
+
+        .popup-menu .menu-item {
+            color: var(--text-color);
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 13px;
+            display: block;
+            text-decoration: none;
+        }
+
+        .popup-menu .menu-item:hover {
+            background: var(--hover-bg);
+        }
+
+        .nav-title {
+            padding: 15px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .nav-title img {
+            width: 30px;
+            height: 30px;
+        }
+
+        .search-box {
+            margin: 10px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: none;
+            background: rgba(255,255,255,0.1);
+            color: var(--text-color);
+            font-size: 14px;
+        }
+
+        .search-box input::placeholder {
+            color: rgba(255,255,255,0.5);
+        }
+
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--nav-bg-end);
+            border-radius: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+            z-index: 1002;
+        }
+
+        .search-result-item {
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+
+        .search-result-item:hover {
+            background: var(--hover-bg);
+        }
+        
+        .active {
+            background-color: var(--active-bg);
+        }
+
+        .nav-item.active {
+            background-color: var(--primary-color);
+        }
+        
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+
+        .nav-item::before {
+            content: '';
+            display: inline-block;
+            width: 25px;
+            height: 25px;
+            margin-right: 10px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-item:hover::before {
+            transform: scale(1.1);
+        }
+
+        .nav-item[onclick*="home"]::before {
+            background-image: url('/static/assets/imgs/system/home.png');
+        }
+
+        .nav-item[onclick*="tools"]::before {
+            background-image: url('/static/assets/imgs/system/tools.png');
+        }
+
+        .nav-item[onclick*="query"]::before {
+            background-image: url('/static/assets/imgs/system/query.png');
+        }
+
+        .nav-item[onclick*="baidu"]::before {
+            background-image: url('/static/assets/imgs/system/baidu.png');
+        }
+
+        .nav-item[onclick*="dataplatform"]::before {
+            background-image: url('/static/assets/imgs/system/dataplatform.png');
+        }
+
+        .nav-item[onclick*="automation"]::before {
+            background-image: url('/static/assets/imgs/system/testauto.png');
+        }
+
+        .nav-item[onclick*="performance"]::before {
+            background-image: url('/static/assets/imgs/system/pressure.png');
+        }
+
+        .breadcrumb {
+            padding: 10px 0px;
+            background: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 0;
+            left: var(--nav-width);
+            right: 0;
+            z-index: 999;
+            transition: left 0.3s ease;
+            display: flex;
+            align-items: center;
+            height: var(--header-height);
+            font-size: 15px;
+        }
+
+        .content.expanded .breadcrumb {
+            left: var(--nav-width-collapsed);
+        }
+
+        .breadcrumb span {
+            color: #999;
+            cursor: default;
+        }
+
+        .breadcrumb span.clickable {
+            color: #333;
+            cursor: pointer;
+        }
+
+        .breadcrumb span:not(:last-child)::after {
+            content: '/';
+            margin: 0 5px;
+            color: #999;
+        }
+
+        @media (max-width: 768px) {
+            .nav {
+                width: var(--nav-width-collapsed);
+            }
+            
+            .content {
+                margin-left: var(--nav-width-collapsed);
+            }
+
+            .search-box,
+            .nav-item span:not(.tooltip),
+            .nav-title {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <div class="nav-title">
+            <img src="{{ url_for('static', filename='assets/imgs/system/zlsk.png') }}" alt="ZLSK">
+            众利测试平台
+        </div>
+        <div class="search-box">
+            <input type="text" placeholder="搜索功能..." oninput="searchMenu(this.value)">
+            <div class="search-results"></div>
+        </div>
+        <!-- 暂时注释掉首页菜单
+        <div class="nav-item" onclick="showContent('home')">
+            <span>首页</span>
+            <div class="tooltip">首页</div>
+        </div>
+        -->
+        <div class="nav-item" onclick="handleNavItemClick(event, 'tools')" onmouseover="showPopupMenu(event, 'tools')" onmouseout="hidePopupMenu('tools')">
+            <span>测试工具</span>
+            <div class="tooltip">测试工具</div>
+        </div>
+        <div class="sub-menu" id="tools">
+            <div class="nav-item" onclick="showContent('riskControl')">
+                <span>风控工具</span>
+            </div>
+            <div class="nav-item" onclick="showContent('delredis')">
+                <span>删除redis</span>
+            </div>
+            <div class="nav-item" onclick="showContent('appcontrol')">
+                <span>APP工具</span>
+            </div>
+        </div>
+        <!-- 构数平台菜单 -->
+        <div class="nav-item" onclick="handleNavItemClick(event, 'dataplatform')" onmouseover="showPopupMenu(event, 'dataplatform')" onmouseout="hidePopupMenu('dataplatform')">
+            <span>构数平台</span>
+            <div class="tooltip">构数平台</div>
+        </div>
+        <div class="sub-menu" id="dataplatform">
+            <div class="nav-item" onclick="showContent('dataConstruct')">
+                <span>数据构造</span>
+            </div>
+        </div>
+        <div class="nav-item" onclick="handleNavItemClick(event, 'automation')" onmouseover="showPopupMenu(event, 'automation')" onmouseout="hidePopupMenu('automation')">
+            <span>自动化</span>
+            <div class="tooltip">自动化</div>
+        </div>
+        <div class="sub-menu" id="automation">
+            <div class="nav-item" onclick="showContent('autoExecution')">
+                <span>自动化执行</span>
+            </div>
+        </div>
+        <div class="nav-item" onclick="handleNavItemClick(event, 'performance')" onmouseover="showPopupMenu(event, 'performance')" onmouseout="hidePopupMenu('performance')">
+            <span>性能压测</span>
+            <div class="tooltip">性能压测</div>
+        </div>
+        <div class="sub-menu" id="performance">
+            <div class="nav-item" onclick="showContent('pressureTest')">
+                <span>性能压测执行</span>
+            </div>
+        </div>
+        <!-- 暂时注释掉查询菜单
+        <div class="nav-item" onclick="handleNavItemClick(event, 'query')" onmouseover="showPopupMenu(event, 'query')" onmouseout="hidePopupMenu('query')">
+            <span>查询</span>
+            <div class="tooltip">查询</div>
+        </div>
+        <div class="sub-menu" id="query">
+            <div class="nav-item" onclick="showContent('orderQuery')">
+                <span>订单查询</span>
+            </div>
+            <div class="nav-item" onclick="showContent('repaymentQuery')">
+                <span>还款查询</span>
+            </div>
+        </div>
+        -->
+    </div>
+    
+    <!-- 修改弹出菜单部分 -->
+    <div class="popup-menu" id="popup-tools">
+        <div class="menu-title">测试工具</div>
+        <a href="#" class="menu-item" onclick="showContent('riskControl')">风控工具</a>
+        <a href="#" class="menu-item" onclick="showContent('delredis')">删除redis</a>
+        <a href="#" class="menu-item" onclick="showContent('appcontrol')">APP工具</a>
+    </div>
+
+    <!-- 构数平台弹出菜单 -->
+    <div class="popup-menu" id="popup-dataplatform">
+        <div class="menu-title">构数平台</div>
+        <a href="#" class="menu-item" onclick="showContent('dataConstruct')">数据构造</a>
+    </div>
+
+    <div class="popup-menu" id="popup-automation">
+        <div class="menu-title">自动化</div>
+        <a href="#" class="menu-item" onclick="showContent('autoExecution')">自动化执行</a>
+    </div>
+
+    <div class="popup-menu" id="popup-performance">
+        <div class="menu-title">性能压测</div>
+        <a href="#" class="menu-item" onclick="showContent('pressureTest')">性能压测执行</a>
+    </div>
+
+    <div class="content">
+        <div class="breadcrumb">
+            <div class="toggle-nav" onclick="toggleNav()">
+                <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="20" height="20" class="hamburger">
+                    <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM142.4 642.1L298.7 519a8.84 8.84 0 0 0 0-13.9L142.4 381.9c-5.8-4.6-14.4-.5-14.4 6.9v246.3a8.9 8.9 0 0 0 14.4 7z"></path>
+                </svg>
+            </div>
+        </div>
+        <iframe id="contentFrame" src=""></iframe>
+    </div>
+
+    <script>
+        let navHistory = [];
+        let currentPopupMenu = null;
+        let popupMenuTimeout = null;
+        let currentHoveredItem = null;
+
+        function handleNavItemClick(event, menuId) {
+            const nav = document.querySelector('.nav');
+            if (nav.classList.contains('collapsed')) {
+                event.preventDefault();
+                event.stopPropagation();
+                return;
+            }
+            toggleSubMenu(menuId, event);
+        }
+
+        function showPopupMenu(event, menuId) {
+            const nav = document.querySelector('.nav');
+            if (!nav.classList.contains('collapsed')) return;
+
+            // 立即隐藏当前显示的弹出菜单
+            if (currentPopupMenu && currentPopupMenu.id !== 'popup-' + menuId) {
+                currentPopupMenu.style.display = 'none';
+            }
+
+            clearTimeout(popupMenuTimeout);
+            
+            const popupMenu = document.getElementById('popup-' + menuId);
+            const rect = event.currentTarget.getBoundingClientRect();
+            
+            // 获取当前页面的 iframe src
+            const currentPage = document.getElementById('contentFrame').src;
+            
+            // 清除所有菜单项的激活状态
+            popupMenu.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+                
+                // 检查这个菜单项对应的页面是否是当前页面
+                const pageUrl = item.getAttribute('onclick')?.match(/'([^']+)'/)?.[1];
+                if (pageUrl && currentPage.includes(pageUrl)) {
+                    item.classList.add('active');
+                }
+            });
+            
+            popupMenu.style.left = (rect.right + 5) + 'px';
+            popupMenu.style.top = rect.top + 'px';
+            popupMenu.style.display = 'block';
+            
+            currentPopupMenu = popupMenu;
+            currentHoveredItem = event.currentTarget;
+
+            popupMenu.addEventListener('mouseenter', () => {
+                clearTimeout(popupMenuTimeout);
+            });
+
+            popupMenu.addEventListener('mouseleave', () => {
+                if (currentHoveredItem !== event.currentTarget) {
+                    popupMenu.style.display = 'none';
+                }
+            });
+
+            // 添加或更新CSS样式
+            const styleId = 'popup-menu-active-style';
+            let styleElement = document.getElementById(styleId);
+            
+            if (!styleElement) {
+                styleElement = document.createElement('style');
+                styleElement.id = styleId;
+                document.head.appendChild(styleElement);
+            }
+            
+            styleElement.textContent = `
+                .popup-menu .menu-item.active {
+                    background-color: #3498db !important;
+                    color: white !important;
+                }
+            `;
+        }
+
+        function hidePopupMenu(menuId) {
+            const popupMenu = document.getElementById('popup-' + menuId);
+            
+            popupMenuTimeout = setTimeout(() => {
+                if (popupMenu && !isMouseOverElement(popupMenu, event) && 
+                    (!currentHoveredItem || !isMouseOverElement(currentHoveredItem, event))) {
+                    popupMenu.style.display = 'none';
+                    currentPopupMenu = null;
+                    currentHoveredItem = null;
+                }
+            }, 100);
+        }
+
+        function isMouseOverElement(element, event) {
+            if (!event || !element) return false;
+            
+            const rect = element.getBoundingClientRect();
+            const mouseX = event.clientX;
+            const mouseY = event.clientY;
+            
+            return mouseX >= rect.left && mouseX <= rect.right && 
+                   mouseY >= rect.top && mouseY <= rect.bottom;
+        }
+
+        function toggleNav() {
+            const nav = document.querySelector('.nav');
+            const content = document.querySelector('.content');
+            const expandIcon = document.querySelector('.expand-icon');
+            const collapseIcon = document.querySelector('.collapse-icon');
+            
+            // 同步收缩导航栏和内容区域
+            nav.classList.toggle('collapsed');
+            content.classList.toggle('expanded');
+            
+            // 隐藏所有子菜单
+            document.querySelectorAll('.sub-menu').forEach(menu => {
+                menu.style.display = 'none';
+            });
+            
+            // 移除一级菜单的激活状态，但保留二级菜单的激活状态
+            document.querySelectorAll('.nav-item').forEach(item => {
+                if (!item.closest('.sub-menu')) {
+                    item.classList.remove('active');
+                }
+            });
+            
+            // 切换图标显示
+            if (nav.classList.contains('collapsed')) {
+                expandIcon.style.display = 'block';
+                collapseIcon.style.display = 'none';
+            } else {
+                expandIcon.style.display = 'none';
+                collapseIcon.style.display = 'block';
+            }
+        }
+
+        function searchMenu(value) {
+            const searchResults = document.querySelector('.search-results');
+            if (!value) {
+                searchResults.style.display = 'none';
+                return;
+            }
+
+            const menuItems = document.querySelectorAll('.nav-item span:not(.tooltip)');
+            const results = Array.from(menuItems)
+                .filter(item => item.textContent.toLowerCase().includes(value.toLowerCase()))
+                .map(item => item.textContent);
+
+            searchResults.innerHTML = results
+                .map(result => `<div class="search-result-item" onclick="navigateToResult('${result}')">${result}</div>`)
+                .join('');
+            
+            searchResults.style.display = results.length ? 'block' : 'none';
+        }
+
+        function navigateToResult(result) {
+            const menuItem = Array.from(document.querySelectorAll('.nav-item'))
+                .find(item => item.textContent.trim() === result);
+            if (menuItem) {
+                menuItem.click();
+            }
+            document.querySelector('.search-results').style.display = 'none';
+        }
+
+        function updateBreadcrumb(page) {
+            const breadcrumb = document.querySelector('.breadcrumb');
+            const currentPath = [];
+            
+            if (page !== 'home') {
+                currentPath.push({text: '首页', page: 'home', clickable: true});
+                const menuItem = document.querySelector(`.nav-item[onclick*="${page}"]`);
+                const parentMenu = menuItem.closest('.sub-menu');
+                
+                if (parentMenu) {
+                    const parentText = parentMenu.previousElementSibling.querySelector('span').textContent;
+                    currentPath.push({text: parentText, page: parentMenu.id, clickable: false});
+                }
+                
+                currentPath.push({text: menuItem.querySelector('span').textContent, page, clickable: false});
+            } else {
+                currentPath.push({text: '首页', page: 'home', clickable: true});
+            }
+
+            const toggleNav = breadcrumb.querySelector('.toggle-nav');
+            breadcrumb.innerHTML = '';
+            breadcrumb.appendChild(toggleNav);
+            
+            currentPath.forEach((item, index) => {
+                const span = document.createElement('span');
+                if (item.clickable) {
+                    span.classList.add('clickable');
+                    span.onclick = () => showContent(item.page);
+                }
+                span.textContent = item.text;
+                breadcrumb.appendChild(span);
+            });
+        }
+
+        function toggleSubMenu(menuId, event) {
+            event.stopPropagation();
+            const nav = document.querySelector('.nav');
+            const subMenu = document.getElementById(menuId);
+            const parent = event.currentTarget;
+            const rect = parent.getBoundingClientRect();
+            
+            // 关闭其他子菜单
+            document.querySelectorAll('.sub-menu').forEach(menu => {
+                if(menu.id !== menuId) {
+                    menu.style.display = 'none';
+                }
+            });
+            
+            if (subMenu.style.display === 'block') {
+                subMenu.style.display = 'none';
+            } else {
+                // 计算子菜单位置
+                if (nav.classList.contains('collapsed')) {
+                    subMenu.style.top = rect.top + 'px';
+                    subMenu.style.left = (rect.right + 5) + 'px';
+                } else {
+                    subMenu.style.position = 'static';
+                    subMenu.style.boxShadow = 'none';
+                }
+                subMenu.style.display = 'block';
+            }
+        }
+
+        function showContent(page) {
+            const frame = document.getElementById('contentFrame');
+            
+            // 清除所有菜单项的active状态
+            document.querySelectorAll('.nav-item, .sub-menu .nav-item, .popup-menu .menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // 为当前页面对应的菜单项添加active类
+            const menuItems = document.querySelectorAll(`[onclick*="${page}"]`);
+            menuItems.forEach(item => {
+                // 检查是否是弹出菜单项
+                if (item.classList.contains('menu-item')) {
+                    item.classList.add('active');
+                }
+                // 检查是否是子菜单项
+                if (item.closest('.sub-menu')) {
+                    item.classList.add('active');
+                }
+            });
+
+            updateBreadcrumb(page);
+            navHistory.push(page);
+
+            // 添加CSS样式来突出显示激活的菜单项
+            const style = document.createElement('style');
+            style.textContent = `
+                .popup-menu .menu-item.active {
+                    background-color: var(--active-bg);
+                }
+            `;
+            document.head.appendChild(style);
+
+            document.querySelectorAll('.popup-menu').forEach(menu => {
+                menu.style.display = 'none';
+                menu.querySelectorAll('.menu-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+            });
+
+            switch(page) {
+                case 'home':
+                    frame.src = '';
+                    break;
+                case 'riskControl':
+                    frame.src = '/riskControl';
+                    break;
+                case 'orderQuery':
+                    frame.src = '';
+                    break;
+                case 'repaymentQuery':
+                    frame.src = '';
+                    break;
+                case 'delredis':
+                    frame.src = '/delredis';
+                    break;
+                case 'appcontrol':
+                    frame.src = '/appcontrol';
+                    break;
+                case 'dataConstruct':
+                    frame.src = '/dataConstruct';
+                    break;
+                case 'autoExecution':
+                    frame.src = '/autoExecution';
+                    break;
+                case 'pressureTest':
+                    frame.src = '/pressureTest';
+                    break;
+            }
+        }
+
+        window.onload = function() {
+            showContent('home');
+            
+            document.addEventListener('keydown', function(e) {
+                if(e.key === 'Escape') {
+                    document.querySelectorAll('.sub-menu, .popup-menu').forEach(menu => {
+                        menu.style.display = 'none';
+                    });
+                }
+                if(e.altKey && e.key === 'ArrowLeft' && navHistory.length > 1) {
+                    navHistory.pop();
+                    showContent(navHistory.pop());
+                }
+                if(e.altKey && e.key === 'ArrowRight') {
+                    toggleNav();
+                }
+            });
+        }
+    </script>
+</body>
+</html>

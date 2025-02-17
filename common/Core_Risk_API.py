@@ -21,11 +21,11 @@ class core_risk_api(Base_Api):
         self.logging = Logger().init_logger()
 
     # 风控手机号白名单加白
-    def test_risk_add_phone(self, *encry_request_data):
+    def test_risk_add_phone(self, encry_request_data):
         try:
             data = {
                 "data": [
-                    *encry_request_data
+                    encry_request_data
                 ]
             }
             self.logging.info(f"开始发送风控加白请求：========，请求数据为{encry_request_data}")

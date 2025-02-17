@@ -460,68 +460,52 @@ class loop_result:
 
     # 仅供天源花侧查询API授信数据使用
     def loop_tyh_api_sx_result(self, credit_applyNo):
-        """
-        轮询API侧授信结果并执行相应任务
-        :param credit_applyNo: 授信申请编号
-        :return: bool 处理是否成功
-        """
-        MAX_RETRIES = 10
-        QUERY_INTERVAL = 15  # 主查询间隔
-        SIGN_WAIT_TIME = 20  # 签章等待时间
-        CREDIT_WAIT_TIME = 15  # 授信处理等待时间
+        # 轮训判断 授信表查询，为"S"则跳出
         count = 0
         while True:
             count += 1
-            if count >= MAX_RETRIES:
-                self.logging.info(f"已达到最大查询次数{MAX_RETRIES}次，请稍后重试！")
-                return False
-            try:
-                self.logging.info(f"第{count}次查询API授信结果")
-                # 查询API侧的表单数据
-                sql_result = self.db.select_zx_credit_applicant_result(credit_applyNo)
-                if not sql_result:
-                    self.logging.error("数据库查询返回为空，无法继续处理！")
-                    return False
-                # 获取状态
-                status = sql_result.get("status")
-                risk_status = sql_result.get('risk_status', '')
-                sign_status = sql_result.get("sign_status")
-                if not status:
-                    self.logging.info(f"系统发生错误！请检查返回数据：{sql_result}")
-                    return False
-                # 处理成功状态 - 只有当status和risk_status都为S时才算授信成功
-                if status == "S" and risk_status == "S" and sign_status == "S":
-                    self.logging.info("授信成功！")
-                    break
-                # 处理失败状态 - 立即退出
-                elif status == "F":
-                    self.logging.info("申请失败，请检查落库原因！")
-                    return False
-                # 处理中间状态
-                elif status in ["S", "P", "W", "U"]:
-                    self.logging.info("授信处理中，执行相应任务...")
-                    # 处理风控状态
-                    if risk_status in ["", "W", "P"]:
-                        self.logging.info("执行授信处理任务")
-                        execute_xxl_job().apply_credit_xxljob(credit_applyNo)
-                        time.sleep(CREDIT_WAIT_TIME)
+            if count < 10:
+                try:
+                    # 查询API侧的表单数据
+                    # 查询数据库授信单处于什么状态，来对应跑对应的任务
+                    sql_result = self.db.select_zx_credit_applicant_result(credit_applyNo)
+                    time.sleep(3)
+                    if sql_result:
+                        if sql_result["status"] is not None:
+                            if sql_result["status"] == "P" or sql_result["status"] == "W":
+                                self.logging.info("授信处理中，请稍等！！")
+                                if sql_result['risk_status'] == "" or sql_result['risk_status'] == "W" or \
+                                        sql_result['risk_status'] == "P":
+                                    # 执行授信处理任务
+                                    execute_xxl_job().apply_credit_xxljob(credit_applyNo)
+                                    time.sleep(6)
+                                else:
+                                    if sql_result['sign_status'] == '' or sql_result['sign_status'] == "W" or \
+                                            sql_result['sign_status'] == "P":
+                                        # 执行签章任务
+                                        execute_xxl_job().apply_credit_sign_xxljob()
+                                        time.sleep(20)
+                            elif sql_result["status"] == "F":
+                                self.logging.info("申请失败，请检查落库原因！")
+                                break
+                            elif sql_result["status"] == "S":
+                                self.logging.info(f"授信成功！")
+                                return sql_result
+                            else:
+                                self.logging.info("系统错误,掉单,请重新尝试！！")
+                                break
+                        else:
+                            self.logging.info(f"系统发生错误！请检查返回数据：{sql_result}")
+                            break
                     else:
-                        # 处理签章状态
-                        if sign_status in ["", "W", "P"]:
-                            self.logging.info("执行签章任务")
-                            execute_xxl_job().apply_credit_sign_xxljob()
-                            time.sleep(SIGN_WAIT_TIME)
-                    # 等待后继续下一次查询
-                    time.sleep(QUERY_INTERVAL)
+                        self.logging.error("请求返回为空，无法继续处理！")
+                        break
+                except Exception as e:
+                    self.logging.error(f"请求发生错误：{e}")
                     continue
-                else:
-                    self.logging.info("系统错误,掉单,请重新尝试！")
-                    return False
-            except Exception as e:
-                self.logging.error(f"处理过程发生错误：{e}")
-                time.sleep(QUERY_INTERVAL)
-                continue
-        return True  # 循环正常结束（通过break跳出）时返回True
+            else:
+                self.logging.info(f"当前系统查询次数过多，请稍后重试！")
+                return False
 
     # 仅供天源花侧查询API借款数据使用
     def loop_tyh_api_loan_result(self, loanApplyNo):

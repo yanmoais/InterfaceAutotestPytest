@@ -20,59 +20,55 @@ class loop_result_tyh:
 
     # 天源花授信结果轮询查询
     def loop_tyh_sx_result(self, data, credit_applyNo):
-        """
-        轮询查询授信结果
-        :param data: 查询参数
-        :param credit_applyNo: 授信申请编号
-        :return: bool 是否查询成功
-        """
-        MAX_RETRIES = 15  # 最大重试次数
-        SLEEP_INTERVAL = 15  # 轮询间隔时间(秒)
+        # 轮训判断 授信查询结果，为"成功"则跳出
         count = 0
         while True:
             count += 1
-            if count >= MAX_RETRIES:
-                self.logging.info(f"已达到最大查询次数{MAX_RETRIES}次，请稍后重试！")
-                return False
-            try:
-                time.sleep(SLEEP_INTERVAL)
-                self.logging.info(f"第{count}次查询授信结果")
-                # 加密并发送查询请求
-                encry_data = self.api.api_param_encry(data)
-                resp = self.api.test_query_credit_result(encry_data)
-                if not resp:
-                    self.logging.error("请求返回为空，无法继续处理！")
-                    return False
-                # 查询API侧的授信申请单号
-                credit_applyNo_for_api = Select_Sql_Result().select_credit_apply_no_by_tyh(credit_applyNo)
-                # 解密返回结果
-                resp_decry = self.api.api_param_decry(resp)
-                self.logging.info(f"当前解密后的返回数据为：{resp_decry}")
-                if not resp_decry.get("status"):
-                    self.logging.info(f"系统发生错误！请检查返回数据：{resp_decry}")
-                    return False
-                # 根据状态处理
-                status = resp_decry["status"]
-                if status == "S":
-                    self.logging.info("授信成功！")
-                    break  # 使用 break 而不是 return，确保完全跳出循环
-                elif status == "F":
-                    self.logging.info("申请失败，请检查落库原因！")
-                    return False
-                elif status in ["P", "W", "U"]:
-                    self.logging.info("授信处理中，继续轮询...")
-                    # 调用API侧轮询任务
-                    api_result = loop_result().loop_tyh_api_sx_result(credit_applyNo_for_api)
-                    if api_result:  # 如果API侧处理成功，也跳出循环
+            # 等待15秒后发起授信查询请求
+            resp = None
+            if count < 10:
+                try:
+                    time.sleep(3)
+                    # 加密授信查询数据
+                    encry_data = self.api.api_param_encry(data)
+                    # 查询授信结果
+                    resp = self.api.test_query_credit_result(encry_data)
+                    # 查询出对应API侧的授信申请单号
+                    credit_applyNo_for_api = Select_Sql_Result().select_credit_apply_no_by_tyh(credit_applyNo)
+                    if resp:
+                        try:
+                            # 解密返回结果
+                            resp_decry = self.api.api_param_decry(resp)
+                            self.logging.info(f"当前解密后的返回数据为：{resp_decry}")
+                            if resp_decry["status"] is not None:
+                                if resp_decry["status"] == "P" or resp_decry["status"] == "W":
+                                    self.logging.info("授信处理中，请稍等！！")
+                                    # 调用API侧轮询任务
+                                    loop_result().loop_tyh_api_sx_result(credit_applyNo_for_api)
+                                elif resp_decry["status"] == "F":
+                                    self.logging.info("申请失败，请检查落库原因！")
+                                    break
+                                elif resp_decry["status"] == "S":
+                                    self.logging.info(f"授信成功！")
+                                    return resp_decry
+                                else:
+                                    self.logging.info("系统错误,掉单,请重新尝试！！")
+                                    break
+                            else:
+                                self.logging.info(f"系统发生错误！请检查返回数据：{resp_decry}")
+                                break
+                        except Exception as e:
+                            self.logging.error(f"解密过程中发生错误：{e}不存在或预期错误")
+                            break
+                    else:
+                        self.logging.error("请求返回为空，无法继续处理！")
                         break
-                    continue
-                else:
-                    self.logging.info("系统错误,请重新尝试！")
-                    return False
-            except Exception as e:
-                self.logging.error(f"请求发生错误：{e}")
+                except Exception as e:
+                    self.logging.error(f"请求发生错误：{e}")
+                    break
+            else:
+                self.logging.info(f"当前系统查询次数过多，请稍后重试！")
                 return False
-        return True  # 循环正常结束（通过break跳出）时返回True
 
     # 天源花借款结果轮询查询
     def loop_tyh_jk_result(self, data, loan_applyNo):

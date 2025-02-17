@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>风控测试工具</title>
+    <style>
+        :root {
+            --primary-color: #1890ff;
+            --success-color: #52c41a;
+            --warning-color: #faad14;
+            --error-color: #f5222d;
+            --text-color: #333333;
+            --border-radius: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f0f2f5;
+            color: var(--text-color);
+            line-height: 1.5;
+            padding: 24px;
+        }
+
+        .page-title {
+            text-align: center;
+            color: var(--text-color);
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 32px;
+        }
+
+        .flex-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            padding: 24px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 500;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-icon {
+            cursor: help;
+            color: #1890ff;
+            font-size: 16px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .info-icon:hover .tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .tooltip {
+            visibility: hidden;
+            opacity: 0;
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 400px;
+            background: white;
+            border: 1px solid #e8e8e8;
+            border-radius: 4px;
+            padding: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            z-index: 1000;
+            transition: opacity 0.3s;
+            white-space: pre-line;
+            text-align: left;
+            font-weight: normal;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-top: 8px;
+            color: #333333;
+        }
+
+        .tooltip h3 {
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .tooltip strong {
+            font-size: 16px;
+            color: #ff4d4f;
+            display: block;
+            margin: 8px 0;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(24,144,255,0.2);
+            outline: none;
+        }
+
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+            flex: 1;
+        }
+
+        #phoneNumbers {
+            min-height: 300px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.5;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            cursor: pointer;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            transition: all 0.3s;
+            margin-right: 8px;
+        }
+
+        .btn-primary {
+            color: #fff;
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: #40a9ff;
+            border-color: #40a9ff;
+        }
+
+        .btn-danger {
+            color: #fff;
+            background-color: var(--error-color);
+            border-color: var(--error-color);
+        }
+
+        .btn-danger:hover {
+            background-color: #ff4d4f;
+            border-color: #ff4d4f;
+        }
+
+        .btn-block {
+            display: block;
+            width: 100%;
+            margin-top: 16px;
+        }
+
+        .result {
+            margin-top: 16px;
+            padding: 12px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .result.success {
+            background-color: #f6ffed;
+            border: 1px solid #b7eb8f;
+            color: var(--success-color);
+        }
+
+        .result.warning {
+            background-color: #fffbe6;
+            border: 1px solid #ffe58f;
+            color: var(--warning-color);
+        }
+
+        .result.error {
+            background-color: #fff2f0;
+            border: 1px solid #ffccc7;
+            color: var(--error-color);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .arrow-icon {
+            display: inline-block;
+            margin-left: 4px;
+            width: 16px;
+            height: 16px;
+            vertical-align: middle;
+        }
+
+        @media (max-width: 1200px) {
+            .flex-container {
+                grid-template-columns: 1fr;
+                padding: 0 16px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 16px;
+            }
+
+            .card {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="flex-container">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">
+                    手机号批量排序生成
+                    <span class="info-icon">ⓘ
+                        <div class="tooltip">
+                            <h3>手机号批量排序生成说明</h3>
+                            为方便测试或联调批量构造手机号，输入基础手机号及填写需要生成的数量，以基础手机号的尾号进行排序生成。
+                            <strong>请按需生成使用，勿要过大生成并加白以免对服务器造成压力！</strong>
+                            示例如：基础手机号19011400001，生成3个则生成返回
+                            19011400001
+                            19011400002
+                            19011400003
+                        </div>
+                    </span>
+                </h2>
+                <button class="btn btn-danger" onclick="clearGenerateInput()">清空</button>
+            </div>
+            <div class="form-group">
+                <label class="form-label">手机号</label>
+                <input type="text" id="basePhone" class="form-control" placeholder="请输入基础手机号">
+            </div>
+            <div class="form-group">
+                <label class="form-label">生成数量</label>
+                <input type="number" id="generateCount" class="form-control" placeholder="请输入需要生成的数量">
+            </div>
+            <button class="btn btn-primary btn-block" onclick="generatePhones()">生成</button>
+            <textarea id="generatedPhones" class="form-control" style="margin-top: 16px;" readonly></textarea>
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="copyGeneratedPhones()">复制</button>
+                <button class="btn btn-primary" onclick="addToWhiteList()">添加到加白请求列表 <svg class="arrow-icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M869 487.8L491.2 159.9c-2.9-2.5-6.6-3.9-10.5-3.9h-88.5c-7.4 0-10.8 9.2-5.2 14l350.2 304H152c-4.4 0-8 3.6-8 8v60c0 4.4 3.6 8 8 8h585.1L386.9 854c-5.6 4.9-2.2 14 5.2 14h91.5c1.9 0 3.8-0.7 5.2-2L869 536.2c14.7-12.8 14.7-35.6 0-48.4z"></path></svg></button>
+            </div>
+            <div id="generateResult"></div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">手机号加白</h2>
+                <button class="btn btn-danger" onclick="clearInput()">清空</button>
+            </div>
+            <div class="form-group">
+                <label class="form-label">手机号列表</label>
+                <textarea id="phoneNumbers" class="form-control" 
+                    placeholder="输入需要加白手机号，批量加白需换行输入，每行一个手机号"></textarea>
+            </div>
+            <button class="btn btn-primary btn-block" onclick="addWhiteList()">提交加白</button>
+            <div id="result"></div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">回捞营销名单</h2>
+                <button class="btn btn-danger" onclick="clearInput2()">清空</button>
+            </div>
+            <div class="form-group">
+                <label class="form-label">是否批发回捞营销(点击清空按钮会回到默认否)</label>
+                <select id="market_source" class="form-control">
+                    <option value="">否</option>
+                    <option value="HLPF">是</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">手机号</label>
+                <input type="text" id="phone" class="form-control" placeholder="请输入手机号">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">提额额度</label>
+                <input type="number" id="increased_credit" class="form-control" value="5000">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">可用额度</label>
+                <input type="number" id="available_credit" class="form-control" value="15000">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">总额度</label>
+                <input type="number" id="credit_amount" class="form-control" value="20000">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">额度有效期起始时间</label>
+                <input type="datetime-local" id="credit_start_time" class="form-control" value="2024-10-15T22:06">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">额度有效期到期时间</label>
+                <input type="datetime-local" id="credit_end_time" class="form-control" value="2025-07-28T03:55">
+            </div>
+            
+            <button class="btn btn-primary btn-block" onclick="addMarketList()">提交</button>
+            <div id="result2"></div>
+        </div>
+    </div>
+
+    <script>
+        function generatePhones() {
+            const basePhone = document.getElementById('basePhone').value;
+            const count = parseInt(document.getElementById('generateCount').value);
+            const resultDiv = document.getElementById('generateResult');
+            
+            if (!basePhone.trim() || !count) {
+                showGenerateResult('请输入手机号和生成数量', 'error');
+                return;
+            }
+
+            const phoneRegex = /^1[3-9]\d{9}$/;
+            if (!phoneRegex.test(basePhone)) {
+                showGenerateResult('手机号格式不正确', 'error');
+                return;
+            }
+
+            let generatedPhones = [];
+            const baseNumber = parseInt(basePhone);
+            
+            for(let i = 0; i < count; i++) {
+                generatedPhones.push(String(baseNumber + i));
+            }
+
+            document.getElementById('generatedPhones').value = generatedPhones.join('\n');
+            showGenerateResult('生成成功', 'success');
+        }
+
+        function copyGeneratedPhones() {
+            const generatedPhones = document.getElementById('generatedPhones');
+            generatedPhones.select();
+            document.execCommand('copy');
+            showGenerateResult('复制成功', 'success');
+        }
+
+        function addToWhiteList() {
+            const generatedPhones = document.getElementById('generatedPhones').value;
+            document.getElementById('phoneNumbers').value = generatedPhones;
+            showGenerateResult('已添加到加白请求列表', 'success');
+        }
+
+        function clearGenerateInput() {
+            document.getElementById('basePhone').value = '';
+            document.getElementById('generateCount').value = '';
+            document.getElementById('generatedPhones').value = '';
+            document.getElementById('generateResult').textContent = '';
+            document.getElementById('generateResult').className = '';
+        }
+
+        function showGenerateResult(message, type) {
+            const resultDiv = document.getElementById('generateResult');
+            resultDiv.className = 'result ' + type;
+            resultDiv.textContent = message;
+        }
+
+        function addWhiteList() {
+            const phoneNumbersText = document.getElementById('phoneNumbers').value;
+            const resultDiv = document.getElementById('result');
+            
+            if (!phoneNumbersText.trim()) {
+                showResult('请输入手机号', 'error');
+                return;
+            }
+
+            const phoneNumbers = phoneNumbersText.split('\n')
+                .map(num => num.trim())
+                .filter(num => num !== '');
+
+            const phoneRegex = /^1[3-9]\d{9}$/;
+            const invalidNumbers = phoneNumbers.filter(num => !phoneRegex.test(num));
+            
+            if (invalidNumbers.length > 0) {
+                showResult(`以下手机号格式不正确：\n${invalidNumbers.join('\n')}`, 'error');
+                return;
+            }
+
+            fetch('/risk_control/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({data: phoneNumbers})
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.code === "200" && result.message === "all phone number already exists") {
+                    showResult('当前输入的所有手机号已存在历史加白记录无需加白', 'warning');
+                } else if (result.code === "200" && result.message === "success") {
+                    showResult('风控加白成功', 'success');
+                } else {
+                    showResult('提交失败，请重试', 'error');
+                }
+            })
+            .catch(error => {
+                showResult('提交失败，请重试', 'error');
+            });
+        }
+
+        function addMarketList() {
+            const market_source = document.getElementById('market_source').value;
+            const phone = document.getElementById('phone').value;
+            const increased_credit = document.getElementById('increased_credit').value;
+            const available_credit = document.getElementById('available_credit').value;
+            const credit_amount = document.getElementById('credit_amount').value;
+            const credit_start_time = document.getElementById('credit_start_time').value.replace('T', ' ');
+            const credit_end_time = document.getElementById('credit_end_time').value.replace('T', ' ');
+
+            if (!phone.trim()) {
+                showResult2('请输入手机号', 'error');
+                return;
+            }
+
+            const phoneRegex = /^1[3-9]\d{9}$/;
+            if (!phoneRegex.test(phone)) {
+                showResult2('手机号格式不正确', 'error');
+                return;
+            }
+
+            const data = {
+                data: [{
+                    phone,
+                    increased_credit: parseInt(increased_credit),
+                    available_credit: parseInt(available_credit),
+                    credit_amount: parseInt(credit_amount),
+                    credit_start_time: credit_start_time + ':54',
+                    credit_end_time: credit_end_time + ':51',
+                    market_source_channel: market_source
+                }]
+            };
+
+            fetch('/risk_control/submit_market', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                showResult2(JSON.stringify(result, null, 2), result.code === "200" ? 'success' : 'error');
+            })
+            .catch(error => {
+                showResult2('提交失败，请重试', 'error');
+            });
+        }
+
+        function clearInput() {
+            document.getElementById('phoneNumbers').value = '';
+            document.getElementById('result').textContent = '';
+            document.getElementById('result').className = '';
+        }
+
+        function clearInput2() {
+            document.getElementById('market_source').value = '';
+            document.getElementById('phone').value = '';
+            document.getElementById('increased_credit').value = '5000';
+            document.getElementById('available_credit').value = '15000';
+            document.getElementById('credit_amount').value = '20000';
+            document.getElementById('credit_start_time').value = '2024-10-15T22:06';
+            document.getElementById('credit_end_time').value = '2025-07-28T03:55';
+            document.getElementById('result2').textContent = '';
+            document.getElementById('result2').className = '';
+        }
+
+        function showResult(message, type) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.className = 'result ' + type;
+            resultDiv.textContent = message;
+        }
+
+        function showResult2(message, type) {
+            const resultDiv = document.getElementById('result2');
+            resultDiv.className = 'result ' + type;
+            resultDiv.textContent = message;
+        }
+    </script>
+</body>
+</html>
