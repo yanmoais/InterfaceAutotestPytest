@@ -240,13 +240,13 @@ class loop_result:
                                     if sql_result['risk_status'] == "" or sql_result['risk_status'] == "W" or \
                                             sql_result['risk_status'] == "P":
                                         # 执行授信处理任务
-                                        self.__perform_task(credit_applyNo, "loan")
+                                        execute_xxl_job().apply_credit_xxljob(credit_applyNo)
                                         time.sleep(6)
                                     else:
                                         if sql_result['sign_status'] == '' or sql_result['sign_status'] == "W" or \
                                                 sql_result['sign_status'] == "P":
                                             # 执行签章任务
-                                            self.__perform_task(credit_applyNo, "loan_sign")
+                                            execute_xxl_job().apply_credit_sign_xxljob()
                                             time.sleep(20)
                                 elif resp_decry["status"] == "F":
                                     self.logging.info("申请失败，请检查落库原因！")
