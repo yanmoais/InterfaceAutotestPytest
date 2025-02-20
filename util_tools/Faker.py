@@ -346,7 +346,7 @@ def tyh_h5_loan_repay(credit_apply_no, user_id, loan_apply_no):
 
 if __name__ == '__main__':
     # certificationApplyNo = get_api_bk_id()
-    id_no, birthday = get_zx_user_id_no(year_s=1990, year_e=2019)
+    id_no, birthday = get_zx_user_id_no(year_s=1990, year_e=1999)
     ccb = get_baofu_ccb_num()
     phone = read_risk_phone()
     # print(id_no, birthday)

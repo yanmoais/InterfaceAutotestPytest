@@ -74,7 +74,6 @@ def test_xiaomi_loan_success_api_flow(get_channel):
         # 产品信息
         product_code = "KN_HALF"
         logging.info(f"开始执行测试方法中渠道 {channel_code} 的测试")
-        
 
     with allure.step("更新为限流模式"):
         Update_Sql_Result().update_api_chanel_non_funds(channel_code)
@@ -210,7 +209,7 @@ def test_xiaomi_loan_success_api_flow(get_channel):
 
     with allure.step("借款成功断言"):
         pass
-    
+
     with allure.step("生成测试结果"):
         # 生成测试结果
         test_result = {
@@ -223,9 +222,10 @@ def test_xiaomi_loan_success_api_flow(get_channel):
             "userName": user_name,
             "idCard": id_no,
             "bankCard": bank_card_no
-        }   
+        }
         # 输出测试结果 - 确保只输出一行
         print(f"TEST_RESULT:{json.dumps(test_result, ensure_ascii=False)}")
+
 
 # API全流程-小米消金放款成功
 @pytest.mark.run(order=10)
@@ -276,7 +276,6 @@ def test_xiaomi_bind_card_success_api_flow(get_channel):
         # 产品信息
         product_code = "KN_HALF"
         logging.info(f"开始执行测试方法中渠道 {channel_code} 的测试")
-        
 
     with allure.step("更新为限流模式"):
         Update_Sql_Result().update_api_chanel_non_funds(channel_code)
@@ -376,7 +375,7 @@ def test_xiaomi_bind_card_success_api_flow(get_channel):
 
     with allure.step("绑卡成功断言"):
         pass
-    
+
     with allure.step("生成测试结果"):
         # 生成测试结果
         test_result = {
@@ -389,7 +388,7 @@ def test_xiaomi_bind_card_success_api_flow(get_channel):
             "userName": user_name,
             "idCard": id_no,
             "bankCard": bank_card_no
-        }   
+        }
         # 输出测试结果 - 确保只输出一行
         print(f"TEST_RESULT:{json.dumps(test_result, ensure_ascii=False)}")
 
@@ -443,7 +442,6 @@ def test_xiaomi_credit_success_api_flow(get_channel):
         # 产品信息
         product_code = "KN_HALF"
         logging.info(f"开始执行测试方法中渠道 {channel_code} 的测试")
-        
 
     with allure.step("更新为限流模式"):
         Update_Sql_Result().update_api_chanel_non_funds(channel_code)
@@ -517,7 +515,7 @@ def test_xiaomi_credit_success_api_flow(get_channel):
 
     with allure.step("授信成功断言"):
         pass
-    
+
     with allure.step("生成测试结果"):
         # 生成测试结果
         test_result = {
@@ -530,7 +528,7 @@ def test_xiaomi_credit_success_api_flow(get_channel):
             "userName": user_name,
             "idCard": id_no,
             "bankCard": bank_card_no
-        }   
+        }
         # 输出测试结果 - 确保只输出一行
         print(f"TEST_RESULT:{json.dumps(test_result, ensure_ascii=False)}")
 
@@ -751,7 +749,7 @@ def test_xiaomi_repay_d0_success_api_flow(get_channel):
             "userName": user_name,
             "idCard": id_no,
             "bankCard": bank_card_no
-        }   
+        }
         # 输出测试结果 - 确保只输出一行
         print(f"TEST_RESULT:{json.dumps(test_result, ensure_ascii=False)}")
 
@@ -1032,7 +1030,6 @@ def test_xiaomi_repay_success_api_flow(get_channel):
             "userName": user_name,
             "idCard": id_no,
             "bankCard": bank_card_no
-        }       
+        }
         # 输出测试结果 - 确保只输出一行
         print(f"TEST_RESULT:{json.dumps(test_result, ensure_ascii=False)}")
-
