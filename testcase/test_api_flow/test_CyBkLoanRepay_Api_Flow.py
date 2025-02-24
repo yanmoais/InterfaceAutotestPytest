@@ -3,6 +3,7 @@
 # @Author : Blues.Lan
 # Them：Pyhon自动化
 # @Time :  上午11:49
+
 import time
 import pytest
 import allure
@@ -31,7 +32,7 @@ from config.testconfig import channel_codes
 @allure.title("360沙盒渠道-借款成功-API全流程")
 @allure.story("360沙盒渠道-长银布客资方案例-API全流程")
 @allure.severity(allure.severity_level.CRITICAL)
-def test_new_cy_loan_success_api_flow(get_channel):
+def test_bk_cy_loan_success_api_flow(get_channel):
     with allure.step("数据初始化"):
         # 核心api的基类
         api = core_api_flow_api()
@@ -233,7 +234,7 @@ def test_new_cy_loan_success_api_flow(get_channel):
 @allure.title("360沙盒渠道-授信成功-API全流程")
 @allure.story("360沙盒渠道-长银布客资方案例-API全流程")
 @allure.severity(allure.severity_level.CRITICAL)
-def test_new_cy_credit_success_api_flow(get_channel):
+def test_bk_cy_credit_success_api_flow(get_channel):
     with allure.step("数据初始化"):
         # 核心api的基类
         api = core_api_flow_api()
@@ -373,7 +374,7 @@ def test_new_cy_credit_success_api_flow(get_channel):
 @allure.title("360沙盒渠道-绑卡成功-API全流程")
 @allure.story("360沙盒渠道-长银布客资方案例-API全流程")
 @allure.severity(allure.severity_level.CRITICAL)
-def test_new_cy_band_card_success_api_flow(get_channel):
+def test_bk_cy_band_card_success_api_flow(get_channel):
     with allure.step("数据初始化"):
         # 核心api的基类
         api = core_api_flow_api()
@@ -540,7 +541,7 @@ def test_new_cy_band_card_success_api_flow(get_channel):
 @allure.story("360沙盒渠道-长银布客还款案例-API全流程")
 @allure.severity(allure.severity_level.CRITICAL)
 @pytest.mark.skip()
-def test_new_cy_repay_d0_success_api_flow(get_channel):
+def test_bk_cy_repay_d0_success_api_flow(get_channel):
     with allure.step("数据初始化"):
         # 核心api的基类
         api = core_api_flow_api()

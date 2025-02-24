@@ -34,7 +34,7 @@ from util_tools.Xxl_Job_Executor import execute_xxl_job
 @allure.title("360沙盒渠道-借款成功-API全流程")
 @allure.story("360沙盒渠道-哈密众邦资方授信案例-API全流程")
 @allure.severity(allure.severity_level.CRITICAL)
-def test_sushang_loan_success_api_flow(get_channel):
+def test_zb_loan_success_api_flow(get_channel):
     with allure.step("数据初始化"):
         api = core_api_flow_api()
         enc = encrypt_decrypt()
@@ -50,10 +50,10 @@ def test_sushang_loan_success_api_flow(get_channel):
 
         # 获取风控加白了的手机号，读取本地txt文件
         mobile_no = read_risk_phone()
-        # 修改对应的缩写或其他标志：哈密众邦  ==  MSS
-        loanApplyNo = get_req_seq_no("MSS")
+        # 修改对应的缩写或其他标志：哈密众邦  ==  ZB
+        loanApplyNo = get_req_seq_no("ZB")
         # 资金方，修改成对应需要放款的资金方funds_code
-        funds_code = "MENG_SHANG"
+        funds_code = "HAMI_ZHONGBANG"
         # 渠道方，修改成对应需要走的渠道方channel_code
         channel_code = get_channel
         # 借款金额
@@ -192,6 +192,25 @@ def test_sushang_loan_success_api_flow(get_channel):
         jk_success_resp = loop_result().loop_api_flow_loan_result(loan_query_need_encry_data, loanApplyNo, channel_code)
         logging.info(f"借款返回的查询参数是：{jk_success_resp}")
 
+    with allure.step("借款成功断言"):
+        pass
+
+    with allure.step("生成测试结果"):
+        # 生成测试结果
+        test_result = {
+            "userId": user_id,
+            "loanApplyNo": loanApplyNo,
+            "fundsCode": funds_code,
+            "loanAmount": loan_amt,
+            "loanDate": datetime.datetime.now().strftime("%Y-%m-%d"),
+            "phoneNumber": mobile_no,
+            "userName": user_name,
+            "idCard": id_no,
+            "bankCard": bank_card_no
+        }
+        # 输出测试结果 - 确保只输出一行
+        print(f"TEST_RESULT:{json.dumps(test_result, ensure_ascii=False)}")
+
 
 # API全流程-哈密众邦D0批扣还款成功
 @pytest.mark.run(order=11)
@@ -201,7 +220,7 @@ def test_sushang_loan_success_api_flow(get_channel):
 @allure.story("360沙盒渠道-哈密众邦资方还款案例-API全流程")
 @allure.severity(allure.severity_level.CRITICAL)
 @pytest.mark.skip()
-def test_sushang_repay_d0_success_api_flow(get_channel):
+def test_zb_repay_d0_success_api_flow(get_channel):
     with allure.step("数据初始化"):
         api = core_api_flow_api()
         enc = encrypt_decrypt()
@@ -217,10 +236,10 @@ def test_sushang_repay_d0_success_api_flow(get_channel):
 
         # 获取风控加白了的手机号，读取本地txt文件
         mobile_no = read_risk_phone()
-        # 修改对应的缩写或其他标志：哈密众邦  ==  MSS
-        loanApplyNo = get_req_seq_no("MSS")
+        # 修改对应的缩写或其他标志：哈密众邦  ==  ZB
+        loanApplyNo = get_req_seq_no("ZB")
         # 资金方，修改成对应需要放款的资金方funds_code
-        funds_code = "MENG_SHANG"
+        funds_code = "HAMI_ZHONGBANG"
         # 渠道方，修改成对应需要走的渠道方channel_code
         channel_code = get_channel
         # 借款金额
@@ -401,7 +420,7 @@ def test_sushang_repay_d0_success_api_flow(get_channel):
 @allure.story("360沙盒渠道-哈密众邦资方还款案例-API全流程")
 @allure.severity(allure.severity_level.CRITICAL)
 @pytest.mark.skip()
-def test_sushang_repay_success_api_flow(get_channel):
+def test_zb_repay_success_api_flow(get_channel):
     with allure.step("数据初始化"):
         # 核心api的基类
         api = core_api_flow_api()
@@ -429,11 +448,11 @@ def test_sushang_repay_success_api_flow(get_channel):
         logging = Logger().init_logger()
         # 获取风控加白了的手机号，读取本地txt文件
         mobile_no = read_risk_phone()
-        # 修改对应的缩写或其他标志：哈密众邦  ==  MSS
-        loanApplyNo = get_req_seq_no("MSS")
+        # 修改对应的缩写或其他标志：哈密众邦  ==  ZB
+        loanApplyNo = get_req_seq_no("ZB")
         repayApplyNo = get_credit_apply_no("REPAY")
         # 资金方，修改成对应需要放款的资金方funds_code
-        funds_code = "MENG_SHANG"
+        funds_code = "HAMI_ZHONGBANG"
         # 渠道方，修改成对应需要走的渠道方channel_code
         channel_code = get_channel
         # 借款金额
