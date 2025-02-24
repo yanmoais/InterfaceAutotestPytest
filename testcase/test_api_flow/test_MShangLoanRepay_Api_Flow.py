@@ -32,7 +32,7 @@ from util_tools.Xxl_Job_Executor import execute_xxl_job
 @allure.title("360沙盒渠道-借款成功-API全流程")
 @allure.story("360沙盒渠道-蒙商资方授信案例-API全流程")
 @allure.severity(allure.severity_level.CRITICAL)
-def test_sushang_loan_success_api_flow(get_channel):
+def test_mshang_loan_success_api_flow(get_channel):
     with allure.step("数据初始化"):
         api = core_api_flow_api()
         enc = encrypt_decrypt()
@@ -221,7 +221,7 @@ def test_sushang_loan_success_api_flow(get_channel):
 @allure.story("360沙盒渠道-蒙商资方还款案例-API全流程")
 @allure.severity(allure.severity_level.CRITICAL)
 @pytest.mark.skip()
-def test_sushang_repay_d0_success_api_flow(get_channel):
+def test_mshang_repay_d0_success_api_flow(get_channel):
     with allure.step("数据初始化"):
         api = core_api_flow_api()
         enc = encrypt_decrypt()
@@ -423,7 +423,7 @@ def test_sushang_repay_d0_success_api_flow(get_channel):
 @allure.story("360沙盒渠道-蒙商资方还款案例-API全流程")
 @allure.severity(allure.severity_level.CRITICAL)
 @pytest.mark.skip()
-def test_sushang_repay_success_api_flow(get_channel):
+def test_mshang_repay_success_api_flow(get_channel):
     with allure.step("数据初始化"):
         # 核心api的基类
         api = core_api_flow_api()
