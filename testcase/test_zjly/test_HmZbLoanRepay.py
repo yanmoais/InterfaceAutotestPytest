@@ -187,15 +187,15 @@ def test_jmx_loan_success():
         bank_name = "建设银行"
         loan_amt = "2000"
         reqPeriods = "12"
-        loan_sqe_no = "1877623671821058048  "
+        loan_sqe_no = "1897533358360117248  "
         req_no = get_req_no()
         fk_no = get_fk_id()
         contract_no = get_contract_no()
         dbht_no = get_dbht_no()
         bink_no = get_bink_no()
         logging = Logger().init_logger()
-        apiKey = "ZYHMZB"
-        channel = "zhongBang"
+        apiKey = "RLZY"
+        channel = "runLouZy"
 
     # with allure.step("切换成MOCK模式"):
     #     Update_Sql_Result().update_jmx_zjly_mock()

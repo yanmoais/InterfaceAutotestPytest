@@ -53,7 +53,16 @@ class Mysql:
 
     # 插入数据库
     def insert_db(self, sql):
-        pass
+        try:
+            self.cursor.execute(sql)
+            self.db.commit()
+            # print("插入数据库，操作{}表数据-成功".format(dbname))
+            self.logging.info("执行sql成功:\n\t{}".format(sql))
+        except Exception as e:
+            # 发生错误时回滚
+            self.db.rollback()
+            # 异常捕获
+            raise e
 
     # 关闭数据库
     def close_db(self):
@@ -69,6 +78,8 @@ class Mysql:
             db_config = config['api']['api_flow']
         elif self.test_db_name == "tyh":
             db_config = config['tyh']['tyh_api_flow']
+        elif self.test_db_name == "auto":
+            db_config = config['auto']['auto_test']
         else:
             raise ValueError("未知的数据库名称")
         return db_config['host'], db_config['username'], db_config['password'], db_config['port'], db_config['db_name']

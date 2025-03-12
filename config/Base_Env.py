@@ -6,8 +6,8 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DB_YAML_PATH = BASE_DIR + os.sep + "config" + os.sep + "database_config.yaml"
 RISK_PHONE_PATH = BASE_DIR + os.sep + "testdata" + os.sep + "risk_phone" + os.sep + "user_phone.txt"
-CASE_FILE_PATH = BASE_DIR + os.sep + "testdata" + os.sep + "test_case_excel" + os.sep + "test_case.xlsx"
-SHEET_NAME_PATH = "Sheet1"
+CASE_FILE_PATH = BASE_DIR + os.sep + "testdata" + os.sep + "test_case_excel" + os.sep + "excle_repayment_plan.xlsx"
+SHEET_NAME_PATH = "Sheet_12"
 XXL_JOB_USERNMAE = 'admin'
 XXL_JOB_PASSWORD = '123456'
 XXL_JOB_HOST_CORE_API = 'http://192.168.1.187:8080/'

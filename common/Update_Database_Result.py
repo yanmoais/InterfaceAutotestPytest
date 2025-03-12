@@ -559,15 +559,47 @@ class Update_Sql_Result(Mysql):
         else:
             self.logging.info("当前渠道为路由模式，无需切换！")
 
+    # 插入最新跑出来的测试报告数据
+    def insert_test_report_data(self, report_name, report_lob, funds_info, report_time, report_dir, case_pass_rate,
+                                case_sum, case_pass_sum, case_fail_rate, case_broken_rate, case_unknown_rate, status,
+                                test_db="auto", ):
+        # 原错误SQL应修改为：
+        insert_sql = f"""
+        INSERT INTO automation_test_result.test_report_result 
+        (report_name, report_lob, funds_info, report_time, leader, report_dir, 
+         case_pass_rate, case_sum, case_pass_sum, case_fail_rate, case_broken_rate, 
+         case_unknown_rate, status) 
+        VALUES (
+            '{report_name}',       # 字符串添加单引号
+            '{report_lob}',        # 字符串添加单引号 
+            '{funds_info}',        # 字符串添加单引号
+            '{report_time}',       # 格式化时间
+            'admin',               # 固定值保持原样
+            '{report_dir}',        # 路径添加单引号
+            '{case_pass_rate}%',   # 百分比添加引号（假设字段是字符串类型）
+            {case_sum},            # 数值类型保持不变
+            {case_pass_sum},       # 数值类型保持不变 
+            '{case_fail_rate}%',   # 百分比添加引号
+            '{case_broken_rate}%', # 百分比添加引号
+            '{case_unknown_rate}%',# 百分比添加引号
+            '{status}'               # 根据status字段类型决定是否加引号（如果是数字则保留原样）
+        )
+        """
+        result = Mysql(test_db).insert_db(insert_sql)
+        self.logging.info(f"数据库执行完成!")
+        return result
+
 
 if __name__ == '__main__':
     # user_id = "ZLTEST_202410161729069481126"
     # funds_code = "FR_RUN_LOU"
     # Update_Sql_Result().update_cynew_zjly_mock()
-    results = Select_Sql_Result().select_fr_channel_config('中原提钱花MOCK')
-    print()
-    if 'mock'.lower() not in results['code'].lower():
-        print("当前是mock环境")
-    else:
-        print("当前是测试环境")
+    # results = Select_Sql_Result().select_fr_channel_config('中原提钱花MOCK')
+    # if 'mock'.lower() not in results['code'].lower():
+    #     print("当前是mock环境")
+    # else:
+    #     print("当前是测试环境")
     # print((datetime.datetime.now() - relativedelta(months=1)).strftime("%Y-%m-%d %H:%M:%S"))
+    db = Update_Sql_Result()
+    db.insert_test_report_data('自动化测试报告', '核心API', '小米、海峡', '2025-03-12', 'DASDADASDASDASDADA', '20', '100', '20',
+                                        '40', '50', '0', 'S')

@@ -355,6 +355,9 @@ if __name__ == '__main__':
     from common.Encrypt_Decrypt import encrypt_decrypt
     print("身份证MD5：",encrypt_decrypt().param_encry_by_md5(id_no))
     print("手机号MD5：",encrypt_decrypt().param_encry_by_md5(phone))
+    # from common.Select_Database_Result import *
+    # plan = Select_Sql_Result().select_api_flow_zx_loan_plan_info_for_test_tools('SLN2022262534')
+    # print(plan)
     # print(get_credit_apply_no("")XM)
     # 请求鉴权数据
     # bk_jq_need_encry_data = { "certificationApplyNo": "SC00565656","SFAF":"SFASFAF"}

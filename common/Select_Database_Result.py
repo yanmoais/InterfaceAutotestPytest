@@ -102,6 +102,13 @@ class Select_Sql_Result(Mysql):
             result[index] = value
         return result
 
+    # 查询api侧zx_loan_plan_info表还款计划详情，根据loan_apply_no来模糊查询所有期数(仅对测试平台)
+    def select_api_flow_zx_loan_plan_info_for_test_tools(self, loan_apply_no, test_db="api"):
+        select_sql = f"SELECT term,start_date,due_date,plan_status,CAST(prin_amt AS CHAR)AS prin_amt,CAST(int_amt AS CHAR)AS int_amt,CAST(guarantee_amt AS CHAR)AS guarantee_amt,CAST(advice_amt AS CHAR)AS advice_amt FROM zx_loan_plan_info WHERE plan_no LIKE '{loan_apply_no}%' ORDER BY term;"
+        result = Mysql(test_db).select_db(select_sql)
+        self.logging.info(f"数据库查询返回数据为：==={result}")
+        return result
+
     # 查询api侧zx_loan_apply_record表放款成功后的partner_loan_no，根据loan_apply_no来查询(loan_apply_no)
     def select_partner_loan_no_apply_record(self, loan_apply_no, test_db="api"):
         select_sql = f"SELECT partner_loan_no FROM zws_middleware_360.zx_loan_apply_record WHERE loan_apply_no = '{loan_apply_no}';"
@@ -213,10 +220,18 @@ class Select_Sql_Result(Mysql):
         self.logging.error(f"查询失败，达到最大重试次数：{max_retries}次，该笔数据可能掉单，请检查数据库！")
         return None
 
+    # 查询自动化测试环境的历史报告地址
+    def select_automation_report(self, test_db="auto"):
+        # 准备查询 SQL
+        select_sql = f"SELECT * FROM automation_test_result.test_report_result;"
+        result = Mysql(test_db).select_db(select_sql)
+        self.logging.info(f"数据库查询返回数据为：==={result}")
+        return result
+
 
 if __name__ == '__main__':
-    loan_apply_no = 'TYH_202411051730S774983448'
+    loan_apply_no = 'SLN1006823586'
     db = Select_Sql_Result()
-    channel = db.select_credit_apply_no_by_tyh(loan_apply_no)
+    channel = db.select_automation_report()
     # reap = db.select_zx_loan_apply_record(channel)
     print(channel)

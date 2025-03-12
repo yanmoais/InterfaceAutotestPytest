@@ -49,15 +49,7 @@ class read_excel():
 
 
 if __name__ == '__main__':
-    sheet_obj = read_excel()
-    test_function = ['test_jmx_credit_success', 'test_jmx_credit_amt_query_success', 'test_jmx_loan_success',
-                     'test_zhongyuan_credit_success', 'test_zhongyuan_credit_amt_query_success',
-                     'test_zhongyuan_binding_card_success', 'test_zhongyuan_loan_success',
-                     'test_zhongyuan_d0_repay_success', 'test_new_cy_credit_success',
-                     'test_new_cy_binding_card_success', 'test_new_cy_credit_amt_query_success',
-                     'test_new_cy_loan_success', 'test_new_cy_bf_loan_success', 'test_zx_credit_success',
-                     'test_zx_credit_amt_query_success', 'test_zx_binding_card_success', 'test_zx_loan_success',
-                     'test_zx_loan_success', 'test_new_zx_loan_success', 'test_haixia_credit_success',
-                     'test_haixia_credit_amt_query_success', 'test_haixia_loan_success', 'test_mengshang_loan_success',
-                     'test_runlou_loan_success']
-    sheet_obj.write_save_excel(test_function)
+    term = '9'
+    if term == '9':
+        sheet_obj = read_excel(sheet_name='Sheet_9')
+        print(sheet_obj.get_case_data())

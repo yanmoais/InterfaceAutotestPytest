@@ -19,6 +19,13 @@ tyh:
     username: tyh_cashloan
     password: 08*wP&DT@w#J
     db_name: tyh_cashloan
+auto:
+  auto_test:
+    host: 192.168.2.20
+    port: 3306
+    username: root
+    password: b2C@yQ8B2^U2AQXT3Evf
+    db_name: automation_test_result
 
 redis:
   zjly:

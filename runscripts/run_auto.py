@@ -6,6 +6,7 @@ import os
 import pytest
 import sys
 from multiprocessing import Process, Event
+from common.Update_Database_Result import *
 import requests
 
 
