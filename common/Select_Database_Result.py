@@ -220,18 +220,16 @@ class Select_Sql_Result(Mysql):
         self.logging.error(f"查询失败，达到最大重试次数：{max_retries}次，该笔数据可能掉单，请检查数据库！")
         return None
 
-    # 查询自动化测试环境的历史报告地址
-    def select_automation_report(self, test_db="auto"):
-        # 准备查询 SQL
-        select_sql = f"SELECT * FROM automation_test_result.test_report_result;"
+    # 查询测试报告数据库的数据
+    def select_test_report(self, test_db="auto"):
+        select_sql = f"SELECT * FROM automation_test_result.test_report_result ORDER BY id;"
         result = Mysql(test_db).select_db(select_sql)
-        self.logging.info(f"数据库查询返回数据为：==={result}")
         return result
 
 
 if __name__ == '__main__':
-    loan_apply_no = 'SLN1006823586'
+    loan_apply_no = 'TYH_202411051730S774983448'
     db = Select_Sql_Result()
-    channel = db.select_automation_report()
+    channel = db.select_test_report()
     # reap = db.select_zx_loan_apply_record(channel)
     print(channel)
