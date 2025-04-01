@@ -58,7 +58,7 @@ def test_sit_llh_yx_credit_h5_success():
         # 借款期数
         reqPeriods = "12"
         # 产品信息
-        product_code = "TYH_HY"
+        product_code = "LLH"
 
     with allure.step("用户撞库"):
         # 撞库数据,以手机号为主
@@ -105,7 +105,7 @@ def test_sit_llh_yx_credit_h5_success():
         # 发送授信请求
         sx_resp = requests.post(url=host + "/applyCredit", json=public_param, headers=headers)
         # 授信返回结果
-        logging.info(f"授信返回结果为：======{sx_resp.json()}")
+        logging.info(f"授信返回结果为：======{sx_resp.text}")
 
     # with allure.step("授信结果查询"):
     #     partnerCreditNo = ""
