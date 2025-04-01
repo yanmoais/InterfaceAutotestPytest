@@ -120,18 +120,6 @@ def test_sit_llh_yx_credit_success():
         # 授信结果返回数据
         logging.info(f"授信结果返回结果为：======{sx_result_resp.text}")
 
-    with allure.step("获取H5借款链接"):
-        # 借款链接请求数据
-        loan_h5_data = {"userId": user_id,
-                        "partnerCreditNo": partnerCreditNo,
-                        "loanApplyNo": loanApplyNo,
-                        "pageType": "1"}
-        public_param["data"] = loan_h5_data
-        # 发送借款链接H5请求
-        loan_h5_resp = requests.post(url=host + "/outsideLink", json=public_param, headers=headers)
-        # 借款链接
-        logging.info(f"借款链接:{loan_h5_resp.json()}")
-
 
 # H5借款链接
 def test_sit_llh_yx_credit_h5_success():
@@ -148,8 +136,8 @@ def test_sit_llh_yx_credit_h5_success():
 
     # 渠道方，修改成对应需要走的渠道方channel_code
     channel_code = "LLH_XY"
-    user_id = ""
-    partnerCreditNo = ""
+    user_id = "ZL174347714429"
+    partnerCreditNo = "1906907514809749504"
 
     with allure.step("获取H5借款链接"):
         # 借款链接请求数据
@@ -161,7 +149,7 @@ def test_sit_llh_yx_credit_h5_success():
         # 发送借款链接H5请求
         loan_h5_resp = requests.post(url=host + "/outsideLink", json=public_param, headers=headers)
         # 借款链接
-        logging.info(f"借款链接:{loan_h5_resp.json()}")
+        logging.info(f"借款链接:{loan_h5_resp}")
 
 
 # 还款链接H5
