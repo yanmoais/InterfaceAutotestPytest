@@ -80,9 +80,15 @@ class execute_xxl_job(xxlJob):
         self.logging.info(f"调用单笔还款查询任务成功!")
         time.sleep(5)
 
+    # 调用SIT_LLH的授信处理任务
+    def sit_llh_apply_credit(self, creditApplyNo):
+        param_data = {"creditApplyNo": creditApplyNo}
+        self.excute_xxl_job.trigger_xxl_job(4, f'{param_data}', ENV='sit_llh')
+        self.logging.info(f"执行SIT_LLH的授信处理任务成功!")
+        time.sleep(5)
+
 
 if __name__ == '__main__':
-    # loanApplyNo = "ZLTEST_202410211729493860807"
-    # execute_xxl_job().push_credit_info_to_customer_center(loanApplyNo)
+    loanApplyNo = "LLH_202504011743492867646"
+    execute_xxl_job().sit_llh_apply_credit(loanApplyNo)
     # print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-    pass

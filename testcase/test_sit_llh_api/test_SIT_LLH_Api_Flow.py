@@ -107,7 +107,8 @@ def test_sit_llh_yx_credit_success():
         # 授信返回结果
         logging.info(f"授信返回结果为：======{sx_resp.text}")
 
-    with allure.step("等待10S等待落库完成"):
+    with allure.step("执行授信处理任务"):
+        execute_xxl_job().sit_llh_apply_credit(loanApplyNo)
         time.sleep(10)
 
     with allure.step("授信结果查询"):
