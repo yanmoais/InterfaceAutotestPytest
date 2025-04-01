@@ -28,12 +28,12 @@ class core_zjly_func:
     # 已绑银行卡查询
     def test_zfzt_banked_query(self):
         reqsn = get_zfpt_req_no()
-        businessChannel = 101
+        businessChannel = 107
         req_data = {
             "reqSn": reqsn,
             "businessChannel": businessChannel,
             "params": json_dumps_cn({
-                "ID": "440402199402101216",
+                "ID": "440402199402107216",
                 "BIND_PRODUCT_CODE": "bind_sian_03"
             })
         }
@@ -44,7 +44,7 @@ class core_zjly_func:
         return decry_resp
 
     # 支付中台绑卡申请
-    def test_zfzt_bank_apply(self, ACCOUNT_NAME="机构测试", TEL="13049826549", ID="110101199503069607",
+    def test_zfzt_bank_apply(self, ACCOUNT_NAME="机构测试", TEL="13049826549", ID="110701199503069607",
                              CREDIT_ACCTNO="6217201736413968440", PRODUCT_CODE="BF"):
         ACCOUNT_NAME = ACCOUNT_NAME
         TEL = TEL
@@ -57,7 +57,7 @@ class core_zjly_func:
         else:
             return False
         reqsn = get_zfpt_req_no()
-        businessChannel = 101
+        businessChannel = 107
         req_data = {
             "reqSn": reqsn,
             "businessChannel": businessChannel,
@@ -80,7 +80,7 @@ class core_zjly_func:
     # 支付中台绑卡确认
     def test_zfzt_bank_confirm(self, reqsn="APP20241128112600779009"):
         reqsn = reqsn
-        businessChannel = 101
+        businessChannel = 107
         req_data = {
             "reqSn": reqsn,
             "businessChannel": businessChannel,
@@ -97,7 +97,7 @@ class core_zjly_func:
     # 支付中台渠道协议号同步
     def test_zfzt_agrm_no_sync(self):
         reqsn = get_zfpt_req_no()
-        businessChannel = 101
+        businessChannel = 107
         ccb_account = "6217007320102015947"
         req_data = {
             "reqSn": reqsn,
@@ -108,7 +108,7 @@ class core_zjly_func:
                 "BANK_NAME": "中国建设银行",
                 "CREDIT_ACCTNO": ccb_account,
                 "TEL": "13312920936",
-                "ID": "440402199402101216",
+                "ID": "440402199402107216",
                 "BIND_PRODUCT_CODE": "bind_sian_03",
                 "AGRMNO": "1202408231146562850000369487"
             })
@@ -124,7 +124,7 @@ class core_zjly_func:
     def test_zfzt_withhold_apply(self, ccb_account="6217001732872646040", tel="15917853170", id_no="440111199912223459",
                                  product_code="BF", amount="30000", ACCOUNT_NAME="扣款测试"):
         reqsn = get_zfpt_req_no()
-        businessChannel = 101
+        businessChannel = 107
         ccb_account = ccb_account
         if product_code == "BF":
             REPAY_PRODUCT_CODE = "repay_baofu_09"
@@ -162,7 +162,7 @@ class core_zjly_func:
     # 聚合支付扣款申请
     def test_zfzt_together_withhold_apply(self):
         reqsn = get_zfpt_req_no()
-        businessChannel = 101
+        businessChannel = 107
         req_data = {
             "reqSn": reqsn,
             "businessChannel": businessChannel,
@@ -180,7 +180,7 @@ class core_zjly_func:
     # 支付中台扣款查询
     def test_zfzt_withhold_query(self, reqsn="APP20241129173150392150"):
         reqsn = reqsn
-        businessChannel = 101
+        businessChannel = 107
         req_data = {
             "reqSn": reqsn,
             "businessChannel": businessChannel
@@ -191,14 +191,31 @@ class core_zjly_func:
         Logger().init_logger().info(f"解密后的数据为：{decry_resp}")
         return decry_resp
 
+    # 支付中台卡宾
+    def test_zfzt_card_bin_query(self, CREDIT_ACCTNO):
+        reqsn = get_zfpt_req_no()
+        businessChannel = 107
+        req_data = {
+            "businessChannel": businessChannel,
+            "reqSn": reqsn,
+            "params": json_dumps_cn({
+                "CREDIT_ACCTNO": CREDIT_ACCTNO,
+            })
+        }
+        datas = self.test_zjl_jiami(req_data)
+        resp = core_zfpt_api().zfzt_card_bin_query(reqsn, businessChannel, datas)
+        decry_resp = self.test_zjly_jiemi(resp)
+        Logger().init_logger().info(f"解密后的数据为：{decry_resp}")
+        return decry_resp
+
 
 if __name__ == '__main__':
     api = core_zjly_func()
-    # resp = api.test_zfzt_withhold_apply(ccb_account="6214837553903786", tel="15915370864", id_no="360724199402101018",
+    # resp = api.test_zfzt_withhold_apply(ccb_account="6214837553903786", tel="15915370864", id_no="360724199402107018",
     #                                     product_code="SN", amount="1", ACCOUNT_NAME="蓝国剑")
     # # resp = api.test_zfzt_withhold_apply()
     # print(resp)
-    rsp = api.test_zfzt_withhold_query("20250207150418187098694")
+    rsp = api.test_zfzt_card_bin_query("6227250871772090")
     print(rsp)
     # reqsn, resp = api.test_zfzt_bank_apply()
     # print(resp)

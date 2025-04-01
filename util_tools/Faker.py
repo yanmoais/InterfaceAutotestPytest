@@ -346,7 +346,7 @@ def tyh_h5_loan_repay(credit_apply_no, user_id, loan_apply_no):
 
 if __name__ == '__main__':
     # certificationApplyNo = get_api_bk_id()
-    id_no, birthday = get_zx_user_id_no(year_s=1990, year_e=1999)
+    id_no, birthday = get_zx_user_id_no(year_s=1991, year_e=1999)
     ccb = get_baofu_ccb_num()
     phone = read_risk_phone()
     # print(id_no, birthday)
@@ -355,6 +355,7 @@ if __name__ == '__main__':
     from common.Encrypt_Decrypt import encrypt_decrypt
     print("身份证MD5：",encrypt_decrypt().param_encry_by_md5(id_no))
     print("手机号MD5：",encrypt_decrypt().param_encry_by_md5(phone))
+    print("手机号MD5：",encrypt_decrypt().param_encry_by_md5("15908979011"))
     # from common.Select_Database_Result import *
     # plan = Select_Sql_Result().select_api_flow_zx_loan_plan_info_for_test_tools('SLN2022262534')
     # print(plan)

@@ -151,10 +151,25 @@ class core_zfpt_api(Base_Api):
         except Exception as e:
             self.logging.info(f"请求发生异常，======={e}")
 
+    # 支付中台，卡宾查询接口，接收加密数据
+    def zfzt_card_bin_query(self, reqsn, businessChannel, encry_requst_data):
+        request_data = {"reqSn": reqsn, "timeStamp": encry_requst_data['timeStamp'],
+                        "businessChannel": businessChannel,
+                        "sign": encry_requst_data['sign'],
+                        "key": encry_requst_data['key'],
+                        "requestData": encry_requst_data['requestData']}
+        try:
+            self.logging.info(f"开始发送支付中台卡宾查询请求：========，请求数据为{request_data}")
+            resp = self.base_api.post("/v1/bin", request_data)
+            self.logging.info(f"返回结果数据为：=======，{resp}")
+            return resp
+        except Exception as e:
+            self.logging.info(f"请求发生异常，======={e}")
+
 
 if __name__ == '__main__':
     api = core_zfpt_api()
-    print(api.uri)
+    print(api.zfzt_card_bin_query())
     # resp = api.test_check_user(data)
     # datas = api.api_param_decry(resp)
     # print(resp)
