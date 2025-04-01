@@ -47,11 +47,9 @@ def test_sit_llh_yx_credit_success():
 
         # 获取风控加白了的手机号，读取本地txt文件
         mobile_no = read_risk_phone()
-        # 修改对应的缩写或其他标志：金美信  ==  JMX
-        loanApplyNo = get_req_seq_no("JMX")
         # 渠道方，修改成对应需要走的渠道方channel_code
         channel_code = "LLH_XY"
-        loanApplyNo = get_req_seq_no("LLH")
+        loanApplyNo = get_req_seq_no("LLHXY")
         partnerCreditNo = ""
         # 借款金额
         loan_amt = "2000"
