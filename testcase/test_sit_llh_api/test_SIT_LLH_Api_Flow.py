@@ -105,21 +105,21 @@ def test_sit_llh_yx_credit_success():
         # 发送授信请求
         sx_resp = requests.post(url=host + "/applyCredit", json=public_param, headers=headers)
         # 授信返回结果
-        logging.info(f"授信返回结果为：======{sx_resp.text}")
+        logging.info(f"授信审核结果为：======{sx_resp.text}")
 
     with allure.step("执行授信处理任务"):
-        execute_xxl_job().sit_llh_apply_credit(loanApplyNo)
+        execute_xxl_job().sit_llh_apply_credit(credit_apply_no)
         time.sleep(10)
 
-    with allure.step("授信结果查询"):
-        # 授信结果查询数据
-        sx_result_data = {"userId": user_id, "partnerCreditNo": partnerCreditNo}
-        public_param["data"] = sx_result_data
-        print("授信结果查询数据：", public_param)
-        # 发送授信结果查询请求
-        sx_result_resp = requests.post(url=host + "/queryCreditResultByPartner", json=public_param, headers=headers)
-        # 授信结果返回数据
-        logging.info(f"授信结果返回结果为：======{sx_result_resp.text}")
+    # with allure.step("授信结果查询"):
+    #     # 授信结果查询数据
+    #     sx_result_data = {"userId": user_id, "partnerCreditNo": partnerCreditNo}
+    #     public_param["data"] = sx_result_data
+    #     print("授信结果查询数据：", public_param)
+    #     # 发送授信结果查询请求
+    #     sx_result_resp = requests.post(url=host + "/queryCreditResultByPartner", json=public_param, headers=headers)
+    #     # 授信结果返回数据
+    #     logging.info(f"授信结果返回结果为：======{sx_result_resp.text}")
 
 
 # H5借款链接
