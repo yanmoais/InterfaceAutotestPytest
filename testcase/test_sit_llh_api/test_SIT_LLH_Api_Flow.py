@@ -39,7 +39,7 @@ def test_sit_llh_yx_credit_success():
         credit_apply_no = get_credit_apply_no("LLH_")
         db = Update_Sql_Result()
         apply_time = get_time_stand_api()
-        id_no, birthday = get_zx_user_id_no(year_s=1991, year_e=2000)
+        id_no, birthday = get_zx_user_id_no(year_s=1991, year_e=1995)
         user_name = get_user_name()
         user_id = get_cust_id()
         bank_card_no = get_baofu_ccb_num()
