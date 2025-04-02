@@ -19,8 +19,7 @@ def read_db_yaml():
         return db_data
 
 
-def read_risk_phone():
-    path = RISK_PHONE_PATH
+def read_risk_phone(path=RISK_PHONE_PATH):
     with open(path, "r", encoding="utf-8") as file:
         lines = file.readlines()
         if lines:
