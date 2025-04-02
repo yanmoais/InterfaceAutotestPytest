@@ -72,7 +72,7 @@ def test_sit_llh_yx_credit_success():
                                            "addrDetail": "广东省广州市番禺区成钧街道豪承小区190号楼501"},
                               "idCardOcrInfo": {"positive": get_positive_photo(), "negative": get_negative_photo(),
                                                 "nameOCR": user_name, "idCardNoOCR": id_no, "beginTimeOCR": "20230829",
-                                                "duetimeOCR": "20991231",
+                                                "duetimeOCR": "20430829",
                                                 "addressOCR": "广东省广州市番禺区成钧街道豪承小区190号楼501",
                                                 "sexOCR": "M", "ethnicOCR": "汉族", "issueOrgOCR": "广州市公安局"},
                               "faceInfo": {"assayTime": apply_time, "assayType": "SENSETIME", "best": get_best_photo()},
@@ -130,8 +130,8 @@ def test_sit_llh_yx_credit_h5_success():
 
     # 渠道方，修改成对应需要走的渠道方channel_code
     channel_code = "LLH_XY"
-    user_id = "ZL174350799586"
-    partnerCreditNo = "1907036885302251520"
+    user_id = "ZL174347648597"
+    partnerCreditNo = "1906904740915187712"
 
     with allure.step("获取H5借款链接"):
         # 借款链接请求数据
