@@ -7,6 +7,8 @@ import requests
 import time
 import pytest
 import allure
+
+from common.Core_Api_Flow_Api import core_api_flow_api
 from common.Encrypt_Decrypt import encrypt_decrypt
 from config.testconfig import channel_codes
 from util_tools.logger import Logger
@@ -21,7 +23,8 @@ from common.Select_Database_Result import Select_Sql_Result
 from util_tools.Loop_Result_Tyh import loop_result_tyh
 
 # 初始化环境参数
-host = "http://gzdev.ffyla.com:26801"
+# host = "http://gzdev.ffyla.com:26801"
+host = "http://192.168.2.61:19803"
 headers = {"Content-Type": "application/json;charset=UTF-8"}
 channelId = "LLH_XY"
 
@@ -30,8 +33,6 @@ channelId = "LLH_XY"
 def test_sit_llh_yx_credit_success():
     with allure.step("数据初始化"):
         # 初始化环境参数
-        host = "http://gzdev.ffyla.com:26801"
-        channelId = "LLH_XY"
         public_param = {
             "partner": channelId
         }
@@ -119,8 +120,6 @@ def test_sit_llh_yx_credit_success():
 def test_sit_llh_yx_credit_h5_success():
     with allure.step("数据初始化"):
         # 初始化环境参数
-        host = "http://gzdev.ffyla.com:26801"
-        channelId = "LLH_XY"
         public_param = {
             "partner": channelId
         }
@@ -130,8 +129,8 @@ def test_sit_llh_yx_credit_h5_success():
 
     # 渠道方，修改成对应需要走的渠道方channel_code
     channel_code = "LLH_XY"
-    user_id = "ZL174347648597"
-    partnerCreditNo = "1906904740915187712"
+    user_id = "ZL174358041658"
+    partnerCreditNo = "1907340647497601024"
 
     with allure.step("获取H5借款链接"):
         # 借款链接请求数据
@@ -150,8 +149,6 @@ def test_sit_llh_yx_credit_h5_success():
 def test_sit_llh_yx_repay_h5_success():
     with allure.step("数据初始化"):
         # 初始化环境参数
-        host = "http://gzdev.ffyla.com:26801"
-        channelId = "LLH_XY"
         public_param = {
             "partner": channelId
         }
@@ -160,10 +157,10 @@ def test_sit_llh_yx_repay_h5_success():
 
     # 修改对应的数据
     repayApplyNo = get_repay_no()
-    partnerCreditNo = "1907036885302251520"
-    user_id = "ZL174350799586"
-    partnerLoanNo = "1907316171175235584"
-    loanApplyNo = "LLHXY1743509680063"
+    partnerCreditNo = "1907340647497601024"
+    user_id = "ZL174358041658"
+    partnerLoanNo = "1907347621689823232"
+    loanApplyNo = "LLHXY1743581930051"
 
     with allure.step("获取H5还款链接"):
         # 还款链接请求数据
@@ -178,3 +175,86 @@ def test_sit_llh_yx_repay_h5_success():
         loan_h5_resp = requests.post(url=host + "/outsideLink", json=public_param, headers=headers)
         # 还款链接
         logging.info(f"还款链接:{loan_h5_resp.text}")
+
+
+def test_bind_Card_Info():
+    # 核心api的基类
+    api = core_api_flow_api()
+    # 日志基类
+    logging = Logger().init_logger()
+    # 渠道方，修改成对应需要走的渠道方channel_code
+    channelCode = "APPZY"
+    headers = {
+        "Content-Type": "application/json",
+        "channelCode": channelCode
+    }
+
+    data = {
+        "idCardNo": "350600198010060111"
+    }
+    # 加密数据
+    zk_encry_data = api.api_param_encry(data, channelCode)
+    print(zk_encry_data)
+    url = "http://192.168.3.203:8801/bindCardInfo"
+
+    resp = requests.post(url=url, data=zk_encry_data, headers=headers)
+    print(resp)
+    # 解密
+    decry_resp = api.api_param_decry(resp)
+    print(decry_resp)
+
+
+def test_bind_Card_list():
+    # 核心api的基类
+    api = core_api_flow_api()
+    # 日志基类
+    logging = Logger().init_logger()
+    # 渠道方，修改成对应需要走的渠道方channel_code
+    channelCode = "RP"
+    headers = {
+        "Content-Type": "application/json",
+        "channelCode": channelCode
+    }
+
+    data = {
+        "userId": "SUR2739452076",
+        "bindChannel": "fundsChannel"
+    }
+    # 加密数据
+    zk_encry_data = api.api_param_encry(data, channelCode)
+    print(zk_encry_data)
+    url = "http://192.168.3.203:8801/bindCardList"
+
+    resp = requests.post(url=url, data=zk_encry_data, headers=headers)
+    print(resp)
+    # 解密
+    decry_resp = api.api_param_decry(resp)
+    print(decry_resp)
+
+
+def test_bind_Card_Info_List():
+    # 核心api的基类
+    api = core_api_flow_api()
+    # 日志基类
+    logging = Logger().init_logger()
+    # 渠道方，修改成对应需要走的渠道方channel_code
+    channelCode = "APPZY"
+    headers = {
+        "Content-Type": "application/json",
+        "channelCode": channelCode
+    }
+    data = {
+        "idCardNo": "350600198010060111",
+        # "userId": "SUR2739452076",
+        "bindChannel": "payChannel"
+    }
+    # 加密数据
+    zk_encry_data = api.api_param_encry(data, channelCode)
+    print(zk_encry_data)
+    url = "http://192.168.3.203:8801/bindCardInfoList"
+
+    resp = requests.post(url=url, data=zk_encry_data, headers=headers)
+    print(resp)
+    # 解密
+    decry_resp = api.api_param_decry(resp)
+    print(decry_resp)
