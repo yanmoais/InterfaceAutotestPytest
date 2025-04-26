@@ -32,7 +32,7 @@ from util_tools.Loop_result import loop_result
 @allure.title("360沙盒渠道-借款成功-API全流程")
 @allure.story("360沙盒渠道-海峡资方授信案例-API全流程")
 @allure.severity(allure.severity_level.CRITICAL)
-def test_haixia_loan_success_api_flow(get_channel):
+def test_haixia_loan_success_api_flow(get_channel,get_loan_perid):
     with allure.step("数据初始化"):
         # 核心api的基类
         api = core_api_flow_api()
@@ -70,7 +70,7 @@ def test_haixia_loan_success_api_flow(get_channel):
         # 借款金额
         loan_amt = "2000"
         # 借款期数
-        reqPeriods = "12"
+        reqPeriods = get_loan_perid
         # 产品信息
         product_code = "KN_HALF"
         logging.info(f"开始执行测试方法中渠道 {channel_code} 的测试")
@@ -221,7 +221,8 @@ def test_haixia_loan_success_api_flow(get_channel):
             "phoneNumber": mobile_no,
             "userName": user_name,
             "idCard": id_no,
-            "bankCard": bank_card_no
+            "bankCard": bank_card_no,
+            "loanPeriod": reqPeriods
         }
         # 输出测试结果 - 确保只输出一行
         print(f"TEST_RESULT:{json.dumps(test_result, ensure_ascii=False)}")
@@ -234,7 +235,7 @@ def test_haixia_loan_success_api_flow(get_channel):
 @allure.title("360沙盒渠道-授信成功-API全流程")
 @allure.story("360沙盒渠道-海峡资方授信案例-API全流程")
 @allure.severity(allure.severity_level.CRITICAL)
-def test_haixia_credit_success_api_flow(get_channel):
+def test_haixia_credit_success_api_flow(get_channel,get_loan_perid):
     with allure.step("数据初始化"):
         # 核心api的基类
         api = core_api_flow_api()
@@ -272,7 +273,7 @@ def test_haixia_credit_success_api_flow(get_channel):
         # 借款金额
         loan_amt = "2000"
         # 借款期数
-        reqPeriods = "12"
+        reqPeriods = get_loan_perid
         # 产品信息
         product_code = "KN_HALF"
         logging.info(f"开始执行测试方法中渠道 {channel_code} 的测试")
@@ -361,7 +362,8 @@ def test_haixia_credit_success_api_flow(get_channel):
             "phoneNumber": mobile_no,
             "userName": user_name,
             "idCard": id_no,
-            "bankCard": bank_card_no
+            "bankCard": bank_card_no,
+            "loanPeriod": reqPeriods
         }
         # 输出测试结果 - 确保只输出一行
         print(f"TEST_RESULT:{json.dumps(test_result, ensure_ascii=False)}")
@@ -374,7 +376,7 @@ def test_haixia_credit_success_api_flow(get_channel):
 @allure.title("360沙盒渠道-绑卡成功-API全流程")
 @allure.story("360沙盒渠道-海峡资方授信案例-API全流程")
 @allure.severity(allure.severity_level.CRITICAL)
-def test_haixia_band_card_success_api_flow(get_channel):
+def test_haixia_band_card_success_api_flow(get_channel,get_loan_perid):
     with allure.step("数据初始化"):
         # 核心api的基类
         api = core_api_flow_api()
@@ -412,7 +414,7 @@ def test_haixia_band_card_success_api_flow(get_channel):
         # 借款金额
         loan_amt = "2000"
         # 借款期数
-        reqPeriods = "12"
+        reqPeriods = get_loan_perid
         # 产品信息
         product_code = "KN_HALF"
         logging.info(f"开始执行测试方法中渠道 {channel_code} 的测试")
@@ -527,7 +529,8 @@ def test_haixia_band_card_success_api_flow(get_channel):
             "phoneNumber": mobile_no,
             "userName": user_name,
             "idCard": id_no,
-            "bankCard": bank_card_no
+            "bankCard": bank_card_no,
+            "loanPeriod": reqPeriods
         }
         # 输出测试结果 - 确保只输出一行
         print(f"TEST_RESULT:{json.dumps(test_result, ensure_ascii=False)}")
