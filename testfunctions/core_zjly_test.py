@@ -215,7 +215,7 @@ if __name__ == '__main__':
     #                                     product_code="SN", amount="1", ACCOUNT_NAME="蓝国剑")
     # # resp = api.test_zfzt_withhold_apply()
     # print(resp)
-    rsp = api.test_zfzt_card_bin_query("6227250871772090")
+    rsp = api.test_zfzt_card_bin_query("6225882702420768590")
     print(rsp)
     # reqsn, resp = api.test_zfzt_bank_apply()
     # print(resp)

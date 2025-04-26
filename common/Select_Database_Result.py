@@ -102,12 +102,30 @@ class Select_Sql_Result(Mysql):
             result[index] = value
         return result
 
+    # 查询api侧的放款订单表是否存在数据
+    def select_api_zx_loan_apply_record_tools(self, loan_apply_no, test_db="api"):
+        loan_apply_sql = f"SELECT term,loan_status,funds_code,loan_no FROM zx_loan_apply_record WHERE loan_apply_no = '{loan_apply_no}';"
+        loan_apply_result = Mysql(test_db).select_db(loan_apply_sql)
+        self.logging.info(f"数据库查询返回数据为：==={loan_apply_result}")
+        if loan_apply_result:
+            return loan_apply_result
+        else:
+            self.logging.info(f"没有找到数据，该笔数据可能掉单，请检查数据库！")
+            return False
+
     # 查询api侧zx_loan_plan_info表还款计划详情，根据loan_apply_no来模糊查询所有期数(仅对测试平台)
     def select_api_flow_zx_loan_plan_info_for_test_tools(self, loan_apply_no, test_db="api"):
-        select_sql = f"SELECT term,start_date,due_date,plan_status,CAST(prin_amt AS CHAR)AS prin_amt,CAST(int_amt AS CHAR)AS int_amt,CAST(guarantee_amt AS CHAR)AS guarantee_amt,CAST(advice_amt AS CHAR)AS advice_amt FROM zx_loan_plan_info WHERE plan_no LIKE '{loan_apply_no}%' ORDER BY term;"
-        result = Mysql(test_db).select_db(select_sql)
-        self.logging.info(f"数据库查询返回数据为：==={result}")
-        return result
+        result = None
+        loan_apply_result = Select_Sql_Result().select_api_zx_loan_apply_record_tools(loan_apply_no)
+        self.logging.info(f"数据库查询返回数据为：==={loan_apply_result}")
+        if loan_apply_result:
+            select_sql = f"SELECT term,start_date,due_date,plan_status,CAST(prin_amt AS CHAR)AS prin_amt,CAST(int_amt AS CHAR)AS int_amt,CAST(guarantee_amt AS CHAR)AS guarantee_amt,CAST(advice_amt AS CHAR)AS advice_amt FROM zx_loan_plan_info WHERE plan_no LIKE '{loan_apply_no}%' ORDER BY term;"
+            result = Mysql(test_db).select_db(select_sql)
+            self.logging.info(f"还款计划查询结果为：==={result}")
+            return result
+        else:
+            self.logging.info(f"没有找到数据，该笔数据可能掉单，请检查数据库！")
+            return False
 
     # 查询api侧zx_loan_apply_record表放款成功后的partner_loan_no，根据loan_apply_no来查询(loan_apply_no)
     def select_partner_loan_no_apply_record(self, loan_apply_no, test_db="api"):
@@ -228,8 +246,7 @@ class Select_Sql_Result(Mysql):
 
 
 if __name__ == '__main__':
-    loan_apply_no = 'TYH_202411051730S774983448'
+    loan_apply_no = 'ZL_ZA1910617843309879296'
     db = Select_Sql_Result()
-    channel = db.select_test_report()
-    # reap = db.select_zx_loan_apply_record(channel)
-    print(channel)
+    reap = db.select_api_zx_loan_apply_record_tools(loan_apply_no)
+    print(reap)

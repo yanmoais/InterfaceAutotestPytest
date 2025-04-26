@@ -14,6 +14,7 @@ import jsonpath
 from faker import Faker
 from util_tools.Read_Yaml import *
 
+
 # 实例化Faker对象
 def get_fake():
     get_fakes = Faker("zh-CN")
@@ -351,11 +352,11 @@ if __name__ == '__main__':
     phone = read_risk_phone()
     # print(id_no, birthday)
     # loan, repay = tyh_h5_loan_repay("TYH_202411041730710546726", "ZL173071054678","JMX1730710546789")
-    print(get_user_name(),id_no, birthday, ccb, phone)
+    print(get_user_name(), id_no, birthday, ccb, phone)
     from common.Encrypt_Decrypt import encrypt_decrypt
-    print("身份证MD5：",encrypt_decrypt().param_encry_by_md5(id_no))
-    print("手机号MD5：",encrypt_decrypt().param_encry_by_md5(phone))
-    print("手机号MD5：",encrypt_decrypt().param_encry_by_md5("15908979011"))
+
+    print("身份证MD5：", encrypt_decrypt().param_encry_by_md5(id_no))
+    print("手机号MD5：", encrypt_decrypt().param_encry_by_md5(phone))
     # from common.Select_Database_Result import *
     # plan = Select_Sql_Result().select_api_flow_zx_loan_plan_info_for_test_tools('SLN2022262534')
     # print(plan)

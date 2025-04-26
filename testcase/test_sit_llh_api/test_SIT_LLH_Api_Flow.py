@@ -7,7 +7,6 @@ import requests
 import time
 import pytest
 import allure
-
 from common.Core_Api_Flow_Api import core_api_flow_api
 from common.Encrypt_Decrypt import encrypt_decrypt
 from config.testconfig import channel_codes
@@ -23,10 +22,10 @@ from common.Select_Database_Result import Select_Sql_Result
 from util_tools.Loop_Result_Tyh import loop_result_tyh
 
 # 初始化环境参数
-# host = "http://gzdev.ffyla.com:26801"
-host = "http://192.168.2.61:19803"
+host = "http://gzdev.ffyla.com:26801"
+# host = "http://192.168.2.61:19803/rong360llh"
 headers = {"Content-Type": "application/json;charset=UTF-8"}
-channelId = "LLH_XY"
+channelId = "TYH_XY"
 
 
 # 授信操作
