@@ -34,7 +34,7 @@ from util_tools.Xxl_Job_Executor import execute_xxl_job
 @allure.title("360沙盒渠道-借款成功-API全流程")
 @allure.story("360沙盒渠道-金美信消金资方案例-API全流程")
 @allure.severity(allure.severity_level.CRITICAL)
-def test_jmx_loan_success_api_flow(get_channel,get_loan_perid):
+def test_jmx_loan_success_api_flow(get_channel, get_loan_perid):
     with allure.step("数据初始化"):
         # 核心api的基类
         api = core_api_flow_api()
@@ -135,17 +135,17 @@ def test_jmx_loan_success_api_flow(get_channel,get_loan_perid):
         logging.info(f"数据库更新资方完毕")
         time.sleep(5)
 
+    with allure.step("推送客户中心"):
+        execute_xxl_job().push_credit_info_to_customer_center(credit_apply_no)
+        time.sleep(5)
+        logging.info("授信成功后推送客户中心成功！")
+
     with allure.step("轮询判断是否授信成功"):
         # 授信查询数据
         sx_cx_data = {"userId": user_id, "creditApplyNo": credit_apply_no}
         # 发起授信结果轮询请求
         resp = loop_result().loop_api_flow_sx_result(sx_cx_data, credit_apply_no, channel_code)
         logging.info(f"当前授信结果返回数据为：{resp}")
-
-    with allure.step("推送客户中心"):
-        execute_xxl_job().push_credit_info_to_customer_center(credit_apply_no)
-        time.sleep(5)
-        logging.info("授信成功后推送客户中心成功！")
 
     with allure.step("绑卡申请"):
         # 请求鉴权数据
@@ -236,7 +236,7 @@ def test_jmx_loan_success_api_flow(get_channel,get_loan_perid):
 @allure.title("360沙盒渠道-授信成功-API全流程")
 @allure.story("360沙盒渠道-金美信消金资方案例-API全流程")
 @allure.severity(allure.severity_level.CRITICAL)
-def test_jmx_credit_success_api_flow(get_channel,get_loan_perid):
+def test_jmx_credit_success_api_flow(get_channel, get_loan_perid):
     with allure.step("数据初始化"):
         # 核心api的基类
         api = core_api_flow_api()
@@ -377,7 +377,7 @@ def test_jmx_credit_success_api_flow(get_channel,get_loan_perid):
 @allure.title("360沙盒渠道-绑卡成功-API全流程")
 @allure.story("360沙盒渠道-金美信消金资方案例-API全流程")
 @allure.severity(allure.severity_level.CRITICAL)
-def test_jmx_band_card_success_api_flow(get_channel,get_loan_perid):
+def test_jmx_band_card_success_api_flow(get_channel, get_loan_perid):
     with allure.step("数据初始化"):
         # 核心api的基类
         api = core_api_flow_api()

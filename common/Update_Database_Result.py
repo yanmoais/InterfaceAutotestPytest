@@ -594,10 +594,15 @@ class Update_Sql_Result(Mysql):
     # 下面几个均是还款计划修改的sql
     # api侧的到期还款，修改计划表，同步的会将批发的也修改
     def api_modify_due_repayment_plan(self, loan_apply_no, term='1', test_db="api"):
+        count = 0
         try:
-            update_sql_plan = f"UPDATE zws_middleware_360.zx_loan_plan_info t SET t.start_date = DATE_FORMAT((DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH )), '%Y%m%d'),t.due_date = DATE_FORMAT(CURRENT_DATE(), '%Y%m%d') WHERE t.plan_no LIKE '{loan_apply_no}%' AND t.term = '{term}';"
-            result = Mysql(test_db).update_db(update_sql_plan)
-            self.logging.info(f"数据库执行完成!")
+            for current_term in range(int(term), 0, -1):
+                count += 1
+                start_date = (datetime.datetime.now() - relativedelta(months=count)).strftime('%Y%m%d')
+                due_date = (datetime.datetime.now() - relativedelta(months=count - 1)).strftime('%Y%m%d')
+                update_sql_plan = f"UPDATE zws_middleware_360.zx_loan_plan_info t SET t.start_date = '{start_date}', t.due_date = '{due_date}' WHERE t.plan_no LIKE '{loan_apply_no}%' AND t.term = '{current_term}';"
+                result = Mysql(test_db).update_db(update_sql_plan)
+                self.logging.info(f"数据库执行完成! term={current_term}")
             return True
         except Exception as e:
             self.logging.error(f"请求发生错误：{e}")
@@ -616,10 +621,14 @@ class Update_Sql_Result(Mysql):
 
     # 批发资金侧的到期还款，修改计划表
     def zjly_modify_due_repayment_plan(self, req_seq_no, term='1', test_db="zjly"):
+        count = 0
         try:
-            update_sql_plan = f"UPDATE finance_router.fr_api_repayment_plan t SET t.ps_due_dt = DATE_FORMAT(CURRENT_DATE(), '%Y-%m-%d')WHERE t.order_no in (SELECT ord.order_no FROM finance_router.fr_api_order_info ord WHERE ord.req_seq_no IN('{req_seq_no}')) AND t.period = '{term}';"
-            result = Mysql(test_db).update_db(update_sql_plan)
-            self.logging.info(f"数据库执行完成!")
+            for current_term in range(int(term), 0, -1):
+                count += 1
+                due_date = (datetime.datetime.now() - relativedelta(months=count - 1)).strftime('%Y-%m-%d')
+                update_sql_plan = f"UPDATE finance_router.fr_api_repayment_plan t SET t.ps_due_dt = '{due_date}' WHERE t.order_no in (SELECT ord.order_no FROM finance_router.fr_api_order_info ord WHERE ord.req_seq_no IN('{req_seq_no}')) AND t.period = '{current_term}';"
+                result = Mysql(test_db).update_db(update_sql_plan)
+                self.logging.info(f"数据库执行完成!")
             return True
         except Exception as e:
             self.logging.error(f"请求发生错误：{e}")
@@ -680,10 +689,54 @@ class Update_Sql_Result(Mysql):
             self.logging.error(f"请求发生错误：{e}")
             return False
 
+    # api侧的逾期还款，修改计划表
+    def api_modify_over_due_repayment_plan(self, loan_apply_no, term='1', test_db="api"):
+        try:
+            update_sql_plan = f"UPDATE zws_middleware_360.zx_loan_plan_info t SET t.start_date = DATE_FORMAT((DATE_SUB(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH ),INTERVAL 3 DAY)), '%Y%m%d'),t.due_date = DATE_FORMAT(DATE_SUB(CURRENT_DATE(),INTERVAL 3 DAY), '%Y%m%d') WHERE t.plan_no LIKE '{loan_apply_no}%' AND t.term = '{term}';"
+            result = Mysql(test_db).update_db(update_sql_plan)
+            self.logging.info(f"数据库执行完成!")
+            return True
+        except Exception as e:
+            self.logging.error(f"请求发生错误：{e}")
+            return False
+
+    # api侧的逾期还款，修改订单表
+    def api_modify_over_due_repayment_loan_note_info(self, loan_apply_no, test_db="api"):
+        try:
+            update_sql_loan_note_info = f"UPDATE zws_middleware_360.zx_loan_note_info t SET t.loan_time = CONCAT(DATE_FORMAT(DATE_SUB(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH), INTERVAL 3 DAY), '%Y%m%d'), RIGHT(t.loan_time, 6)),t.status_time = CONCAT(DATE_FORMAT(DATE_SUB(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH), INTERVAL 3 DAY), '%Y%m%d'), RIGHT(t.status_time, 6)),t.cash_date = DATE_FORMAT(DATE_SUB(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH ), INTERVAL 3 DAY), '%Y%m%d'),t.inst_date = DATE_FORMAT(DATE_SUB(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH ), INTERVAL 3 DAY), '%Y%m%d')WHERE t.loan_apply_no = '{loan_apply_no}';"
+            result = Mysql(test_db).update_db(update_sql_loan_note_info)
+            self.logging.info(f"数据库执行完成!")
+            return True
+        except Exception as e:
+            self.logging.error(f"请求发生错误：{e}")
+            return False
+
+    # 批发资金侧的逾期还款，修改计划表
+    def zjly_modify_over_due_repayment_plan(self, req_seq_no, term='1', test_db="zjly"):
+        try:
+            update_sql_plan = f"UPDATE finance_router.fr_api_repayment_plan t SET t.ps_due_dt = DATE_FORMAT(DATE_SUB(CURRENT_DATE(), INTERVAL 3 DAY), '%Y-%m-%d')WHERE t.order_no in(SELECT ord.order_no FROM finance_router.fr_api_order_info ord WHERE ord.req_seq_no IN('{req_seq_no}')) AND t.period = '{term}';"
+            result = Mysql(test_db).update_db(update_sql_plan)
+            self.logging.info(f"数据库执行完成!")
+            return True
+        except Exception as e:
+            self.logging.error(f"请求发生错误：{e}")
+            return False
+
+    # 批发资金侧的逾期还款，修改订单表
+    def zjly_modify_over_due_repayment_fr_api_order_info(self, req_seq_no, test_db="zjly"):
+        try:
+            update_sql_order_info = f"UPDATE finance_router.fr_api_order_info t SET t.settle_time = CONCAT(DATE_FORMAT(DATE_SUB(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH),INTERVAL 3 DAY), '%Y-%m-%d'), RIGHT(t.settle_time, 9)),t.repay_day = DATE_FORMAT(DATE_SUB(CURRENT_DATE(), INTERVAL 3 DAY ), '%Y-%m-%d'),t.apply_dt = DATE_FORMAT(DATE_SUB(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH ), INTERVAL 3 DAY ), '%Y-%m-%d')WHERE t.req_seq_no = '{req_seq_no}';"
+            result = Mysql(test_db).update_db(update_sql_order_info)
+            self.logging.info(f"数据库执行完成!")
+            return True
+        except Exception as e:
+            self.logging.error(f"请求发生错误：{e}")
+            return False
+
     # 批发资金侧的提前结清，修改计划表
     def zjly_modify_pre_due_repayment_plan(self, req_seq_no, term='1', test_db="zjly"):
         try:
-            update_sql_plan = f"UPDATE finance_router.fr_api_repayment_plan t SET t.ps_due_dt = DATE_FORMAT(DATE_SUB(CURRENT_DATE(), INTERVAL 5 DAY), '%Y-%m-%d')WHERE t.order_no in(SELECT ord.order_no FROM finance_router.fr_api_order_info ord WHERE ord.req_seq_no IN('{req_seq_no}')) AND t.period = '{term}';"
+            update_sql_plan = f"UPDATE finance_router.fr_api_repayment_plan t SET t.ps_due_dt = DATE_FORMAT(DATE_ADD(DATE_SUB(CURRENT_DATE(), INTERVAL 5 DAY), INTERVAL 1 MONTH), '%Y-%m-%d') WHERE t.order_no in(SELECT ord.order_no FROM finance_router.fr_api_order_info ord WHERE ord.req_seq_no IN('{req_seq_no}')) AND t.period = '{term}';"
             result = Mysql(test_db).update_db(update_sql_plan)
             self.logging.info(f"数据库执行完成!")
             return True
@@ -703,7 +756,7 @@ class Update_Sql_Result(Mysql):
             return False
 
     # 修改还款计划，根据申请单号进行(仅针对测试平台)
-    def modify_repayment_plan(self, loan_apply_no, bill_type, term='1'):
+    def modify_repayment_plan(self, loan_apply_no, bill_type, term='1', ompensatory='True'):
         db = Update_Sql_Result()
         # 先判断借据存不存在，后续优化判断是否借款成功的借据
         loan_resp = Select_Sql_Result().select_api_zx_loan_apply_record_tools(loan_apply_no)
@@ -744,6 +797,13 @@ class Update_Sql_Result(Mysql):
                 except Exception as e:
                     self.logging.error(f"请求发生错误：{e}")
                     return False
+            # 逾期还款
+            elif bill_type == "over_due_repay":
+                try:
+                    return True
+                except Exception as e:
+                    self.logging.error(f"请求发生错误：{e}")
+                    return False
         else:
             self.logging.info(f"没有找到数据，该笔数据可能掉单，请检查数据库！")
             return False
@@ -753,7 +813,7 @@ if __name__ == '__main__':
     # user_id = "ZLTEST_202410161729069481126"
     # funds_code = "FR_RUN_LOU"
     db = Update_Sql_Result()
-    print(db.modify_repayment_plan('SLN7053153500','pre_repay','2'))
+    print(db.zjly_modify_due_repayment_plan('1924345284763205632', '6'))
     # results = Select_Sql_Result().select_fr_channel_config('中原提钱花MOCK')
     # print()
     # if 'mock'.lower() not in results['code'].lower():

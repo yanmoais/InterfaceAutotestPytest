@@ -34,7 +34,7 @@ redis:
     password: a6ENZ8CCM1xPhcf@
     db: 6
   api:
-    host: 192.168.1.101
+    host: 192.168.2.189
     port: 6379
-    password: zQ6gmXuw0dodB@
+    password: zhongli888
     db: 9

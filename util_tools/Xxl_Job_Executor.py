@@ -87,8 +87,23 @@ class execute_xxl_job(xxlJob):
         self.logging.info(f"执行SIT_LLH的授信处理任务成功!")
         time.sleep(5)
 
+    # 调用核心更新逾期罚息处理任务
+    def update_overdue(self, loanApplyNo):
+        param_data = {"loanApplyNo": loanApplyNo}
+        self.excute_xxl_job.trigger_xxl_job(184, f'{param_data}')
+        self.logging.info(f"执行核心更新逾期罚息处理任务成功!")
+        time.sleep(5)
+
+    # 调用核心代偿、回购打标处理任务
+    def update_compensation(self, loanApplyNo):
+        param_data = {"loanApplyNo": loanApplyNo}
+        self.excute_xxl_job.trigger_xxl_job(232, f'{param_data}')
+        self.logging.info(f"执行核心代偿、回购打标处理任务成功!")
+        time.sleep(5)
+
 
 if __name__ == '__main__':
-    loanApplyNo = "LLH_202504011743492867646"
-    execute_xxl_job().sit_llh_apply_credit(loanApplyNo)
+    loanApplyNo = "SLN4508024327"
+    execute_xxl_job().update_overdue(loanApplyNo)
+    execute_xxl_job().update_compensation(loanApplyNo)
     # print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))

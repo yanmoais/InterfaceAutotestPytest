@@ -17,7 +17,7 @@ def get_channel():
         channel = "ICE_ZLSK_36"
     yield channel
     # 收尾，修改为资金路由模式
-    Update_Sql_Result().update_api_chanel_non_funds(channel)
+    Update_Sql_Result().update_api_chanel_funds_router(channel)
 
 
 @pytest.fixture(scope="function", autouse=True)
