@@ -39,7 +39,7 @@ class loop_result:
         while True:
             # 等待2秒后发起授信状态查询请求
             count += 1
-            time.sleep(10)
+            time.sleep(2)
             resp = None
             if count < 20:
                 try:
@@ -84,7 +84,7 @@ class loop_result:
         while True:
             # 等待2秒后发起放款查询请求
             count += 1
-            time.sleep(10)
+            time.sleep(2)
             resp = None
             if count < 20:
                 try:

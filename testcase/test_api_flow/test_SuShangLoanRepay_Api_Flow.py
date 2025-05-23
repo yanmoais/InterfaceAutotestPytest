@@ -492,7 +492,7 @@ def test_sushang_credit_success_api_flow(get_channel,get_loan_perid):
 @pytest.mark.run(order=11)
 @allure.epic("360沙盒渠道-苏商（蒙商）资方-API全流程")
 @allure.feature("360沙盒渠道-还款模块-API全流程")
-@allure.title("360沙盒渠道-到期D0还款成功-API全流程")
+@allure.title("360沙盒渠道-到期D0批扣还款成功-API全流程")
 @allure.story("360沙盒渠道-苏商（蒙商）资方还款案例-API全流程")
 @allure.severity(allure.severity_level.CRITICAL)
 @pytest.mark.skip()

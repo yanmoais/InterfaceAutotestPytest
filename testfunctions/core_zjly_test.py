@@ -68,7 +68,9 @@ class core_zjly_func:
                 "CREDIT_ACCTNO": CREDIT_ACCTNO,
                 "TEL": TEL,
                 "ID": ID,
-                "BIND_PRODUCT_CODE": BIND_PRODUCT_CODE
+                "BIND_PRODUCT_CODE": BIND_PRODUCT_CODE,
+                "PRODUCT_LINE": "TYH",
+                "ASSET_CHANNEL": "TYH_HSR"
             })
         }
         datas = self.test_zjl_jiami(req_data)

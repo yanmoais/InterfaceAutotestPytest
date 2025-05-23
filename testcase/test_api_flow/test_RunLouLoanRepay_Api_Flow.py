@@ -32,7 +32,7 @@ from util_tools.Xxl_Job_Executor import execute_xxl_job
 @allure.title("360沙盒渠道-借款成功-API全流程")
 @allure.story("360沙盒渠道-润楼资方授信案例-API全流程")
 @allure.severity(allure.severity_level.CRITICAL)
-def test_runlou_loan_success_api_flow(get_channel,get_loan_perid):
+def test_runlou_loan_success_api_flow(get_channel, get_loan_perid):
     with allure.step("数据初始化"):
         # 核心api的基类
         api = core_api_flow_api()
@@ -206,10 +206,10 @@ def test_runlou_loan_success_api_flow(get_channel,get_loan_perid):
         # 发起轮询，并且执行借款过程中需要的JOB
         jk_success_resp = loop_result().loop_api_flow_loan_result(loan_query_need_encry_data, loanApplyNo, channel_code)
         logging.info(f"借款返回的查询参数是：{jk_success_resp}")
-    
-    with allure.step("借款成功断言"):   
+
+    with allure.step("借款成功断言"):
         pass
-    
+
     with allure.step("生成测试结果"):
         # 生成测试结果
         test_result = {
@@ -234,7 +234,7 @@ def test_runlou_loan_success_api_flow(get_channel,get_loan_perid):
 @allure.title("360沙盒渠道-绑卡成功-API全流程")
 @allure.story("360沙盒渠道-润楼资方授信案例-API全流程")
 @allure.severity(allure.severity_level.CRITICAL)
-def test_runlou_band_card_success_api_flow(get_channel,get_loan_perid):
+def test_runlou_band_card_success_api_flow(get_channel, get_loan_perid):
     with allure.step("数据初始化"):
         # 核心api的基类
         api = core_api_flow_api()
@@ -372,10 +372,10 @@ def test_runlou_band_card_success_api_flow(get_channel,get_loan_perid):
             bk_jq_need_encry_data["certificationApplyNo"], bk_jq_need_encry_data[
                 "agreementTime"] = get_api_bk_id(), get_time_stand_api()
             loop_result().loop_api_flow_bk_result(bk_jq_need_encry_data, channel_code)
-    
-    with allure.step("绑卡成功断言"):   
+
+    with allure.step("绑卡成功断言"):
         pass
-    
+
     with allure.step("生成测试结果"):
         # 生成测试结果
         test_result = {
@@ -394,7 +394,6 @@ def test_runlou_band_card_success_api_flow(get_channel,get_loan_perid):
         print(f"TEST_RESULT:{json.dumps(test_result, ensure_ascii=False)}")
 
 
-
 # API全流程-润楼授信成功
 @pytest.mark.run(order=10)
 @allure.epic("360沙盒渠道-润楼资方-API全流程")
@@ -402,7 +401,7 @@ def test_runlou_band_card_success_api_flow(get_channel,get_loan_perid):
 @allure.title("360沙盒渠道-授信成功-API全流程")
 @allure.story("360沙盒渠道-润楼资方授信案例-API全流程")
 @allure.severity(allure.severity_level.CRITICAL)
-def test_runlou_credit_success_api_flow(get_channel,get_loan_perid):
+def test_runlou_credit_success_api_flow(get_channel, get_loan_perid):
     with allure.step("数据初始化"):
         # 核心api的基类
         api = core_api_flow_api()
@@ -514,10 +513,10 @@ def test_runlou_credit_success_api_flow(get_channel,get_loan_perid):
         execute_xxl_job().push_credit_info_to_customer_center(credit_apply_no)
         time.sleep(5)
         logging.info("授信成功后推送客户中心成功！")
-    
-    with allure.step("授信成功断言"):   
+
+    with allure.step("授信成功断言"):
         pass
-    
+
     with allure.step("生成测试结果"):
         # 生成测试结果
         test_result = {
@@ -536,16 +535,15 @@ def test_runlou_credit_success_api_flow(get_channel,get_loan_perid):
         print(f"TEST_RESULT:{json.dumps(test_result, ensure_ascii=False)}")
 
 
-
 # API全流程-润楼D0批扣还款成功
 @pytest.mark.run(order=11)
 @allure.epic("360沙盒渠道-润楼资方-API全流程")
 @allure.feature("360沙盒渠道-还款模块-API全流程")
-@allure.title("360沙盒渠道-到期D0还款成功-API全流程")
+@allure.title("360沙盒渠道-到期D0批扣还款成功-API全流程")
 @allure.story("360沙盒渠道-润楼资方还款案例-API全流程")
 @allure.severity(allure.severity_level.CRITICAL)
 @pytest.mark.skip()
-def test_runlou_repay_d0_success_api_flow(get_channel,get_loan_perid):
+def test_runlou_repay_d0_success_api_flow(get_channel, get_loan_perid):
     with allure.step("数据初始化"):
         # 核心api的基类
         api = core_api_flow_api()
@@ -766,7 +764,7 @@ def test_runlou_repay_d0_success_api_flow(get_channel,get_loan_perid):
 @allure.story("360沙盒渠道-润楼资方还款案例-API全流程")
 @allure.severity(allure.severity_level.CRITICAL)
 @pytest.mark.skip()
-def test_runlou_repay_success_api_flow(get_channel,get_loan_perid):
+def test_runlou_repay_success_api_flow(get_channel, get_loan_perid):
     with allure.step("数据初始化"):
         # 核心api的基类
         api = core_api_flow_api()
