@@ -54,7 +54,14 @@ class Select_Sql_Result(Mysql):
 
     # 查询api侧zl_batch_deduction_apply表当前还款进度，根据借款流水号授信申请单号来查询(zx_loan_apply_no)
     def select_zl_batch_deduction_apply(self, loan_apply_no, test_db="api"):
-        select_sql = f"SELECT ar.repay_status, ar.jxym_repay_status FROM zl_batch_deduction_apply as ar WHERE ar.zx_loan_apply_no = '{loan_apply_no}';"
+        select_sql = f"SELECT ar.repay_status, ar.jxym_repay_status,ar.zj_repay_status FROM zl_batch_deduction_apply as ar WHERE ar.zx_loan_apply_no = '{loan_apply_no}';"
+        result = Mysql(test_db).select_db(select_sql)[0]
+        self.logging.info(f"数据库查询返回数据为：==={result}")
+        return result
+
+    # 查询api侧zx_repayment_apply_record表当前还款进度，根据借款流水号授信申请单号来查询(loan_apply_no)
+    def select_zx_repayment_apply_record(self, loan_apply_no, test_db="api"):
+        select_sql = f"SELECT ar.repay_status, ar.jxym_repay_status,ar.zj_repay_status FROM zx_repayment_apply_record as ar WHERE ar.loan_apply_no = '{loan_apply_no}';"
         result = Mysql(test_db).select_db(select_sql)[0]
         self.logging.info(f"数据库查询返回数据为：==={result}")
         return result
@@ -246,7 +253,7 @@ class Select_Sql_Result(Mysql):
 
 
 if __name__ == '__main__':
-    loan_apply_no = 'ZL_ZA1910617843309879296'
+    loan_apply_no = 'ZYYM2025050716313087135'
     db = Select_Sql_Result()
-    reap = db.select_api_zx_loan_apply_record_tools(loan_apply_no)
+    reap = db.select_zx_repayment_apply_record(loan_apply_no)
     print(reap)

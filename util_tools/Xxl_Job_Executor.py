@@ -8,6 +8,7 @@ import time
 import allure
 from common.Xxl_Job import xxlJob
 from util_tools.Faker import *
+from util_tools.Read_Yaml import *
 
 
 class execute_xxl_job(xxlJob):
@@ -46,15 +47,19 @@ class execute_xxl_job(xxlJob):
         self.logging.info(f"执行放款签章定时任务成功!")
         time.sleep(3)
 
-    # 调用新长银批扣 D0 定时任务，到期日批扣
-    # 新长银批扣需要满足条件：当前系统日期 - 到期日 >= 0
-    def new_cy_batch_d0_repay_apply(self, date=datetime.datetime.now().strftime("%Y%m%d")):
-        self.excute_xxl_job.trigger_xxl_job(601, f'{date}')
-        self.logging.info(f"执行新长银批扣 D0 定时任务成功：======日期为{date}")
-        time.sleep(5)
+    # 调用批扣 D0 定时任务，到期日批扣
+    # 批扣需要满足条件：当前系统日期 - 到期日 >= 0
+    # 将ID参数化，对不同的资方做适配
+    def funds_batch_d0_repay_apply(self, funds, date=datetime.datetime.now().strftime("%Y%m%d")):
+        xxl_yaml = read_xxl_yaml()
+        ids = xxl_yaml[funds]
+        print(ids, funds)
+        self.excute_xxl_job.trigger_xxl_job(ids, '')
+        self.logging.info(f"执行{funds}批扣 D0 定时任务成功：======日期为{date}")
+        time.sleep(60)
 
     # 调用查询批扣结果任务，传loanApplyNo
-    def new_cy_d0_batch_repayment_query(self, loanApplyNo):
+    def funds_d0_batch_repayment_query(self, loanApplyNo):
         param_data = {"loanApplyNo": loanApplyNo}
         self.excute_xxl_job.trigger_xxl_job(578, f'{param_data}')
         self.logging.info(f"执行查询批扣结果任务成功!")
@@ -72,7 +77,7 @@ class execute_xxl_job(xxlJob):
     def single_repay(self):
         self.excute_xxl_job.trigger_xxl_job(199)
         self.logging.info(f"调用单笔还款处理任务成功!")
-        time.sleep(5)
+        time.sleep(60)
 
     # 调用单笔还款结果查询
     def single_query_result(self):
@@ -103,7 +108,9 @@ class execute_xxl_job(xxlJob):
 
 
 if __name__ == '__main__':
-    loanApplyNo = "SLN4508024327"
-    execute_xxl_job().update_overdue(loanApplyNo)
-    execute_xxl_job().update_compensation(loanApplyNo)
+    # loanApplyNo = "SLN4508024327"
+    # execute_xxl_job().update_overdue(loanApplyNo)
+    # execute_xxl_job().update_compensation(loanApplyNo)
+    funds_code = "HAMI_ZHONGBANG"
+    execute_xxl_job().funds_batch_d0_repay_apply(funds_code)
     # print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))

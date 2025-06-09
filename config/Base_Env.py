@@ -5,6 +5,7 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DB_YAML_PATH = BASE_DIR + os.sep + "config" + os.sep + "database_config.yaml"
+XXL_YAML_PATH = BASE_DIR + os.sep + "config" + os.sep + "funds_xxl_config.yaml"
 RISK_PHONE_PATH = BASE_DIR + os.sep + "testdata" + os.sep + "risk_phone" + os.sep + "user_phone.txt"
 RISK_PHONE_MD5_PATH = BASE_DIR + os.sep + "testdata" + os.sep + "risk_phone" + os.sep + "phone_md5.txt"
 CASE_FILE_PATH = BASE_DIR + os.sep + "testdata" + os.sep + "test_case_excel" + os.sep + "excle_repayment_plan.xlsx"

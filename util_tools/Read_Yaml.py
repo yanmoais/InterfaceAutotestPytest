@@ -19,6 +19,13 @@ def read_db_yaml():
         return db_data
 
 
+def read_xxl_yaml():
+    path = XXL_YAML_PATH
+    with open(path, "r", encoding="utf-8") as file:
+        db_data = yaml.safe_load(file)
+        return db_data['funds_xxl_id']
+
+
 def read_risk_phone(path=RISK_PHONE_PATH):
     with open(path, "r", encoding="utf-8") as file:
         lines = file.readlines()
@@ -42,4 +49,4 @@ def write_user_data(path, data):
 
 
 if __name__ == '__main__':
-    print(read_risk_phone())
+    print(read_xxl_yaml())

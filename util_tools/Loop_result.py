@@ -250,7 +250,7 @@ class loop_result:
                                             time.sleep(20)
                                 elif resp_decry["status"] == "F":
                                     self.logging.info("申请失败，请检查落库原因！")
-                                    break
+                                    return False
                                 elif resp_decry["status"] == "S":
                                     self.logging.info(f"授信成功！")
                                     return resp_decry
@@ -411,7 +411,7 @@ class loop_result:
                 return False
 
     # api全流程还款结果轮询查询
-    def loop_api_flow_repay_result(self, loanApplyNo):
+    def loop_api_flow_repay_result(self, loanApplyNo, repay_method='D0batch'):
         # 轮训判断 还款结果查询，为"S"则跳出
         count = 0
         while True:
@@ -421,18 +421,26 @@ class loop_result:
             if count < 30:
                 self.logging.info(f"当前是第{count}次还款状态查询！")
                 try:
-                    # 查询数据库还款结果
-                    repay_result = Select_Sql_Result().select_zl_batch_deduction_apply(loanApplyNo)
+                    # 查询数据库还款结果，先判断是何种类型的还款操作
+                    if repay_method == 'D0batch':
+                        repay_result = Select_Sql_Result().select_zl_batch_deduction_apply(loanApplyNo)
+                    elif repay_method == 'due_repay':
+                        repay_result = Select_Sql_Result().select_zx_repayment_apply_record(loanApplyNo)
                     if repay_result:
                         try:
                             if repay_result["repay_status"] is not None:
-                                if repay_result["repay_status"] == "P" or repay_result["jxym_repay_status"] == "P":
+                                if repay_result["repay_status"] == "P" or repay_result["jxym_repay_status"] == "P" or repay_result["zj_repay_status"] == "P":
                                     self.logging.info("还款申请处理中，请稍等！！")
                                     # 执行api侧D0批扣查询
                                     time.sleep(5)
-                                    execute_xxl_job().new_cy_d0_batch_repayment_query(loanApplyNo)
-                                    self.logging.info(f"执行D0批扣结果查询成功！请稍等！")
-                                elif repay_result["repay_status"] == "F" or repay_result["jxym_repay_status"] == "F":
+                                    if repay_method == 'D0batch':
+                                        execute_xxl_job().funds_d0_batch_repayment_query(loanApplyNo)
+                                        self.logging.info(f"执行D0批扣结果查询成功！请稍等！")
+                                    elif repay_method == 'due_repay':
+                                        execute_xxl_job().single_repay()
+                                        execute_xxl_job().single_query_result()
+                                        self.logging.info(f"执行到期还款/还款结果查询成功！请稍等！")
+                                elif repay_result["repay_status"] == "F" or repay_result["jxym_repay_status"] == "F" or repay_result["zj_repay_status"] == "F":
                                     self.logging.info(
                                         f"还款申请失败，请检查数据是否存在问题！错误原因：{repay_result['reasonMsg']}")
                                     break

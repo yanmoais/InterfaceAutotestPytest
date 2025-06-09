@@ -109,7 +109,7 @@ def test_xiaomi_loan_success_api_flow(get_channel,get_loan_perid):
                               "faceInfo": {"assayTime": apply_time, "assayType": "SENSETIME", "best": get_best_photo()},
                               "linkmanInfo": {"relationshipA": "10", "nameA": "毋琳子", "phoneA": "15161455377",
                                               "relationshipB": "60", "nameB": "花娥茜", "phoneB": "15982209187"},
-                              "bankCardInfo": {"bankCode": "0004", "idCardNo": id_no, "userMobile": mobile_no,
+                              "bankCardInfo": {"bankCode": "0003", "idCardNo": id_no, "userMobile": mobile_no,
                                                "userName": user_name, "bankCardNo": bank_card_no},
                               "geoInfo": {"latitude": "43.57687931900941", "longitude": "112.55172012515888"},
                               "companyInfo": {
@@ -148,7 +148,7 @@ def test_xiaomi_loan_success_api_flow(get_channel,get_loan_perid):
 
     with allure.step("绑卡申请"):
         # 请求鉴权数据
-        bk_jq_need_encry_data = {"userId": user_id, "certificationApplyNo": certificationApplyNo, "bankCode": "0004",
+        bk_jq_need_encry_data = {"userId": user_id, "certificationApplyNo": certificationApplyNo, "bankCode": "0003",
                                  "idCardNo": id_no, "userMobile": mobile_no, "userName": user_name,
                                  "bankCardNo": bank_card_no, "registerMobile": mobile_no, "agreementTime": apply_time
                                  }
@@ -185,7 +185,7 @@ def test_xiaomi_loan_success_api_flow(get_channel,get_loan_perid):
                                  "loanPurpose": "05", "partnerCreditNo": partner_creditNo, "term": reqPeriods,
                                  "loanAmt": loan_amt, "loanApplyNo": loanApplyNo, "userId": user_id,
                                  "agreementTime": apply_time,
-                                 "bankCardInfo": {"bankCode": "0004", "idCardNo": id_no, "userMobile": mobile_no,
+                                 "bankCardInfo": {"bankCode": "0003", "idCardNo": id_no, "userMobile": mobile_no,
                                                   "userName": user_name, "bankCardNo": bank_card_no},
                                  "linkmanInfo": {"relationshipA": "10", "nameA": "毋琳子", "phoneA": "15161455377",
                                                  "relationshipB": "60", "nameB": "花娥茜", "phoneB": "15982209187"},
@@ -312,7 +312,7 @@ def test_xiaomi_bind_card_success_api_flow(get_channel,get_loan_perid):
                               "faceInfo": {"assayTime": apply_time, "assayType": "SENSETIME", "best": get_best_photo()},
                               "linkmanInfo": {"relationshipA": "10", "nameA": "毋琳子", "phoneA": "15161455377",
                                               "relationshipB": "60", "nameB": "花娥茜", "phoneB": "15982209187"},
-                              "bankCardInfo": {"bankCode": "0004", "idCardNo": id_no, "userMobile": mobile_no,
+                              "bankCardInfo": {"bankCode": "0003", "idCardNo": id_no, "userMobile": mobile_no,
                                                "userName": user_name, "bankCardNo": bank_card_no},
                               "geoInfo": {"latitude": "43.57687931900941", "longitude": "112.55172012515888"},
                               "companyInfo": {
@@ -351,7 +351,7 @@ def test_xiaomi_bind_card_success_api_flow(get_channel,get_loan_perid):
 
     with allure.step("绑卡申请"):
         # 请求鉴权数据
-        bk_jq_need_encry_data = {"userId": user_id, "certificationApplyNo": certificationApplyNo, "bankCode": "0004",
+        bk_jq_need_encry_data = {"userId": user_id, "certificationApplyNo": certificationApplyNo, "bankCode": "0003",
                                  "idCardNo": id_no, "userMobile": mobile_no, "userName": user_name,
                                  "bankCardNo": bank_card_no, "registerMobile": mobile_no, "agreementTime": apply_time
                                  }
@@ -480,7 +480,7 @@ def test_xiaomi_credit_success_api_flow(get_channel,get_loan_perid):
                               "faceInfo": {"assayTime": apply_time, "assayType": "SENSETIME", "best": get_best_photo()},
                               "linkmanInfo": {"relationshipA": "10", "nameA": "毋琳子", "phoneA": "15161455377",
                                               "relationshipB": "60", "nameB": "花娥茜", "phoneB": "15982209187"},
-                              "bankCardInfo": {"bankCode": "0004", "idCardNo": id_no, "userMobile": mobile_no,
+                              "bankCardInfo": {"bankCode": "0003", "idCardNo": id_no, "userMobile": mobile_no,
                                                "userName": user_name, "bankCardNo": bank_card_no},
                               "geoInfo": {"latitude": "43.57687931900941", "longitude": "112.55172012515888"},
                               "companyInfo": {
@@ -623,7 +623,7 @@ def test_xiaomi_repay_d0_success_api_flow(get_channel,get_loan_perid):
                               "faceInfo": {"assayTime": apply_time, "assayType": "SENSETIME", "best": get_best_photo()},
                               "linkmanInfo": {"relationshipA": "10", "nameA": "毋琳子", "phoneA": "15161455378",
                                               "relationshipB": "60", "nameB": "花娥茜", "phoneB": "15982209185"},
-                              "bankCardInfo": {"bankCode": "0004", "idCardNo": id_no, "userMobile": mobile_no,
+                              "bankCardInfo": {"bankCode": "0003", "idCardNo": id_no, "userMobile": mobile_no,
                                                "userName": user_name, "bankCardNo": bank_card_no},
                               "geoInfo": {"latitude": "43.57687931900941", "longitude": "112.55172012515888"},
                               "companyInfo": {
@@ -662,7 +662,7 @@ def test_xiaomi_repay_d0_success_api_flow(get_channel,get_loan_perid):
 
     with allure.step("绑卡申请"):
         # 请求鉴权数据
-        bk_jq_need_encry_data = {"userId": user_id, "certificationApplyNo": certificationApplyNo, "bankCode": "0004",
+        bk_jq_need_encry_data = {"userId": user_id, "certificationApplyNo": certificationApplyNo, "bankCode": "0003",
                                  "idCardNo": id_no, "userMobile": mobile_no, "userName": user_name,
                                  "bankCardNo": bank_card_no, "registerMobile": mobile_no, "agreementTime": apply_time}
         # 绑卡轮询，并且绑卡两次
@@ -696,7 +696,7 @@ def test_xiaomi_repay_d0_success_api_flow(get_channel,get_loan_perid):
                                  "loanPurpose": "05", "partnerCreditNo": partner_creditNo, "term": reqPeriods,
                                  "loanAmt": loan_amt, "loanApplyNo": loanApplyNo, "userId": user_id,
                                  "agreementTime": apply_time,
-                                 "bankCardInfo": {"bankCode": "0004", "idCardNo": id_no, "userMobile": mobile_no,
+                                 "bankCardInfo": {"bankCode": "0003", "idCardNo": id_no, "userMobile": mobile_no,
                                                   "userName": user_name, "bankCardNo": bank_card_no},
                                  "linkmanInfo": {"relationshipA": "10", "nameA": "毋琳子", "phoneA": "15161455378",
                                                  "relationshipB": "60", "nameB": "花娥茜", "phoneB": "15982209185"},
@@ -846,7 +846,7 @@ def test_xiaomi_repay_success_api_flow(get_channel,get_loan_perid):
                               "faceInfo": {"assayTime": apply_time, "assayType": "SENSETIME", "best": get_best_photo()},
                               "linkmanInfo": {"relationshipA": "10", "nameA": "毋琳子", "phoneA": "15161455378",
                                               "relationshipB": "60", "nameB": "花娥茜", "phoneB": "15982209185"},
-                              "bankCardInfo": {"bankCode": "0004", "idCardNo": id_no, "userMobile": mobile_no,
+                              "bankCardInfo": {"bankCode": "0003", "idCardNo": id_no, "userMobile": mobile_no,
                                                "userName": user_name, "bankCardNo": bank_card_no},
                               "geoInfo": {"latitude": "43.57687931900941", "longitude": "112.55172012515888"},
                               "companyInfo": {
@@ -885,7 +885,7 @@ def test_xiaomi_repay_success_api_flow(get_channel,get_loan_perid):
 
     with allure.step("绑卡申请"):
         # 请求鉴权数据
-        bk_jq_need_encry_data = {"userId": user_id, "certificationApplyNo": certificationApplyNo, "bankCode": "0004",
+        bk_jq_need_encry_data = {"userId": user_id, "certificationApplyNo": certificationApplyNo, "bankCode": "0003",
                                  "idCardNo": id_no, "userMobile": mobile_no, "userName": user_name,
                                  "bankCardNo": bank_card_no, "registerMobile": mobile_no, "agreementTime": apply_time}
         # 绑卡轮询，并且绑卡两次
@@ -919,7 +919,7 @@ def test_xiaomi_repay_success_api_flow(get_channel,get_loan_perid):
                                  "loanPurpose": "05", "partnerCreditNo": partner_creditNo, "term": reqPeriods,
                                  "loanAmt": loan_amt, "loanApplyNo": loanApplyNo, "userId": user_id,
                                  "agreementTime": apply_time,
-                                 "bankCardInfo": {"bankCode": "0004", "idCardNo": id_no, "userMobile": mobile_no,
+                                 "bankCardInfo": {"bankCode": "0003", "idCardNo": id_no, "userMobile": mobile_no,
                                                   "userName": user_name, "bankCardNo": bank_card_no},
                                  "linkmanInfo": {"relationshipA": "10", "nameA": "毋琳子", "phoneA": "15161455378",
                                                  "relationshipB": "60", "nameB": "花娥茜", "phoneB": "15982209185"},
@@ -989,7 +989,7 @@ def test_xiaomi_repay_success_api_flow(get_channel,get_loan_perid):
         repay_need_encry_data = {"userId": user_id, "repayApplyNo": repayApplyNo,
                                  "loanApplyNo": loanApplyNo, "partnerLoanNo": partnerLoanNo,
                                  "repayType": "1", "repayMethod": "0", "repayTime": apply_time, "withholdFlag": "Y",
-                                 "bankCardInfo": {"bankCode": "0004", "idCardNo": id_no,
+                                 "bankCardInfo": {"bankCode": "0003", "idCardNo": id_no,
                                                   "userMobile": mobile_no,
                                                   "userName": user_name, "bankCardNo": bank_card_no,
                                                   "sharePayAgreementId": sharePayAgreementId,
