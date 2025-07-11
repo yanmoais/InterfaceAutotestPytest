@@ -17,7 +17,7 @@ class Update_Sql_Result(Mysql):
 
     # 查询批发侧fr_api_order_info表订单信息,根据借款流水号来查询
     def update_api_binding_bank_card_result(self, req_seq_no):
-        update_sql = f"UPDATE finance_router.fr_api_binding_bank_card SET result_code='1001', result_msg = '签约成功',bind_id = '732855302144952973',messageNo = '200604000014372-17200785447440696447852' WHERE loanseqno = '{req_seq_no}';"
+        update_sql = f"UPDATE finace_router_sit.fr_api_binding_bank_card SET result_code='1001', result_msg = '签约成功',bind_id = '732855302144952973',messageNo = '200604000014372-17200785447440696447852' WHERE loanseqno = '{req_seq_no}';"
         result = Mysql().update_db(update_sql)
         self.logging.info(f"数据库执行完成：==={result}")
         return result
@@ -74,7 +74,7 @@ class Update_Sql_Result(Mysql):
     # api操作还款前对批发侧fr_api_repayment_plan还款计划进行修改,根据loan_apply_no来查询,根据对应期数来修改日期
     def update_api_core_fr_api_repayment_plan_d0(self, loan_apply_no, term):
         core_loan_no = Select_Sql_Result().select_fr_api_repayment_plan(loan_apply_no)[0]['loan_no']
-        update_sql = f"UPDATE finance_router.fr_api_repayment_plan as fr SET fr.ps_due_dt = '{(datetime.datetime.now().strftime('%Y-%m-%d'))}' WHERE fr.loan_no = '{core_loan_no}' AND fr.period = '{term}';"
+        update_sql = f"UPDATE finace_router_sit.fr_api_repayment_plan as fr SET fr.ps_due_dt = '{(datetime.datetime.now().strftime('%Y-%m-%d'))}' WHERE fr.loan_no = '{core_loan_no}' AND fr.period = '{term}';"
         result = Mysql().update_db(update_sql)
         self.logging.info(f"数据库执行完成!")
         return result
@@ -83,17 +83,17 @@ class Update_Sql_Result(Mysql):
     def update_api_core_fr_api_order_info_d0(self, loan_apply_no):
         req_seq_no = Select_Sql_Result().select_zx_loan_apply_record(loan_apply_no)['loan_no']
         now_date = (datetime.datetime.now() - relativedelta(months=1))
-        update_sql = f"UPDATE finance_router.fr_api_order_info as fr SET fr.settle_time = '{now_date.strftime('%Y-%m-%d %H:%M:%S')}',fr.apply_dt = '{now_date.strftime('%Y-%m-%d')}', fr.repay_day = '{now_date.strftime('%Y-%m-%d')}' WHERE fr.req_seq_no = '{req_seq_no}';"
+        update_sql = f"UPDATE finace_router_sit.fr_api_order_info as fr SET fr.settle_time = '{now_date.strftime('%Y-%m-%d %H:%M:%S')}',fr.apply_dt = '{now_date.strftime('%Y-%m-%d')}', fr.repay_day = '{now_date.strftime('%Y-%m-%d')}' WHERE fr.req_seq_no = '{req_seq_no}';"
         result = Mysql().update_db(update_sql)
         self.logging.info(f"数据库执行完成!")
         return result
 
     # 资金批发路由操作还款前对批发侧fr_api_repayment_plan还款计划进行修改,根据req_seq_no来查询,根据对应期数来修改日期
     def update_zjly_fr_api_repayment_plan_due_day(self, req_seq_no, term):
-        update_sql1 = f"SELECT ord.order_no FROM finance_router.fr_api_order_info ord WHERE ord.req_seq_no = '{req_seq_no}';"
+        update_sql1 = f"SELECT ord.order_no FROM finace_router_sit.fr_api_order_info ord WHERE ord.req_seq_no = '{req_seq_no}';"
         order_no = Mysql().select_db(update_sql1)[0]['order_no']
         print(order_no)
-        update_sql2 = f"UPDATE finance_router.fr_api_repayment_plan as fr SET fr.ps_due_dt = '{(datetime.datetime.now().strftime('%Y-%m-%d'))}' WHERE fr.order_no = '{order_no}' AND fr.period = '{term}';"
+        update_sql2 = f"UPDATE finace_router_sit.fr_api_repayment_plan as fr SET fr.ps_due_dt = '{(datetime.datetime.now().strftime('%Y-%m-%d'))}' WHERE fr.order_no = '{order_no}' AND fr.period = '{term}';"
         result = Mysql().update_db(update_sql2)
         self.logging.info(f"数据库执行完成!")
         return result
@@ -113,9 +113,9 @@ class Update_Sql_Result(Mysql):
         # 获取当前是否为Mock环境
         results = Select_Sql_Result().select_fr_channel_config('金美信mock')
         if results['code'] == "jinMeiXin_mock":
-            update_sql_1 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'jinMeiXin_temp' WHERE fr.name = '金美信mock';"
-            update_sql_2 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'jinMeiXin_mock' WHERE fr.name = '金美信-测试';"
-            update_sql_3 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'jinMeiXin' WHERE fr.name = '金美信mock';"
+            update_sql_1 = f"UPDATE finace_router_sit.fr_channel_config as fr SET fr.code = 'jinMeiXin_temp' WHERE fr.name = '金美信mock';"
+            update_sql_2 = f"UPDATE finace_router_sit.fr_channel_config as fr SET fr.code = 'jinMeiXin_mock' WHERE fr.name = '金美信-测试';"
+            update_sql_3 = f"UPDATE finace_router_sit.fr_channel_config as fr SET fr.code = 'jinMeiXin' WHERE fr.name = '金美信mock';"
             Mysql().update_db(update_sql_1)
             time.sleep(1)
             Mysql().update_db(update_sql_2)
@@ -143,9 +143,9 @@ class Update_Sql_Result(Mysql):
         # 获取当前是否为Mock环境
         results = Select_Sql_Result().select_fr_channel_config('金美信mock')
         if results['code'] == "jinMeiXin":
-            update_sql_1 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'jinMeiXin_temp' WHERE fr.name = '金美信mock';"
-            update_sql_2 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'jinMeiXin' WHERE fr.name = '金美信-测试';"
-            update_sql_3 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'jinMeiXin_mock' WHERE fr.name = '金美信mock';"
+            update_sql_1 = f"UPDATE finace_router_sit.fr_channel_config as fr SET fr.code = 'jinMeiXin_temp' WHERE fr.name = '金美信mock';"
+            update_sql_2 = f"UPDATE finace_router_sit.fr_channel_config as fr SET fr.code = 'jinMeiXin' WHERE fr.name = '金美信-测试';"
+            update_sql_3 = f"UPDATE finace_router_sit.fr_channel_config as fr SET fr.code = 'jinMeiXin_mock' WHERE fr.name = '金美信mock';"
             Mysql().update_db(update_sql_1)
             time.sleep(1)
             Mysql().update_db(update_sql_2)
@@ -169,9 +169,9 @@ class Update_Sql_Result(Mysql):
         # 获取当前是否为Mock环境
         results = Select_Sql_Result().select_fr_channel_config('海峡mock')
         if results['code'] == "haiXia_mock":
-            update_sql_1 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'haiXia_temp' WHERE fr.name = '海峡mock';"
-            update_sql_2 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'haiXia_mock' WHERE fr.name = '海峡';"
-            update_sql_3 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'haiXia' WHERE fr.name = '海峡mock';"
+            update_sql_1 = f"UPDATE finace_router_sit.fr_channel_config as fr SET fr.code = 'haiXia_temp' WHERE fr.name = '海峡mock';"
+            update_sql_2 = f"UPDATE finace_router_sit.fr_channel_config as fr SET fr.code = 'haiXia_mock' WHERE fr.name = '海峡';"
+            update_sql_3 = f"UPDATE finace_router_sit.fr_channel_config as fr SET fr.code = 'haiXia' WHERE fr.name = '海峡mock';"
             Mysql().update_db(update_sql_1)
             time.sleep(1)
             Mysql().update_db(update_sql_2)
@@ -199,9 +199,9 @@ class Update_Sql_Result(Mysql):
         # 获取当前是否为Mock环境
         results = Select_Sql_Result().select_fr_channel_config('海峡mock')
         if results['code'] == "haiXia":
-            update_sql_1 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'haiXia_temp' WHERE fr.name = '海峡mock';"
-            update_sql_2 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'haiXia' WHERE fr.name = '海峡';"
-            update_sql_3 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'haiXia_mock' WHERE fr.name = '海峡mock';"
+            update_sql_1 = f"UPDATE finace_router_sit.fr_channel_config as fr SET fr.code = 'haiXia_temp' WHERE fr.name = '海峡mock';"
+            update_sql_2 = f"UPDATE finace_router_sit.fr_channel_config as fr SET fr.code = 'haiXia' WHERE fr.name = '海峡';"
+            update_sql_3 = f"UPDATE finace_router_sit.fr_channel_config as fr SET fr.code = 'haiXia_mock' WHERE fr.name = '海峡mock';"
             Mysql().update_db(update_sql_1)
             time.sleep(1)
             Mysql().update_db(update_sql_2)
@@ -225,9 +225,9 @@ class Update_Sql_Result(Mysql):
         # 获取当前是否为Mock环境
         results = Select_Sql_Result().select_fr_channel_config('中原提钱花MOCK')
         if results['code'] == "zhongYuanTqh_mock":
-            update_sql_1 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'zhongYuanTqh_temp' WHERE fr.name = '中原提钱花MOCK';"
-            update_sql_2 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'zhongYuanTqh_mock' WHERE fr.name = '中原提钱花-测试';"
-            update_sql_3 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'zhongYuanTqh' WHERE fr.name = '中原提钱花MOCK';"
+            update_sql_1 = f"UPDATE finace_router_sit.fr_channel_config as fr SET fr.code = 'zhongYuanTqh_temp' WHERE fr.name = '中原提钱花MOCK';"
+            update_sql_2 = f"UPDATE finace_router_sit.fr_channel_config as fr SET fr.code = 'zhongYuanTqh_mock' WHERE fr.name = '中原提钱花-测试';"
+            update_sql_3 = f"UPDATE finace_router_sit.fr_channel_config as fr SET fr.code = 'zhongYuanTqh' WHERE fr.name = '中原提钱花MOCK';"
             Mysql().update_db(update_sql_1)
             time.sleep(1)
             Mysql().update_db(update_sql_2)
@@ -254,9 +254,9 @@ class Update_Sql_Result(Mysql):
         # 获取当前是否为Mock环境
         results = Select_Sql_Result().select_fr_channel_config('中原提钱花MOCK')
         if results['code'] == "zhongYuanTqh":
-            update_sql_1 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'zhongYuanTqh_temp' WHERE fr.name = '中原提钱花MOCK';"
-            update_sql_2 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'zhongYuanTqh' WHERE fr.name = '中原提钱花-测试';"
-            update_sql_3 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'zhongYuanTqh_mock' WHERE fr.name = '中原提钱花MOCK';"
+            update_sql_1 = f"UPDATE finace_router_sit.fr_channel_config as fr SET fr.code = 'zhongYuanTqh_temp' WHERE fr.name = '中原提钱花MOCK';"
+            update_sql_2 = f"UPDATE finace_router_sit.fr_channel_config as fr SET fr.code = 'zhongYuanTqh' WHERE fr.name = '中原提钱花-测试';"
+            update_sql_3 = f"UPDATE finace_router_sit.fr_channel_config as fr SET fr.code = 'zhongYuanTqh_mock' WHERE fr.name = '中原提钱花MOCK';"
             Mysql().update_db(update_sql_1)
             time.sleep(1)
             Mysql().update_db(update_sql_2)
@@ -279,9 +279,9 @@ class Update_Sql_Result(Mysql):
         # 获取当前是否为Mock环境
         results = Select_Sql_Result().select_fr_channel_config('润楼-MOCK')
         if results['code'] == "runLou_mock":
-            update_sql_1 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'runLou_temp' WHERE fr.name = '润楼-MOCK';"
-            update_sql_2 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'runLou_mock' WHERE fr.name = '润楼-测试';"
-            update_sql_3 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'runLou' WHERE fr.name = '润楼-MOCK';"
+            update_sql_1 = f"UPDATE finace_router_sit.fr_channel_config as fr SET fr.code = 'runLou_temp' WHERE fr.name = '润楼-MOCK';"
+            update_sql_2 = f"UPDATE finace_router_sit.fr_channel_config as fr SET fr.code = 'runLou_mock' WHERE fr.name = '润楼-测试';"
+            update_sql_3 = f"UPDATE finace_router_sit.fr_channel_config as fr SET fr.code = 'runLou' WHERE fr.name = '润楼-MOCK';"
             Mysql().update_db(update_sql_1)
             time.sleep(1)
             Mysql().update_db(update_sql_2)
@@ -308,9 +308,9 @@ class Update_Sql_Result(Mysql):
         # 获取当前是否为Mock环境
         results = Select_Sql_Result().select_fr_channel_config('润楼-MOCK')
         if results['code'] == "runLou":
-            update_sql_1 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'runLou_temp' WHERE fr.name = '润楼-MOCK';"
-            update_sql_2 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'runLou' WHERE fr.name = '润楼-测试';"
-            update_sql_3 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'runLou_mock' WHERE fr.name = '润楼-MOCK';"
+            update_sql_1 = f"UPDATE finace_router_sit.fr_channel_config as fr SET fr.code = 'runLou_temp' WHERE fr.name = '润楼-MOCK';"
+            update_sql_2 = f"UPDATE finace_router_sit.fr_channel_config as fr SET fr.code = 'runLou' WHERE fr.name = '润楼-测试';"
+            update_sql_3 = f"UPDATE finace_router_sit.fr_channel_config as fr SET fr.code = 'runLou_mock' WHERE fr.name = '润楼-MOCK';"
             Mysql().update_db(update_sql_1)
             time.sleep(1)
             Mysql().update_db(update_sql_2)
@@ -333,9 +333,9 @@ class Update_Sql_Result(Mysql):
         # 获取当前是否为Mock环境
         results = Select_Sql_Result().select_fr_channel_config('小米mock')
         if results['code'] == "xiaoMi_mock":
-            update_sql_1 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'xiaoMi_temp' WHERE fr.name = '小米mock';"
-            update_sql_2 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'xiaoMi_mock' WHERE fr.name = '小米测试';"
-            update_sql_3 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'xiaoMi' WHERE fr.name = '小米mock';"
+            update_sql_1 = f"UPDATE finace_router_sit.fr_channel_config as fr SET fr.code = 'xiaoMi_temp' WHERE fr.name = '小米mock';"
+            update_sql_2 = f"UPDATE finace_router_sit.fr_channel_config as fr SET fr.code = 'xiaoMi_mock' WHERE fr.name = '小米测试';"
+            update_sql_3 = f"UPDATE finace_router_sit.fr_channel_config as fr SET fr.code = 'xiaoMi' WHERE fr.name = '小米mock';"
             Mysql().update_db(update_sql_1)
             time.sleep(1)
             Mysql().update_db(update_sql_2)
@@ -362,9 +362,9 @@ class Update_Sql_Result(Mysql):
         # 获取当前是否为Mock环境
         results = Select_Sql_Result().select_fr_channel_config('小米mock')
         if results['code'] == "xiaoMi_mock":
-            update_sql_1 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'xiaoMi_temp' WHERE fr.name = '小米mock';"
-            update_sql_2 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'xiaoMi_mock' WHERE fr.name = '小米测试';"
-            update_sql_3 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'xiaoMi' WHERE fr.name = '小米mock';"
+            update_sql_1 = f"UPDATE finace_router_sit.fr_channel_config as fr SET fr.code = 'xiaoMi_temp' WHERE fr.name = '小米mock';"
+            update_sql_2 = f"UPDATE finace_router_sit.fr_channel_config as fr SET fr.code = 'xiaoMi_mock' WHERE fr.name = '小米测试';"
+            update_sql_3 = f"UPDATE finace_router_sit.fr_channel_config as fr SET fr.code = 'xiaoMi' WHERE fr.name = '小米mock';"
             Mysql().update_db(update_sql_1)
             time.sleep(1)
             Mysql().update_db(update_sql_2)
@@ -391,9 +391,9 @@ class Update_Sql_Result(Mysql):
         # 获取当前是否为Mock环境
         results = Select_Sql_Result().select_fr_channel_config('小米mock')
         if results['code'] == "xiaoMi":
-            update_sql_1 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'xiaoMi_temp' WHERE fr.name = '小米mock';"
-            update_sql_2 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'xiaoMi' WHERE fr.name = '小米测试';"
-            update_sql_3 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'xiaoMi_mock' WHERE fr.name = '小米mock';"
+            update_sql_1 = f"UPDATE finace_router_sit.fr_channel_config as fr SET fr.code = 'xiaoMi_temp' WHERE fr.name = '小米mock';"
+            update_sql_2 = f"UPDATE finace_router_sit.fr_channel_config as fr SET fr.code = 'xiaoMi' WHERE fr.name = '小米测试';"
+            update_sql_3 = f"UPDATE finace_router_sit.fr_channel_config as fr SET fr.code = 'xiaoMi_mock' WHERE fr.name = '小米mock';"
             Mysql().update_db(update_sql_1)
             time.sleep(1)
             Mysql().update_db(update_sql_2)
@@ -416,9 +416,9 @@ class Update_Sql_Result(Mysql):
         # 获取当前是否为Mock环境
         results = Select_Sql_Result().select_fr_channel_config('长银步客Mock')
         if results['code'] == "changYinBuKeMock":
-            update_sql_1 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'changYinBuKeMock_temp' WHERE fr.name = '长银步客Mock';"
-            update_sql_2 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'changYinBuKeMock' WHERE fr.name = '长银步客-测试';"
-            update_sql_3 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'changYinBuKe' WHERE fr.name = '长银步客Mock';"
+            update_sql_1 = f"UPDATE finace_router_sit.fr_channel_config as fr SET fr.code = 'changYinBuKeMock_temp' WHERE fr.name = '长银步客Mock';"
+            update_sql_2 = f"UPDATE finace_router_sit.fr_channel_config as fr SET fr.code = 'changYinBuKeMock' WHERE fr.name = '长银步客-测试';"
+            update_sql_3 = f"UPDATE finace_router_sit.fr_channel_config as fr SET fr.code = 'changYinBuKe' WHERE fr.name = '长银步客Mock';"
             Mysql().update_db(update_sql_1)
             time.sleep(1)
             Mysql().update_db(update_sql_2)
@@ -445,9 +445,9 @@ class Update_Sql_Result(Mysql):
         # 获取当前是否为Mock环境
         results = Select_Sql_Result().select_fr_channel_config('长银步客Mock')
         if results['code'] == "changYinBuKe":
-            update_sql_1 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'changYinBuKeMock_temp' WHERE fr.name = '长银步客Mock';"
-            update_sql_2 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'changYinBuKe' WHERE fr.name = '长银步客-测试';"
-            update_sql_3 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'changYinBuKeMock' WHERE fr.name = '长银步客Mock';"
+            update_sql_1 = f"UPDATE finace_router_sit.fr_channel_config as fr SET fr.code = 'changYinBuKeMock_temp' WHERE fr.name = '长银步客Mock';"
+            update_sql_2 = f"UPDATE finace_router_sit.fr_channel_config as fr SET fr.code = 'changYinBuKe' WHERE fr.name = '长银步客-测试';"
+            update_sql_3 = f"UPDATE finace_router_sit.fr_channel_config as fr SET fr.code = 'changYinBuKeMock' WHERE fr.name = '长银步客Mock';"
             Mysql().update_db(update_sql_1)
             time.sleep(1)
             Mysql().update_db(update_sql_2)
@@ -470,9 +470,9 @@ class Update_Sql_Result(Mysql):
         # 获取当前是否为Mock环境
         results = Select_Sql_Result().select_fr_channel_config('长银Mock')
         if results['code'] == "changYinMock":
-            update_sql_1 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'changYinNew_temp' WHERE fr.name = '长银Mock';"
-            update_sql_2 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'changYinMock' WHERE fr.name = '长银新模式';"
-            update_sql_3 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'changYinNew' WHERE fr.name = '长银Mock';"
+            update_sql_1 = f"UPDATE finace_router_sit.fr_channel_config as fr SET fr.code = 'changYinNew_temp' WHERE fr.name = '长银Mock';"
+            update_sql_2 = f"UPDATE finace_router_sit.fr_channel_config as fr SET fr.code = 'changYinMock' WHERE fr.name = '长银新模式';"
+            update_sql_3 = f"UPDATE finace_router_sit.fr_channel_config as fr SET fr.code = 'changYinNew' WHERE fr.name = '长银Mock';"
             Mysql().update_db(update_sql_1)
             time.sleep(1)
             Mysql().update_db(update_sql_2)
@@ -499,9 +499,9 @@ class Update_Sql_Result(Mysql):
         # 获取当前是否为Mock环境
         results = Select_Sql_Result().select_fr_channel_config('长银步客Mock')
         if results['code'] == "changYinBuKe":
-            update_sql_1 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'changYinBuKeMock_temp' WHERE fr.name = '长银步客Mock';"
-            update_sql_2 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'changYinBuKe' WHERE fr.name = '长银步客-测试';"
-            update_sql_3 = f"UPDATE finance_router.fr_channel_config as fr SET fr.code = 'changYinBuKeMock' WHERE fr.name = '长银步客Mock';"
+            update_sql_1 = f"UPDATE finace_router_sit.fr_channel_config as fr SET fr.code = 'changYinBuKeMock_temp' WHERE fr.name = '长银步客Mock';"
+            update_sql_2 = f"UPDATE finace_router_sit.fr_channel_config as fr SET fr.code = 'changYinBuKe' WHERE fr.name = '长银步客-测试';"
+            update_sql_3 = f"UPDATE finace_router_sit.fr_channel_config as fr SET fr.code = 'changYinBuKeMock' WHERE fr.name = '长银步客Mock';"
             Mysql().update_db(update_sql_1)
             time.sleep(1)
             Mysql().update_db(update_sql_2)
@@ -578,7 +578,7 @@ class Update_Sql_Result(Mysql):
             'admin',               # 固定值保持原样
             '{report_dir}',        # 路径
             '{case_pass_rate}%',   # 通过率
-            {case_sum},            # 数用例总数
+            {case_sum},            # 用例总数
             {case_pass_sum},       # 通过用例数
             '{case_fail_sum}',     # 失败用例数
             '{case_broken_sum}',   # 故障用例数
@@ -627,7 +627,7 @@ class Update_Sql_Result(Mysql):
             for current_term in range(int(term), 0, -1):
                 count += 1
                 due_date = (datetime.datetime.now() - relativedelta(months=count - 1)).strftime('%Y-%m-%d')
-                update_sql_plan = f"UPDATE finance_router.fr_api_repayment_plan t SET t.ps_due_dt = '{due_date}' WHERE t.order_no in (SELECT ord.order_no FROM finance_router.fr_api_order_info ord WHERE ord.req_seq_no IN('{req_seq_no}')) AND t.period = '{current_term}';"
+                update_sql_plan = f"UPDATE finace_router_sit.fr_api_repayment_plan t SET t.ps_due_dt = '{due_date}' WHERE t.order_no in (SELECT ord.order_no FROM finace_router_sit.fr_api_order_info ord WHERE ord.req_seq_no IN('{req_seq_no}')) AND t.period = '{current_term}';"
                 result = Mysql(test_db).update_db(update_sql_plan)
                 self.logging.info(f"数据库执行完成!")
             return True
@@ -638,7 +638,7 @@ class Update_Sql_Result(Mysql):
     # 批发资金侧的到期还款，修改订单表
     def zjly_modify_due_repayment_fr_api_order_info(self, req_seq_no, test_db="zjly"):
         try:
-            update_sql_order_info = f"UPDATE finance_router.fr_api_order_info t SET t.settle_time = CONCAT(DATE_FORMAT(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH), '%Y-%m-%d'), RIGHT(t.settle_time, 9)),t.repay_day = DATE_FORMAT(CURRENT_DATE(), '%Y-%m-%d'),t.apply_dt = DATE_FORMAT(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH ), '%Y-%m-%d') WHERE t.req_seq_no = '{req_seq_no}';"
+            update_sql_order_info = f"UPDATE finace_router_sit.fr_api_order_info t SET t.settle_time = CONCAT(DATE_FORMAT(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH), '%Y-%m-%d'), RIGHT(t.settle_time, 9)),t.repay_day = DATE_FORMAT(CURRENT_DATE(), '%Y-%m-%d'),t.apply_dt = DATE_FORMAT(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH ), '%Y-%m-%d') WHERE t.req_seq_no = '{req_seq_no}';"
             result = Mysql(test_db).update_db(update_sql_order_info)
             self.logging.info(f"数据库执行完成!")
             return True
@@ -696,9 +696,11 @@ class Update_Sql_Result(Mysql):
         try:
             for current_term in range(int(term), 0, -1):
                 count += 1
-                start_date = (datetime.datetime.now() - relativedelta(months=count) - relativedelta(days=compensation_day)).strftime(
+                start_date = (datetime.datetime.now() - relativedelta(months=count) - relativedelta(
+                    days=compensation_day)).strftime(
                     '%Y%m%d')
-                due_date = (datetime.datetime.now() - relativedelta(months=count - 1) - relativedelta(days=compensation_day)).strftime(
+                due_date = (datetime.datetime.now() - relativedelta(months=count - 1) - relativedelta(
+                    days=compensation_day)).strftime(
                     '%Y%m%d')
                 update_sql_plan = f"UPDATE zws_middleware_360.zx_loan_plan_info t SET t.start_date = '{start_date}', t.due_date = '{due_date}' WHERE t.plan_no LIKE '{loan_apply_no}%' AND t.term = '{current_term}';"
                 result = Mysql(test_db).update_db(update_sql_plan)
@@ -725,9 +727,10 @@ class Update_Sql_Result(Mysql):
         try:
             for current_term in range(int(term), 0, -1):
                 count += 1
-                due_date = (datetime.datetime.now() - relativedelta(months=count - 1) - relativedelta(days=compensation_day)).strftime(
+                due_date = (datetime.datetime.now() - relativedelta(months=count - 1) - relativedelta(
+                    days=compensation_day)).strftime(
                     '%Y-%m-%d')
-                update_sql_plan = f"UPDATE finance_router.fr_api_repayment_plan t SET t.ps_due_dt = '{due_date}' WHERE t.order_no in(SELECT ord.order_no FROM finance_router.fr_api_order_info ord WHERE ord.req_seq_no IN('{req_seq_no}')) AND t.period = '{current_term}';"
+                update_sql_plan = f"UPDATE finace_router_sit.fr_api_repayment_plan t SET t.ps_due_dt = '{due_date}' WHERE t.order_no in(SELECT ord.order_no FROM finace_router_sit.fr_api_order_info ord WHERE ord.req_seq_no IN('{req_seq_no}')) AND t.period = '{current_term}';"
                 result = Mysql(test_db).update_db(update_sql_plan)
             self.logging.info(f"数据库执行完成!")
             return True
@@ -738,7 +741,7 @@ class Update_Sql_Result(Mysql):
     # 批发资金侧的逾期还款，修改订单表
     def zjly_modify_over_due_repayment_fr_api_order_info(self, req_seq_no, test_db="zjly"):
         try:
-            update_sql_order_info = f"UPDATE finance_router.fr_api_order_info t SET t.settle_time = CONCAT(DATE_FORMAT(DATE_SUB(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH),INTERVAL 3 DAY), '%Y-%m-%d'), RIGHT(t.settle_time, 9)),t.repay_day = DATE_FORMAT(DATE_SUB(CURRENT_DATE(), INTERVAL 3 DAY ), '%Y-%m-%d'),t.apply_dt = DATE_FORMAT(DATE_SUB(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH ), INTERVAL 3 DAY ), '%Y-%m-%d')WHERE t.req_seq_no = '{req_seq_no}';"
+            update_sql_order_info = f"UPDATE finace_router_sit.fr_api_order_info t SET t.settle_time = CONCAT(DATE_FORMAT(DATE_SUB(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH),INTERVAL 3 DAY), '%Y-%m-%d'), RIGHT(t.settle_time, 9)),t.repay_day = DATE_FORMAT(DATE_SUB(CURRENT_DATE(), INTERVAL 3 DAY ), '%Y-%m-%d'),t.apply_dt = DATE_FORMAT(DATE_SUB(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH ), INTERVAL 3 DAY ), '%Y-%m-%d')WHERE t.req_seq_no = '{req_seq_no}';"
             result = Mysql(test_db).update_db(update_sql_order_info)
             self.logging.info(f"数据库执行完成!")
             return True
@@ -749,7 +752,7 @@ class Update_Sql_Result(Mysql):
     # 批发资金侧的提前结清，修改计划表
     def zjly_modify_pre_due_repayment_plan(self, req_seq_no, term='1', test_db="zjly"):
         try:
-            update_sql_plan = f"UPDATE finance_router.fr_api_repayment_plan t SET t.ps_due_dt = DATE_FORMAT(DATE_ADD(DATE_SUB(CURRENT_DATE(), INTERVAL 5 DAY), INTERVAL 1 MONTH), '%Y-%m-%d') WHERE t.order_no in(SELECT ord.order_no FROM finance_router.fr_api_order_info ord WHERE ord.req_seq_no IN('{req_seq_no}')) AND t.period = '{term}';"
+            update_sql_plan = f"UPDATE finace_router_sit.fr_api_repayment_plan t SET t.ps_due_dt = DATE_FORMAT(DATE_ADD(DATE_SUB(CURRENT_DATE(), INTERVAL 5 DAY), INTERVAL 1 MONTH), '%Y-%m-%d') WHERE t.order_no in(SELECT ord.order_no FROM finace_router_sit.fr_api_order_info ord WHERE ord.req_seq_no IN('{req_seq_no}')) AND t.period = '{term}';"
             result = Mysql(test_db).update_db(update_sql_plan)
             self.logging.info(f"数据库执行完成!")
             return True
@@ -760,7 +763,7 @@ class Update_Sql_Result(Mysql):
     # 批发资金侧的提前结清，修改订单表
     def zjly_modify_pre_due_repayment_fr_api_order_info(self, req_seq_no, test_db="zjly"):
         try:
-            update_sql_order_info = f"UPDATE finance_router.fr_api_order_info t SET t.settle_time = CONCAT(DATE_FORMAT(DATE_SUB(CURRENT_DATE(), INTERVAL 5 DAY), '%Y-%m-%d'), RIGHT(t.settle_time, 9)),t.repay_day = DATE_FORMAT(CURRENT_DATE(), '%Y-%m-%d'),t.apply_dt = DATE_FORMAT(DATE_SUB(CURRENT_DATE(), INTERVAL 5 DAY ), '%Y-%m-%d') WHERE t.req_seq_no = '{req_seq_no}';"
+            update_sql_order_info = f"UPDATE finace_router_sit.fr_api_order_info t SET t.settle_time = CONCAT(DATE_FORMAT(DATE_SUB(CURRENT_DATE(), INTERVAL 5 DAY), '%Y-%m-%d'), RIGHT(t.settle_time, 9)),t.repay_day = DATE_FORMAT(CURRENT_DATE(), '%Y-%m-%d'),t.apply_dt = DATE_FORMAT(DATE_SUB(CURRENT_DATE(), INTERVAL 5 DAY ), '%Y-%m-%d') WHERE t.req_seq_no = '{req_seq_no}';"
             result = Mysql(test_db).update_db(update_sql_order_info)
             self.logging.info(f"数据库执行完成!")
             return True
@@ -825,12 +828,70 @@ class Update_Sql_Result(Mysql):
             self.logging.info(f"没有找到数据，该笔数据可能掉单，请检查数据库！")
             return False
 
+    # 修改 zl_file_info 表需要重签的文件为假删状态
+    def modify_file_info_status(self, loan_apply_no, test_db='api'):
+        try:
+            update_sql_file_info = f"UPDATE zws_middleware_360.zl_file_info t SET t.del_flag = 1 WHERE t.loan_apply_no = '{loan_apply_no}';"
+            result = Mysql(test_db).update_db(update_sql_file_info)
+            self.logging.info(f"数据库执行完成!")
+            return True
+        except Exception as e:
+            self.logging.error(f"请求发生错误：{e}")
+            return False
+
+    # 修改 funds_loan_info 签章状态为PSL
+    def modify_funds_loan_info_status(self, loan_apply_no, test_db='api'):
+        try:
+            update_sql_loan_info = f"UPDATE zws_middleware_360.funds_loan_info fl SET fl.sign_status = 'PSL' WHERE fl.loan_apply_no = '{loan_apply_no}';"
+            result = Mysql(test_db).update_db(update_sql_loan_info)
+            self.logging.info(f"数据库执行完成！")
+            return True
+        except Exception as e:
+            self.logging.info(f"请求发生异常：{e}")
+            return False
+
+    # 修改 zx_loan_apply_record 签章状态为PSL
+    def modify_zx_loan_apply_record_status(self, loan_apply_no, test_db='api'):
+        try:
+            update_sql_loan_apply_record = f"UPDATE zws_middleware_360.zx_loan_apply_record lp SET lp.sign_status = 'PSL' WHERE lp.loan_apply_no = '{loan_apply_no}';"
+            result = Mysql(test_db).update_db(update_sql_loan_apply_record)
+            self.logging.info(f"数据库执行完成！")
+            return True
+        except Exception as e:
+            self.logging.info(f"请求发生异常：{e}")
+            return False
+
+    # 修改 zl_file_job_info 签章状态为W
+    def modify_zl_file_job_info_status(self, loan_apply_no, test_db='api'):
+        try:
+            update_sql_file_job_info = f"UPDATE zws_middleware_360.zl_file_job_info fj SET fj.status = 'W' WHERE fj.file_serial_no = '{loan_apply_no}' AND fj.file_job_type IN ('9','3');"
+            result = Mysql(test_db).update_db(update_sql_file_job_info)
+            self.logging.info(f"数据库执行完成！")
+            return True
+        except Exception as e:
+            self.logging.info(f"请求发生异常：{e}")
+            return False
+
+    # 集合修改签章协议文件相关表
+    def modify_funds_sign_files(self, loan_apply_no, test_db='api'):
+        # 依次修改各个表
+        try:
+            self.modify_file_info_status(loan_apply_no)
+            self.modify_funds_loan_info_status(loan_apply_no)
+            self.modify_zx_loan_apply_record_status(loan_apply_no)
+            self.modify_zl_file_job_info_status(loan_apply_no)
+            self.logging.info(f"已全部修改完成！")
+            return True
+        except Exception as e:
+            self.logging.info(f"请求发生异常：{e}")
+            return False
+
 
 if __name__ == '__main__':
     # user_id = "ZLTEST_202410161729069481126"
     # funds_code = "FR_RUN_LOU"
     db = Update_Sql_Result()
-    print(db.zjly_modify_over_due_repayment_plan('1926878242967535616', '2',4))
+    print(db.modify_zl_file_job_info_status('SLN2220300580'))
     # results = Select_Sql_Result().select_fr_channel_config('中原提钱花MOCK')
     # print()
     # if 'mock'.lower() not in results['code'].lower():

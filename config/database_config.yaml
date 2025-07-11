@@ -1,10 +1,10 @@
 mysql:
   zjly:
-    host: 192.168.1.192
+    host: rm-wz965099vmp66lq0d.mysql.rds.aliyuncs.com
     port: 3306
-    username: xjd
-    password: NSaDKTGEeAqxox31OmD7hQzhQ1
-    db_name: finance_router
+    username: finace_router_sit
+    password: V4T4BgYtZWlpFnSA
+    db_name: finace_router_sit
 api:
   api_flow:
     host: 192.168.1.192

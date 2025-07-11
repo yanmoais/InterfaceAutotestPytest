@@ -4,9 +4,7 @@
 # Them：Pyhon自动化
 # @Time :  下午3:22
 import json
-
 import requests
-
 from util_tools.logger import Logger
 from common.Base_API import Base_Api
 from util_tools.Faker import *

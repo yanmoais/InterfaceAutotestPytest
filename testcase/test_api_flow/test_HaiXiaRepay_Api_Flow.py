@@ -12,7 +12,6 @@ from config.testconfig import channel_codes
 from testdata.assert_data.banding_assert_data import *
 from testdata.assert_data.loan_assert_data import *
 from testdata.assert_data.loan_credit_amt_assert_data import credit_amt_query_success_data
-from util_tools.Loop_result import loop_result
 from util_tools.Public_Assert import loan_success_assert, banding_card_success_assert, loan_credit_amt_success_assert
 from util_tools.Xxl_Job_Executor import execute_xxl_job
 from util_tools.logger import Logger

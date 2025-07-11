@@ -7,6 +7,7 @@
 """
     轮询查询结果
 """
+import json
 
 from common.Core_Zjly_Api import core_zjly_api
 from common.Core_Api_Flow_Api import core_api_flow_api
@@ -429,7 +430,8 @@ class loop_result:
                     if repay_result:
                         try:
                             if repay_result["repay_status"] is not None:
-                                if repay_result["repay_status"] == "P" or repay_result["jxym_repay_status"] == "P" or repay_result["zj_repay_status"] == "P":
+                                if repay_result["repay_status"] == "P" or repay_result["jxym_repay_status"] == "P" or \
+                                        repay_result["zj_repay_status"] == "P":
                                     self.logging.info("还款申请处理中，请稍等！！")
                                     # 执行api侧D0批扣查询
                                     time.sleep(5)
@@ -440,7 +442,8 @@ class loop_result:
                                         execute_xxl_job().single_repay()
                                         execute_xxl_job().single_query_result()
                                         self.logging.info(f"执行到期还款/还款结果查询成功！请稍等！")
-                                elif repay_result["repay_status"] == "F" or repay_result["jxym_repay_status"] == "F" or repay_result["zj_repay_status"] == "F":
+                                elif repay_result["repay_status"] == "F" or repay_result["jxym_repay_status"] == "F" or \
+                                        repay_result["zj_repay_status"] == "F":
                                     self.logging.info(
                                         f"还款申请失败，请检查数据是否存在问题！错误原因：{repay_result['reasonMsg']}")
                                     break
@@ -580,6 +583,54 @@ class loop_result:
                 self.logging.info(f"当前系统查询次数过多，请稍后重试！")
                 return False
 
+    # api签章任务轮询，查询到均为S则返回所有为4的签章数据
+    def loop_api_sign_file_result(self, loanApplyNo):
+        # 轮训判断 还款结果查询，为"S"则跳出
+        count = 0
+        status = ['P', 'W']
+        while True:
+            count += 1
+            # 等待10秒控制查询
+            time.sleep(5)
+            if count < 30:
+                self.logging.info(f"当前是第{count}次签章状态查询！")
+                try:
+                    # 查询签章任务状态
+                    data = self.db.select_zl_file_job_info(loanApplyNo)
+                    self.logging.info(f"当前查询回来的是总的是：{data},type={type(data)}")
+                    sx_file = data[0]["9"]
+                    fk_file = data[1]["3"]
+                    self.logging.info(f"当前查询回来的是：{sx_file},{fk_file}")
+                    if data:
+                        pass
+                        if sx_file is not None:
+                            if sx_file in status or fk_file in status:
+                                self.logging.info("签章处理中，请稍等！！")
+                                time.sleep(5)
+                            elif sx_file == "F" or fk_file == "F":
+                                self.logging.info(
+                                    f"签章处理失败，请检查数据是否存在问题！")
+                                break
+                            elif sx_file == "S" or fk_file == "S":
+                                result = self.db.select_zl_file_info(loanApplyNo)
+                                self.logging.info(f"签章成功！")
+                                return result
+                            else:
+                                self.logging.info("系统错误,掉单,请重新尝试！！")
+                                break
+                        else:
+                            self.logging.info(f"系统发生错误！请检查返回数据：{data}")
+                            break
+                    else:
+                        self.logging.error("请求返回为空，无法继续处理！")
+                        break
+                except Exception as e:
+                    self.logging.error(f"请求发生错误：{e}")
+                    continue
+            else:
+                self.logging.info(f"当前系统查询次数过多，请稍后重试！")
+                return False
+
 
 if __name__ == '__main__':
     # api = core_api_flow_api()
@@ -591,6 +642,8 @@ if __name__ == '__main__':
     # reqPeriods = "12"
     # current_date = get_now_time()
     # logging = Logger().init_logger()
-    data = {}
+    # result = [{"9": "W"}, {"3": "W"}]
+    result = loop_result().loop_api_sign_file_result('SLN3866004403')
+    print(result)
     # loanApplyNo = "1846850735699148800"
     # print(loop_result().loop_tyh_api_loan_result(loanApplyNo))

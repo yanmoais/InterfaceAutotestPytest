@@ -3,6 +3,7 @@
 # @Author : Blues.Lan
 # Them：Pyhon自动化
 # @Time :  下午6:30
+import json
 import time
 
 from util_tools.Database_Conn import Mysql
@@ -12,28 +13,28 @@ class Select_Sql_Result(Mysql):
 
     # 查询批发侧fr_api_order_info表订单信息,根据借款流水号来查询
     def select_api_order_info_result(self, req_seq_no):
-        select_sql = f"SELECT ord.loan_state, ord.trans_result_msg, ord.up_appl_sts, ord.settle_status, ord.is_compensatory, ord.delete_flag, ord.notify FROM finance_router.fr_api_order_info ord WHERE ord.req_seq_no = '{req_seq_no}'"
+        select_sql = f"SELECT ord.loan_state, ord.trans_result_msg, ord.up_appl_sts, ord.settle_status, ord.is_compensatory, ord.delete_flag, ord.notify FROM finace_router_sit.fr_api_order_info ord WHERE ord.req_seq_no = '{req_seq_no}'"
         result = Mysql().select_db(select_sql)[0]
         self.logging.info(f"数据库查询返回数据为：==={result}")
         return result
 
     # 查询批发侧fr_api_order_info表上游借据号,根据下游借款流水号来查询
     def select_api_order_info_up_order_no(self, req_seq_no):
-        select_sql = f"SELECT ord.up_order_no FROM finance_router.fr_api_order_info ord WHERE ord.req_seq_no = '{req_seq_no}'"
+        select_sql = f"SELECT ord.up_order_no FROM finace_router_sit.fr_api_order_info ord WHERE ord.req_seq_no = '{req_seq_no}'"
         result = Mysql().select_db(select_sql)[0]
         self.logging.info(f"数据库查询返回数据为：==={result}")
         return result
 
     # 查询批发侧fr_api_binding_bank_card表绑卡信息,根据签约单号来查询
     def select_api_binding_bank_card_result(self, bk_id):
-        select_sql = f"SELECT bin.result_code, bin.result_msg FROM finance_router.fr_api_binding_bank_card bin WHERE bin.seqno = '{bk_id}'"
+        select_sql = f"SELECT bin.result_code, bin.result_msg FROM finace_router_sit.fr_api_binding_bank_card bin WHERE bin.seqno = '{bk_id}'"
         result = Mysql().select_db(select_sql)[0]
         self.logging.info(f"数据库查询返回数据为：==={result}")
         return result
 
     # 查询批发侧fr_api_loan_amt_log表放款额度信息，根据借款流水号查询
     def select_api_loan_amt_log_result(self, loanseqno):
-        select_sql = f"SELECT CAST(log.loan_amt AS CHAR)AS loan_amt,log.dn_sts, log.pay_msg,log.notify FROM finance_router.fr_api_loan_amt_log as log WHERE log.loanseqno = '{loanseqno}';"
+        select_sql = f"SELECT CAST(log.loan_amt AS CHAR)AS loan_amt,log.dn_sts, log.pay_msg,log.notify FROM finace_router_sit.fr_api_loan_amt_log as log WHERE log.loanseqno = '{loanseqno}';"
         result = Mysql().select_db(select_sql)[0]
         self.logging.info(f"数据库查询返回数据为：==={result}")
         return result
@@ -87,7 +88,7 @@ class Select_Sql_Result(Mysql):
 
     # 查询批发侧fr_channel_config表当前为何环境，根据name来查询(name)
     def select_fr_channel_config(self, name):
-        select_sql = f"SELECT * FROM finance_router.fr_channel_config WHERE name = '{name}';"
+        select_sql = f"SELECT * FROM finace_router_sit.fr_channel_config WHERE name = '{name}';"
         result = Mysql().select_db(select_sql)[0]
         self.logging.info(f"数据库查询返回数据为：===,{result}")
         return result
@@ -251,9 +252,47 @@ class Select_Sql_Result(Mysql):
         result = Mysql(test_db).select_db(select_sql)
         return result
 
+    # 核心根据loan_apply_no查询user_id
+    def select_user_id(self, loan_apply_no, test_db='api'):
+        result = None
+        select_sql = f"SELECT lo.user_id FROM zx_loan_apply_record lo WHERE lo.loan_apply_no = '{loan_apply_no}';"
+        result = Mysql(test_db).select_db(select_sql)
+        if result:
+            self.logging.info(f"用户ID查询的结果为：==={result}")
+            return result[0]['user_id']
+        else:
+            self.logging.info(f"没有找到数据，该笔数据可能掉单，请检查数据库！")
+            return False
+
+    # 查询核心zl_file_info的签章文件
+    def select_zl_file_info(self, loan_apply_no, test_db='api'):
+        user_id = self.select_user_id(loan_apply_no)
+        if user_id:
+            select_sql = f"SELECT fl.name, fl.source_code, fl.file_type,fl.template_no,fl.file_path FROM zl_file_info fl WHERE fl.user_id = '{user_id}' AND file_type = '4' AND del_flag = '0';"
+            result = Mysql(test_db).select_db(select_sql)
+            self.logging.info(f"签章文件查询结果为：==={result}")
+            return result
+        else:
+            self.logging.info(f"没有找到数据，该笔数据可能掉单，请检查数据库！")
+            return False
+
+    # 查询核心zl_file_job_info的签章任务状态
+    def select_zl_file_job_info(self, loan_apply_no, test_db='api'):
+        if loan_apply_no:
+            select_sql = f"SELECT fl.file_job_type,fl.status FROM zl_file_job_info fl WHERE fl.file_serial_no = '{loan_apply_no}' AND file_job_type IN (9,3) AND del_flag = '0';"
+            result = Mysql(test_db).select_db(select_sql)
+            # 列表推导式进行重新组装
+            # 遍历结果，将取值file_job_type当作键，将status当作值，进行组装成列表
+            reslut_map = [{str(item['file_job_type']): item['status']} for item in result]
+            self.logging.info(f"签章任务状态查询结果为：==={json.dumps(reslut_map)}")
+            return reslut_map
+        else:
+            self.logging.info(f"没有找到数据，该笔数据可能掉单，请检查数据库！")
+            return False
+
 
 if __name__ == '__main__':
-    loan_apply_no = 'ZYYM2025050716313087135'
+    loan_apply_no = 'SLN3866004403'
     db = Select_Sql_Result()
-    reap = db.select_zx_repayment_apply_record(loan_apply_no)
+    reap = db.select_zl_file_job_info(loan_apply_no)
     print(reap)

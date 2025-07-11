@@ -347,14 +347,30 @@ def tyh_h5_loan_repay(credit_apply_no, user_id, loan_apply_no):
 
 if __name__ == '__main__':
     # certificationApplyNo = get_api_bk_id()
+    # list = {}
+    # lists = []
+    # dict_list = []
+    # for i in range(21):
+    #     id_no, birthday = get_zx_user_id_no(year_s=1991, year_e=1999)
+    #     ccb = get_baofu_ccb_num()
+    #     phone = read_risk_phone()
+    #     # print(id_no, birthday)
+    #     # loan, repay = tyh_h5_loan_repay("TYH_202411041730710546726", "ZL173071054678","JMX1730710546789")
+    #     print(get_user_name(), id_no, ccb, phone)
+    #     list['user_name'] = get_user_name()
+    #     list['id_no'] = id_no
+    #     list['ccb'] = ccb
+    #     list['phone'] = phone
+    #     lists.append(list)
+    # dict_list.append(lists)
+    # print(dict_list)
     id_no, birthday = get_zx_user_id_no(year_s=1991, year_e=1999)
     ccb = get_baofu_ccb_num()
     phone = read_risk_phone()
     # print(id_no, birthday)
     # loan, repay = tyh_h5_loan_repay("TYH_202411041730710546726", "ZL173071054678","JMX1730710546789")
-    print(get_user_name(), id_no, birthday, ccb, phone)
+    print(get_user_name(), id_no, ccb, phone)
     from common.Encrypt_Decrypt import encrypt_decrypt
-
     print("身份证MD5：", encrypt_decrypt().param_encry_by_md5(id_no))
     print("手机号MD5：", encrypt_decrypt().param_encry_by_md5(phone))
     # from common.Select_Database_Result import *

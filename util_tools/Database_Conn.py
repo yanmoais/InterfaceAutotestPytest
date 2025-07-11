@@ -100,7 +100,7 @@ class Mysql:
 
 
 if __name__ == '__main__':
-    sql = "SELECT ord.loan_state, ord.trans_result, ord.trans_result_msg, ord.up_appl_sts, ord.settle_status, ord.is_compensatory, ord.delete_flag, ord.notify FROM finance_router.fr_api_order_info ord WHERE ord.req_seq_no = 'ZLTEST1723016460195';"
+    sql = "SELECT ord.loan_state, ord.trans_result, ord.trans_result_msg, ord.up_appl_sts, ord.settle_status, ord.is_compensatory, ord.delete_flag, ord.notify FROM finace_router_sit.fr_api_order_info ord WHERE ord.req_seq_no = 'ZLTEST1723016460195';"
     core_my_db = Mysql()
     datas = core_my_db.select_db(sql)[0]
     print(datas)
