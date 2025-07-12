@@ -97,7 +97,6 @@ class Select_Sql_Result(Mysql):
     def select_zl_api_user(self, channel_code, test_db="api"):
         select_sql = f"SELECT * FROM zws_middleware_360.zl_api_user WHERE channel_code = '{channel_code}';"
         result = Mysql(test_db).select_db(select_sql)[0]
-        self.logging.info(f"数据库查询返回数据为：===,{result}")
         return result
 
     # 查询api侧zx_loan_plan_info表还款计划详情，根据loan_apply_no来模糊查询所有期数

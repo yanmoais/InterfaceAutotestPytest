@@ -9,7 +9,7 @@ def read_existing_numbers(filename):
 
 # 生成新的手机号
 def generate_new_phone_number():
-    return '159' + ''.join(random.choices('0123456789', k=8))
+    return '153' + ''.join(random.choices('0123456789', k=8))
 
 
 # 生成不重复的新手机号

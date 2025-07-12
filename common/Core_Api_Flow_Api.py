@@ -203,6 +203,7 @@ class core_api_flow_api(Base_Api):
         else:
             try:
                 # 需要将数据再次格式化成带转义符并且去除空格
+                self.logging.info(f"请求的加密数据：{data}")
                 encry_data = requests.post(url=config['test_api_end_host'] + apis, json=data, headers=headers)
                 return encry_data.text
             except Exception as e:

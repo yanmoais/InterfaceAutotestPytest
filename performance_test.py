@@ -5,12 +5,21 @@ import random
 import socket
 from datetime import datetime
 from locust import task, TaskSet, HttpUser, tag
-
 from data_generator import read_random_line
 from testfunctions.core_zjly_test import core_zjly_func
 from util_tools.Faker import *
 from util_tools.Faker import json_dumps_cn, json_dumps_format
 from util_tools.Read_photo import get_positive_photo, get_negative_photo, get_best_photo
+from testdata.assert_data.banding_assert_data import banding_card_assert_data
+from testdata.assert_data.loan_assert_data import loan_success_assert_data
+from testfunctions.core_zjly_test import *
+from util_tools.Loop_result import loop_result
+from util_tools.Public_Assert import banding_card_success_assert, loan_success_assert
+from util_tools.logger import Logger
+from util_tools.Faker import *
+from common.Core_Zjly_Api import core_zjly_api
+from common.Encrypt_Decrypt import encrypt_decrypt
+import allure
 
 
 class UserTasks(TaskSet):
@@ -47,30 +56,29 @@ class UserTasks(TaskSet):
     #         })
     #     }
     #     request_data = core_zjly_func().test_zjl_jiami(apply_data)
+    #
     #     headers = {"Content-Type": "application/json"}
     #     apply_request_data = {"reqSn": request_data['reqSn'], "timeStamp": request_data['timeStamp'],
     #                           "businessChannel": 101,
     #                           "sign": request_data['sign'],
     #                           "key": request_data['key'],
     #                           "requestData": request_data['requestData']}
-    #     # 发送扣款申请
-    #     # print("发送扣款申请的流水号", reqSn)
-    #     rep = self.client.post(url="http://192.168.1.187:8199/v1/withholdApply", json=apply_request_data,
+    #
+    #     rep = self.client.post(url="http://ags-platform-sit.zhonglishuke.com/", json=apply_request_data,
     #                            headers=headers)
-    #     # 发送扣款结果查询
-    #     query_data = {
-    #         "reqSn": reqSn,
-    #         "businessChannel": 101
-    #     }
-    #     # print("发送扣款查询的流水号", reqSn)
-    #     query_request_data = core_zjly_func().test_zjl_jiami(query_data)
-    #     print("加密后的数据为：", query_request_data)
-    #     query_apply_data = {"reqSn": query_request_data['reqSn'], "timeStamp": query_request_data['timeStamp'],
-    #                         "businessChannel": 101,
-    #                         "sign": query_request_data['sign'],
-    #                         "key": query_request_data['key']}
-    #     reps = self.client.post(url="http://192.168.1.187:8199/v1/withholdQuery", json=query_apply_data,
-    #                             headers=headers)
+    #     print(rep)
+    #     # query_data = {
+    #     #     "reqSn": reqSn,
+    #     #     "businessChannel": 101
+    #     # }
+    #     # query_request_data = core_zjly_func().test_zjl_jiami(query_data)
+    #     # print("加密后的数据为：", query_request_data)
+    #     # query_apply_data = {"reqSn": query_request_data['reqSn'], "timeStamp": query_request_data['timeStamp'],
+    #     #                     "businessChannel": 101,
+    #     #                     "sign": query_request_data['sign'],
+    #     #                     "key": query_request_data['key']}
+    #     # self.client.post(url="http://ags-platform-sit.zhonglishuke.com/contract/query", json=query_apply_data,
+    #     #                         headers=headers)
 
     # @task(1)
     # def band_card(self):
@@ -190,66 +198,74 @@ class UserTasks(TaskSet):
     #     rep = self.client.get(url=host, headers=headers)
     #     print(rep.text)
 
-
+    # @task(1)
+    # def sit_product_channel_code_query(self):
+    #     payload = {
+    #         "productLine": "ZL"
+    #     }
+    #     header = {
+    #         "content-type": "application/json"
+    #     }
+    #     # 发送请求
+    #     rep = self.client.post(url=f"http://zl-product-sit.zhonglishuke.com/api/channel/code", json=payload,
+    #                            headers=header)
+    #     print(rep.text)
+    #
+    # @task(1)
+    # def sit_product_channel_info_query(self):
+    #     payload = {
+    #         "channelCode": "APPZY"
+    #     }
+    #     header = {
+    #         "content-type": "application/json"
+    #     }
+    #     # 发送请求
+    #     rep = self.client.post(url=f"http://zl-product-sit.zhonglishuke.com/api/channel/info", json=payload,
+    #                            headers=header)
+    #     print(rep.text)
+    #
     @task(1)
-    def sit_apply_credit(self):
-        data = None
-        # 初始化环境参数
-        host = "http://gzdev.ffyla.com:26801"
-        channelId = "LLH_XY"
-        headers = {"Content-Type": "application/json;charset=UTF-8"}
-        payload = {
-            "partner": channelId
+    def sign_contract_performance(self):
+        apply_no = get_contract_no()
+        biz_no = get_req_no()
+        # 核心api的基类
+        api = core_api_flow_api()
+        request_data = {
+            "signApplyNo": apply_no,
+            "custNo": "CT1940393672494444544",
+            "bizNo": biz_no,
+            "bizType": "credit",
+            "requestCode": "equtity_platform",
+            "signRoleList": [
+                {
+                    "signRoleType": "1",
+                    "signRoleCode": "36"
+                },
+                {
+                    "signRoleType": "1",
+                    "signRoleCode": "59"
+                }
+            ],
+            "contractNodeType": "302",
+            "params": {"userName": "攒钱花", "userIdCardNo": "450126198611145516", "userMobile": "15500000007",
+                       "sysYear": "2025", "sysMonth": "3", "sysDay": "20"}
         }
-        for _ in range(1):  # 随机读取1次
-            data = read_random_line("test_data.txt")
-
-        credit_apply_no = data['credit_apply_no']
-        apply_time = data['apply_time']
-        id_no = data['id_no']
-        user_name = data['user_name']
-        user_id = data['user_id']
-        bank_card_no = data['bank_card_no']
-
-        # 获取风控加白了的手机号，读取本地txt文件
-        mobile_no = read_risk_phone()
-        # 产品信息
-        product_code = "LLH"
-        # 授信申请数据
-        sx_need_encry_data = {"userId": user_id, "creditApplyNo": credit_apply_no, "applyTime": apply_time,
-                              "productCode": product_code, "applyAmount": "20000.00",
-                              "userInfo": {"mobile": mobile_no, "name": user_name, "idCardNo": id_no, "marriage": "20",
-                                           "monthlyIncome": "4", "education": "20", "job": "1", "province": "广东省",
-                                           "city": "广州市", "district": "番禺区",
-                                           "addrDetail": "广东省广州市番禺区成钧街道豪承小区190号楼501"},
-                              "idCardOcrInfo": {"positive": get_positive_photo(), "negative": get_negative_photo(),
-                                                "nameOCR": user_name, "idCardNoOCR": id_no, "beginTimeOCR": "20230829",
-                                                "duetimeOCR": "20991231",
-                                                "addressOCR": "广东省广州市番禺区成钧街道豪承小区190号楼501",
-                                                "sexOCR": "M", "ethnicOCR": "汉族", "issueOrgOCR": "广州市公安局"},
-                              "faceInfo": {"assayTime": apply_time, "assayType": "SENSETIME", "best": get_best_photo()},
-                              "linkmanInfo": {"relationshipA": "10", "nameA": "毋琳子", "phoneA": "15161455377",
-                                              "relationshipB": "60", "nameB": "花娥茜", "phoneB": "15982209187"},
-                              "bankCardInfo": {"bankCode": "0004", "idCardNo": id_no, "userMobile": mobile_no,
-                                               "userName": user_name, "bankCardNo": bank_card_no},
-                              "geoInfo": {"latitude": "43.57687931900941", "longitude": "112.55172012515888"},
-                              "companyInfo": {
-                                  "companyName": "中国建筑集团有限公司",
-                                  "province": "440000",
-                                  "city": "440100", "district": "440114",
-                                  "companyAddr": "广东省广州市番禺区三里河路15号"},
-                              "agreementTime": apply_time,
-                              "extendInfo": {
-                                  "UTag": "C",
-                                  "mobileMode": "21091116AC",
-                                  "networkType": "",
-                                  "system": "android",
-                                  "systemVersion": "13"}}
-        payload["data"] = sx_need_encry_data
-        print("授信请求数据：", payload)
-        # 发送授信请求
-        rep = self.client.post(url=host + "/applyCredit", json=payload, headers=headers)
-        print(rep.text)
+        header = {
+            "content-type": "application/json"
+        }
+        # 加密数据
+        encry_request_data = api.api_param_encry(request_data, "ZY_API")
+        payload = json.loads(json_dumps_cn(encry_request_data))
+        print(f"加密后的数据为：{payload}")
+        # 发送请求
+        reps = self.client.post(url=f"http://ags-platform-sit.zhonglishuke.com/contract/sign", json=payload,
+                                headers=header)
+        # reps = self.client.post(url=f"http://ags-platform-sit.zhonglishuke.com/contract/sign", json=payload,
+        #                         headers=header)
+        # 解密
+        print(f"请求返回的结果为：{reps.text}")
+        rep = api.api_param_decry(reps)
+        print(rep)
 
 
 class WebUser(HttpUser):

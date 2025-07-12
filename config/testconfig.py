@@ -5,10 +5,12 @@ config = {
     # "test_zjly_host": "http://test-hx.zhonglishuke.com:8080/g1",
     "test_zjly_host": "http://192.168.1.187:8088",
     "test_zfpt_host": "http://192.168.1.187:8199",
-    "test_api_host": "http://192.168.1.167:8801",
+    # "test_api_host": "http://192.168.1.167:8801",
+    "test_api_host": "http://core-cashloan-api-sit.zhonglishuke.com",
     "test_tyh_hy_host": "http://192.168.1.168:6801/api/1.0",
     "test_tyh_hy_end_host": "http://192.168.1.168:6803",
     "test_api_end_host": "http://192.168.1.167:8804",
+    # "test_api_end_host": "http://core-cashloan-api-sit.zhonglishuke.com",
     "test_tyh_app_host": "http://192.168.2.61:6710",
     "risk_host": "http://120.77.248.212:9090"
 

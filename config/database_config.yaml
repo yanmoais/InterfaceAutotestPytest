@@ -12,6 +12,13 @@ api:
     username: zws_middleware_360
     password: maiS2ieb
     db_name: zws_middleware_360
+
+  api_sit_flow:
+    host: rm-wz965099vmp66lq0dbo.mysql.rds.aliyuncs.com
+    port: 3306
+    username: languojian
+    password: 1HrGdgQ%Dg7UED!5
+    db_name: zws_middleware_sit
 tyh:
   tyh_api_flow:
     host: 192.168.1.192
