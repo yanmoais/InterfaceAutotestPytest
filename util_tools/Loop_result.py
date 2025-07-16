@@ -221,7 +221,7 @@ class loop_result:
             count += 1
             # 等待15秒后发起授信查询请求
             resp = None
-            if count < 10:
+            if count < 30:
                 try:
                     time.sleep(10)
                     # 加密授信查询数据
