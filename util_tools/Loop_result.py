@@ -434,7 +434,7 @@ class loop_result:
                                         repay_result["zj_repay_status"] == "P":
                                     self.logging.info("还款申请处理中，请稍等！！")
                                     # 执行api侧D0批扣查询
-                                    time.sleep(5)
+                                    time.sleep(60)
                                     if repay_method == 'D0batch':
                                         execute_xxl_job().funds_d0_batch_repayment_query(loanApplyNo)
                                         self.logging.info(f"执行D0批扣结果查询成功！请稍等！")

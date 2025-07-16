@@ -111,7 +111,7 @@ class Select_Sql_Result(Mysql):
 
     # 查询api侧的放款订单表是否存在数据
     def select_api_zx_loan_apply_record_tools(self, loan_apply_no, test_db="api"):
-        loan_apply_sql = f"SELECT term,loan_status,funds_code,loan_no FROM zx_loan_apply_record WHERE loan_apply_no = '{loan_apply_no}';"
+        loan_apply_sql = f"SELECT term,loan_status,funds_code,loan_no,loan_amt FROM zx_loan_apply_record WHERE loan_apply_no = '{loan_apply_no}';"
         loan_apply_result = Mysql(test_db).select_db(loan_apply_sql)
         self.logging.info(f"数据库查询返回数据为：==={loan_apply_result}")
         if loan_apply_result:

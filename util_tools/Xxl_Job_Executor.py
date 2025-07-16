@@ -85,6 +85,20 @@ class execute_xxl_job(xxlJob):
         self.logging.info(f"调用单笔还款查询任务成功!")
         time.sleep(5)
 
+    # 调用JMX资方的D0批扣任务
+    def jmx_d0_repay_job(self, loanApplyNo):
+        param_data = {"loanApplyNo": loanApplyNo}
+        self.excute_xxl_job.trigger_xxl_job(611, f'{param_data}')
+        self.logging.info(f"执行核心更新逾期罚息处理任务成功!")
+        time.sleep(5)
+
+    # 调用哈密众邦资方的D0批扣任务
+    def hmzb_d0_repay_job(self, loanApplyNo):
+        param_data = {"loanApplyNo": loanApplyNo}
+        self.excute_xxl_job.trigger_xxl_job(734, f'{param_data}')
+        self.logging.info(f"执行核心更新逾期罚息处理任务成功!")
+        time.sleep(5)
+
     # 调用SIT_LLH的授信处理任务
     def sit_llh_apply_credit(self, creditApplyNo):
         param_data = {"creditApplyNo": creditApplyNo}
