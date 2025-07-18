@@ -227,45 +227,46 @@ class UserTasks(TaskSet):
     @task(1)
     def sign_contract_performance(self):
         apply_no = get_contract_no()
-        biz_no = get_req_no()
-        # 核心api的基类
-        api = core_api_flow_api()
-        request_data = {
+        biz_no = get_zfpt_req_no()
+
+        sign_request_data = {
             "signApplyNo": apply_no,
-            "custNo": "CT1940393672494444544",
+            "custNo": "CT1945765969300516864",
             "bizNo": biz_no,
-            "bizType": "credit",
-            "requestCode": "equtity_platform",
+            "bizType": "loan",
+            "requestCode": "ZY_API",
             "signRoleList": [
                 {
-                    "signRoleType": "1",
-                    "signRoleCode": "36"
+                    "signRoleType": "0",
+                    "signRoleCode": "ICE_ZLSK_36"
                 },
                 {
                     "signRoleType": "1",
-                    "signRoleCode": "59"
+                    "signRoleCode": "JMX"
                 }
             ],
             "contractNodeType": "302",
-            "params": {"userName": "攒钱花", "userIdCardNo": "450126198611145516", "userMobile": "15500000007",
-                       "sysYear": "2025", "sysMonth": "3", "sysDay": "20"}
+            "params": json_dumps_format(
+                json.dumps({"userName": "攒钱花", "userIdCardNo": "450126198611145516", "userMobile": "15500000007",
+                            "sysYear": "2025", "sysMonth": "3", "sysDay": "20"})).encode('utf-8').decode('unicode_escape')
         }
         header = {
             "content-type": "application/json"
         }
-        # 加密数据
-        encry_request_data = api.api_param_encry(request_data, "ZY_API")
-        payload = json.loads(json_dumps_cn(encry_request_data))
-        print(f"加密后的数据为：{payload}")
+
+        query_request_data = {"bizNo": biz_no, "bizType": "loan", "custNo": "CT1945765969300516864",
+                              "signRoleList": [], "contractNodeType": "100"}
+
+        print(f"发送签章请求的数据为：{sign_request_data}, 发送签章查询的数据为：{query_request_data}")
         # 发送请求
-        reps = self.client.post(url=f"http://ags-platform-sit.zhonglishuke.com/contract/sign", json=payload,
-                                headers=header)
-        # reps = self.client.post(url=f"http://ags-platform-sit.zhonglishuke.com/contract/sign", json=payload,
-        #                         headers=header)
-        # 解密
-        print(f"请求返回的结果为：{reps.text}")
-        rep = api.api_param_decry(reps)
-        print(rep)
+        reps_sign = self.client.post(url=f"http://ags-platform-sit.zhonglishuke.com/inner/contract/sign",
+                                     json=sign_request_data,
+                                     headers=header)
+        reps_query = self.client.post(url=f"http://ags-platform-sit.zhonglishuke.com/inner/contract/query",
+                                      json=query_request_data,
+                                      headers=header)
+        # rep = api.api_param_decry(reps)
+        print(reps_sign.text, reps_query.text)
 
 
 class WebUser(HttpUser):
