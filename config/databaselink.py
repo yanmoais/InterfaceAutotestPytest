@@ -1,0 +1,15 @@
+# APIdev数据库连接
+API_DEV_DB_HOST = '192.168.1.192'
+API_DEV_DB_PORT = 13310
+API_DEV_DB_USER = 'zws_middleware_360'
+API_DEV_DB_PASSWORD = 'maiS2ieb'
+API_DEV_DB_NAME = 'zws_middleware_360'
+
+#APP数据库连接
+APPUAT_DB_HOST = '192.168.1.192'
+APPUAT_DB_PORT = 3306
+APPUAT_DB_USER = 'wpy'
+APPUAT_DB_PASSWORD = 'wpy@921@'
+APPUAT_DB_NAME = 'zyapp_uat'
+APPDEV_DB_NAME = 'zyapp_test'
+
