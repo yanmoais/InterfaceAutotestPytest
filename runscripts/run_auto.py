@@ -20,7 +20,7 @@ class QueueHandler(logging.Handler):
             msg = self.format(record)
             # 确保消息以JSON格式发送
             self.log_queue.put(json.dumps({"message": msg}))
-        except Exception:
+        except Exception as e:
             self.handleError(record)
 
 

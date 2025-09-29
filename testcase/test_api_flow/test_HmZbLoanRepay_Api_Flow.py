@@ -126,31 +126,59 @@ def test_zb_band_card_success_api_flow(get_channel, get_loan_perid):
         resp = loop_result().loop_api_flow_sx_result(sx_cx_data, credit_apply_no, channel_code)
         logging.info(f"当前授信结果返回数据为：{resp}")
 
-    with allure.step("绑卡申请"):
-        # 请求鉴权数据
-        bk_jq_need_encry_data = {"userId": user_id, "certificationApplyNo": certificationApplyNo, "bankCode": "0003",
-                                 "idCardNo": id_no, "userMobile": mobile_no, "userName": user_name,
-                                 "bankCardNo": bank_card_no, "registerMobile": mobile_no, "agreementTime": apply_time
-                                 }
-        # 判断是360就直接绑卡，不指定bindType
-        # 绑卡轮询，并且绑卡两次
-        # 此处需要优化，360的话不需要指定bindType,直接绑两次卡就好
-        with allure.step("第一次绑卡"):
-            if channel_code in channel_codes:
-                bk_jq_need_encry_data["bindType"] = "fundsChannel"
-            else:
-                pass
-            loop_result().loop_api_flow_bk_result(bk_jq_need_encry_data, channel_code)
-        with allure.step("第二次绑卡"):
-            if channel_code in channel_codes:
-                bk_jq_need_encry_data["bindType"] = "payChannel"
-            else:
-                pass
-            # 第二次绑卡需要更新申请号以及时间，从新赋值
-            time.sleep(2)
-            bk_jq_need_encry_data["certificationApplyNo"], bk_jq_need_encry_data[
-                "agreementTime"] = get_api_bk_id(), get_time_stand_api()
-            loop_result().loop_api_flow_bk_result(bk_jq_need_encry_data, channel_code)
+    if resp in (False, None):
+        logging.info(f"当前授信失败！")
+        return False
+    else:
+        with allure.step("推送客户中心"):
+            execute_xxl_job().push_credit_info_to_customer_center(credit_apply_no)
+            time.sleep(5)
+            logging.info("授信成功后推送客户中心成功！")
+
+        with allure.step("绑卡申请"):
+            # 请求鉴权数据
+            bk_jq_need_encry_data = {"userId": user_id, "certificationApplyNo": certificationApplyNo,
+                                     "bankCode": "0003",
+                                     "idCardNo": id_no, "userMobile": mobile_no, "userName": user_name,
+                                     "bankCardNo": bank_card_no, "registerMobile": mobile_no,
+                                     "agreementTime": apply_time
+                                     }
+            # 判断是360就直接绑卡，不指定bindType
+            # 绑卡轮询，并且绑卡两次
+            # 此处需要优化，360的话不需要指定bindType,直接绑两次卡就好
+            with allure.step("第一次绑卡"):
+                if channel_code in channel_codes:
+                    bk_jq_need_encry_data["bindType"] = "fundsChannel"
+                else:
+                    pass
+                loop_result().loop_api_flow_bk_result(bk_jq_need_encry_data, channel_code)
+            with allure.step("第二次绑卡"):
+                if channel_code in channel_codes:
+                    bk_jq_need_encry_data["bindType"] = "payChannel"
+                else:
+                    pass
+                # 第二次绑卡需要更新申请号以及时间，从新赋值
+                time.sleep(2)
+                bk_jq_need_encry_data["certificationApplyNo"], bk_jq_need_encry_data[
+                    "agreementTime"] = get_api_bk_id(), get_time_stand_api()
+                loop_result().loop_api_flow_bk_result(bk_jq_need_encry_data, channel_code)
+
+        with allure.step("生成测试结果"):
+            # 生成测试结果
+            test_result = {
+                "userId": user_id,
+                "loanApplyNo": loanApplyNo,
+                "fundsCode": funds_code,
+                "loanAmount": loan_amt,
+                "loanDate": datetime.datetime.now().strftime("%Y-%m-%d"),
+                "phoneNumber": mobile_no,
+                "userName": user_name,
+                "idCard": id_no,
+                "bankCard": bank_card_no,
+                "loanPeriod": reqPeriods
+            }
+            # 输出测试结果 - 确保只输出一行
+            print(f"TEST_RESULT:{json.dumps(test_result, ensure_ascii=False)}")
 
 
 # API全流程-哈密众邦授信成功
@@ -252,6 +280,35 @@ def test_zb_credit_success_api_flow(get_channel, get_loan_perid):
         resp = loop_result().loop_api_flow_sx_result(sx_cx_data, credit_apply_no, channel_code)
         logging.info(f"当前授信结果返回数据为：{resp}")
 
+    if resp in (False, None):
+        logging.info(f"当前授信失败！")
+        return False
+    else:
+        with allure.step("推送客户中心"):
+            execute_xxl_job().push_credit_info_to_customer_center(credit_apply_no)
+            time.sleep(5)
+            logging.info("授信成功后推送客户中心成功！")
+
+        with allure.step("授信成功断言"):
+            pass
+
+        with allure.step("生成测试结果"):
+            # 生成测试结果
+            test_result = {
+                "userId": user_id,
+                "loanApplyNo": loanApplyNo,
+                "fundsCode": funds_code,
+                "loanAmount": loan_amt,
+                "loanDate": datetime.datetime.now().strftime("%Y-%m-%d"),
+                "phoneNumber": mobile_no,
+                "userName": user_name,
+                "idCard": id_no,
+                "bankCard": bank_card_no,
+                "loanPeriod": reqPeriods
+            }
+            # 输出测试结果 - 确保只输出一行
+            print(f"TEST_RESULT:{json.dumps(test_result, ensure_ascii=False)}")
+
 
 # API全流程-哈密众邦放款成功
 @pytest.mark.run(order=10)
@@ -352,91 +409,103 @@ def test_zb_loan_success_api_flow(get_channel, get_loan_perid):
         resp = loop_result().loop_api_flow_sx_result(sx_cx_data, credit_apply_no, channel_code)
         logging.info(f"当前授信结果返回数据为：{resp}")
 
-    with allure.step("绑卡申请"):
-        # 请求鉴权数据
-        bk_jq_need_encry_data = {"userId": user_id, "certificationApplyNo": certificationApplyNo, "bankCode": "0003",
-                                 "idCardNo": id_no, "userMobile": mobile_no, "userName": user_name,
-                                 "bankCardNo": bank_card_no, "registerMobile": mobile_no, "agreementTime": apply_time
-                                 }
-        # 判断是360就直接绑卡，不指定bindType
-        # 绑卡轮询，并且绑卡两次
-        # 此处需要优化，360的话不需要指定bindType,直接绑两次卡就好
-        with allure.step("第一次绑卡"):
-            if channel_code in channel_codes:
-                bk_jq_need_encry_data["bindType"] = "fundsChannel"
-            else:
+    if resp in (False, None):
+        logging.info(f"当前授信失败！")
+        return False
+    else:
+        with allure.step("推送客户中心"):
+            execute_xxl_job().push_credit_info_to_customer_center(credit_apply_no)
+            time.sleep(5)
+            logging.info("授信成功后推送客户中心成功！")
+
+        with allure.step("绑卡申请"):
+            # 请求鉴权数据
+            bk_jq_need_encry_data = {"userId": user_id, "certificationApplyNo": certificationApplyNo,
+                                     "bankCode": "0003",
+                                     "idCardNo": id_no, "userMobile": mobile_no, "userName": user_name,
+                                     "bankCardNo": bank_card_no, "registerMobile": mobile_no,
+                                     "agreementTime": apply_time
+                                     }
+            # 判断是360就直接绑卡，不指定bindType
+            # 绑卡轮询，并且绑卡两次
+            # 此处需要优化，360的话不需要指定bindType,直接绑两次卡就好
+            with allure.step("第一次绑卡"):
+                if channel_code in channel_codes:
+                    bk_jq_need_encry_data["bindType"] = "fundsChannel"
+                else:
+                    pass
+                loop_result().loop_api_flow_bk_result(bk_jq_need_encry_data, channel_code)
+            with allure.step("第二次绑卡"):
+                if channel_code in channel_codes:
+                    bk_jq_need_encry_data["bindType"] = "payChannel"
+                else:
+                    pass
+                # 第二次绑卡需要更新申请号以及时间，从新赋值
+                time.sleep(2)
+                bk_jq_need_encry_data["certificationApplyNo"], bk_jq_need_encry_data[
+                    "agreementTime"] = get_api_bk_id(), get_time_stand_api()
+                loop_result().loop_api_flow_bk_result(bk_jq_need_encry_data, channel_code)
+
+        with allure.step("借款试算"):
+            # 借款试算数据
+            # 加密借款试算数据
+            # 发起借款试算请求
+            # 解密试算返回结果
+            pass
+
+        with allure.step("借款申请"):
+            # 借款申请数据
+            jk_sq_need_encry_data = {"loanTime": apply_time, "productCode": product_code, "repayMethod": "01",
+                                     "loanPurpose": "05", "partnerCreditNo": partner_creditNo, "term": reqPeriods,
+                                     "loanAmt": loan_amt, "loanApplyNo": loanApplyNo, "userId": user_id,
+                                     "agreementTime": apply_time,
+                                     "bankCardInfo": {"bankCode": "0003", "idCardNo": id_no, "userMobile": mobile_no,
+                                                      "userName": user_name, "bankCardNo": bank_card_no},
+                                     "linkmanInfo": {"relationshipA": "10", "nameA": "毋琳子", "phoneA": "15161455377",
+                                                     "relationshipB": "60", "nameB": "花娥茜", "phoneB": "15982209187"},
+                                     "geoInfo": {"latitude": "43.57687931900941", "longitude": "112.55172012515888"}}
+            # 加密借款申请数据
+            jk_sq_encry_data = api.api_param_encry(jk_sq_need_encry_data, channel_code)
+            # 发起借款申请请求
+            jk_sq_resp = api.test_apply_loan(jk_sq_encry_data)
+            # 解密借款申请返回结果
+            jk_sq_decry_data = api.api_param_decry(jk_sq_resp)
+            logging.info(f"借款返回数据结果为：======={jk_sq_decry_data}")
+
+        with allure.step("轮询执行JOB借款成功"):
+            # 借款查询数据
+            loan_query_need_encry_data = {
+                "userId": user_id,
+                "loanApplyNo": loanApplyNo
+            }
+            # 发起轮询，并且执行借款过程中需要的JOB
+            jk_success_resp = loop_result().loop_api_flow_loan_result(loan_query_need_encry_data, loanApplyNo,
+                                                                      channel_code)
+            logging.info(f"借款返回的查询参数是：{jk_success_resp}")
+
+        if jk_success_resp in (False, None):
+            logging.info(f"当前借款失败！")
+            return False
+        else:
+            with allure.step("借款成功断言"):
                 pass
-            loop_result().loop_api_flow_bk_result(bk_jq_need_encry_data, channel_code)
-        with allure.step("第二次绑卡"):
-            if channel_code in channel_codes:
-                bk_jq_need_encry_data["bindType"] = "payChannel"
-            else:
-                pass
-            # 第二次绑卡需要更新申请号以及时间，从新赋值
-            time.sleep(2)
-            bk_jq_need_encry_data["certificationApplyNo"], bk_jq_need_encry_data[
-                "agreementTime"] = get_api_bk_id(), get_time_stand_api()
-            loop_result().loop_api_flow_bk_result(bk_jq_need_encry_data, channel_code)
 
-    with allure.step("借款试算"):
-        # 借款试算数据
-        # 加密借款试算数据
-        # 发起借款试算请求
-        # 解密试算返回结果
-        pass
-
-    with allure.step("推送客户中心"):
-        execute_xxl_job().push_credit_info_to_customer_center(credit_apply_no)
-        time.sleep(5)
-
-    with allure.step("借款申请"):
-        # 借款申请数据
-        jk_sq_need_encry_data = {"loanTime": apply_time, "productCode": product_code, "repayMethod": "01",
-                                 "loanPurpose": "05", "partnerCreditNo": partner_creditNo, "term": reqPeriods,
-                                 "loanAmt": loan_amt, "loanApplyNo": loanApplyNo, "userId": user_id,
-                                 "agreementTime": apply_time,
-                                 "bankCardInfo": {"bankCode": "0003", "idCardNo": id_no, "userMobile": mobile_no,
-                                                  "userName": user_name, "bankCardNo": bank_card_no},
-                                 "linkmanInfo": {"relationshipA": "10", "nameA": "毋琳子", "phoneA": "15161455377",
-                                                 "relationshipB": "60", "nameB": "花娥茜", "phoneB": "15982209187"},
-                                 "geoInfo": {"latitude": "43.57687931900941", "longitude": "112.55172012515888"}}
-        # 加密借款申请数据
-        jk_sq_encry_data = api.api_param_encry(jk_sq_need_encry_data, channel_code)
-        # 发起借款申请请求
-        jk_sq_resp = api.test_apply_loan(jk_sq_encry_data)
-        # 解密借款申请返回结果
-        jk_sq_decry_data = api.api_param_decry(jk_sq_resp)
-        logging.info(f"借款返回数据结果为：======={jk_sq_decry_data}")
-
-    with allure.step("轮询执行JOB借款成功"):
-        # 借款查询数据
-        loan_query_need_encry_data = {
-            "userId": user_id,
-            "loanApplyNo": loanApplyNo
-        }
-        # 发起轮询，并且执行借款过程中需要的JOB
-        jk_success_resp = loop_result().loop_api_flow_loan_result(loan_query_need_encry_data, loanApplyNo, channel_code)
-        logging.info(f"借款返回的查询参数是：{jk_success_resp}")
-
-    with allure.step("借款成功断言"):
-        pass
-
-    with allure.step("生成测试结果"):
-        # 生成测试结果
-        test_result = {
-            "userId": user_id,
-            "loanApplyNo": loanApplyNo,
-            "fundsCode": funds_code,
-            "loanAmount": loan_amt,
-            "loanDate": datetime.datetime.now().strftime("%Y-%m-%d"),
-            "phoneNumber": mobile_no,
-            "userName": user_name,
-            "idCard": id_no,
-            "bankCard": bank_card_no,
-            "loanPeriod": reqPeriods
-        }
-        # 输出测试结果 - 确保只输出一行
-        print(f"TEST_RESULT:{json.dumps(test_result, ensure_ascii=False)}")
+            with allure.step("生成测试结果"):
+                # 生成测试结果
+                test_result = {
+                    "userId": user_id,
+                    "loanApplyNo": loanApplyNo,
+                    "fundsCode": funds_code,
+                    "loanAmount": loan_amt,
+                    "loanDate": datetime.datetime.now().strftime("%Y-%m-%d"),
+                    "phoneNumber": mobile_no,
+                    "userName": user_name,
+                    "idCard": id_no,
+                    "bankCard": bank_card_no,
+                    "loanPeriod": reqPeriods
+                }
+                # 输出测试结果 - 确保只输出一行
+                print(f"TEST_RESULT:{json.dumps(test_result, ensure_ascii=False)}")
 
 
 # API全流程-哈密众邦D0批扣还款成功
@@ -541,103 +610,106 @@ def test_zb_repay_d0_success_api_flow(get_channel, get_loan_perid):
         resp = loop_result().loop_api_flow_sx_result(sx_cx_data, credit_apply_no, channel_code)
         logging.info(f"当前授信结果返回数据为：{resp}")
 
-    with allure.step("绑卡申请"):
-        # 请求鉴权数据
-        bk_jq_need_encry_data = {"userId": user_id, "certificationApplyNo": certificationApplyNo, "bankCode": "0003",
-                                 "idCardNo": id_no, "userMobile": mobile_no, "userName": user_name,
-                                 "bankCardNo": bank_card_no, "registerMobile": mobile_no, "agreementTime": apply_time}
-        # 绑卡轮询，并且绑卡两次
-        with allure.step("第一次绑卡"):
-            if channel_code in channel_codes:
-                bk_jq_need_encry_data["bindType"] = "fundsChannel"
-            else:
+    if resp in (False, None):
+        logging.info(f"当前授信失败！")
+        return False
+    else:
+        with allure.step("推送客户中心"):
+            execute_xxl_job().push_credit_info_to_customer_center(credit_apply_no)
+            time.sleep(5)
+            logging.info("授信成功后推送客户中心成功！")
+
+        with allure.step("绑卡申请"):
+            # 请求鉴权数据
+            bk_jq_need_encry_data = {"userId": user_id, "certificationApplyNo": certificationApplyNo,
+                                     "bankCode": "0003",
+                                     "idCardNo": id_no, "userMobile": mobile_no, "userName": user_name,
+                                     "bankCardNo": bank_card_no, "registerMobile": mobile_no,
+                                     "agreementTime": apply_time}
+            # 绑卡轮询，并且绑卡两次
+            with allure.step("第一次绑卡"):
+                if channel_code in channel_codes:
+                    bk_jq_need_encry_data["bindType"] = "fundsChannel"
+                else:
+                    pass
+                loop_result().loop_api_flow_bk_result(bk_jq_need_encry_data, channel_code)
+            with allure.step("第二次绑卡"):
+                if channel_code in channel_codes:
+                    bk_jq_need_encry_data["bindType"] = "payChannel"
+                else:
+                    pass
+                # 第二次绑卡需要更新申请号以及时间，从新赋值
+                time.sleep(2)
+                bk_jq_need_encry_data["certificationApplyNo"], bk_jq_need_encry_data[
+                    "agreementTime"] = get_api_bk_id(), get_time_stand_api()
+                loop_result().loop_api_flow_bk_result(bk_jq_need_encry_data, channel_code)
+
+        with allure.step("借款试算"):
+            # 借款试算数据
+            # 加密借款试算数据
+            # 发起借款试算请求
+            # 解密试算返回结果
+            pass
+
+        with allure.step("借款申请"):
+            # 借款申请数据
+            jk_sq_need_encry_data = {"loanTime": apply_time, "productCode": product_code, "repayMethod": "01",
+                                     "loanPurpose": "05", "partnerCreditNo": partner_creditNo, "term": reqPeriods,
+                                     "loanAmt": loan_amt, "loanApplyNo": loanApplyNo, "userId": user_id,
+                                     "agreementTime": apply_time,
+                                     "bankCardInfo": {"bankCode": "0003", "idCardNo": id_no, "userMobile": mobile_no,
+                                                      "userName": user_name, "bankCardNo": bank_card_no},
+                                     "linkmanInfo": {"relationshipA": "10", "nameA": "毋琳子", "phoneA": "15161455378",
+                                                     "relationshipB": "60", "nameB": "花娥茜", "phoneB": "15982209185"},
+                                     "geoInfo": {"latitude": "43.57687931900941", "longitude": "112.55172012515888"}}
+            # 加密借款申请数据
+            jk_sq_encry_data = api.api_param_encry(jk_sq_need_encry_data, channel_code)
+            # 发起借款申请请求
+            jk_sq_resp = api.test_apply_loan(jk_sq_encry_data)
+            # 解密借款申请返回结果
+            jk_sq_decry_data = api.api_param_decry(jk_sq_resp)
+            logging.info(f"借款返回数据结果为：======={jk_sq_decry_data}")
+
+        with allure.step("轮询执行JOB借款成功"):
+            # 借款查询数据
+            loan_query_need_encry_data = {
+                "userId": user_id,
+                "loanApplyNo": loanApplyNo
+            }
+            # 发起轮询，并且执行借款过程中需要的JOB
+            jk_success_resp = loop_result().loop_api_flow_loan_result(loan_query_need_encry_data, loanApplyNo,
+                                                                      channel_code)
+            logging.info(f"借款成功返回的查询参数是：{jk_success_resp}")
+
+        if jk_success_resp in (False, None):
+            logging.info(f"当前借款失败！")
+            return False
+        else:
+            with allure.step("借款成功断言"):
                 pass
-            loop_result().loop_api_flow_bk_result(bk_jq_need_encry_data, channel_code)
-        with allure.step("第二次绑卡"):
-            if channel_code in channel_codes:
-                bk_jq_need_encry_data["bindType"] = "payChannel"
-            else:
+
+            with allure.step("修改api还款相关表"):
+                # 修改api还款计划表以便于D0批扣还款
+                time.sleep(1)
+                db.update_api_flow_zx_loan_plan_info_d0(loanApplyNo, "1")
+                db.update_api_flow_zx_loan_note_info_d0(loanApplyNo)
+                logging.info(f"修改api还款计划表、借据信息表成功")
+
+            with allure.step("修改批发还款相关表"):
+                # 修改批发路由还款计划表以便于D0批扣还款
+                db.update_api_core_fr_api_repayment_plan_d0(loanApplyNo, "1")
+                db.update_api_core_fr_api_order_info_d0(loanApplyNo)
+                logging.info(f"修改批发还款计划表、API订单表成功")
+
+            with allure.step("轮询执行D0批扣还款成功"):
+                # 执行api侧D0批扣任务
+                time.sleep(1)
+                execute_xxl_job().hmzb_d0_repay_job()
+                logging.info(f"执行D0批扣任务成功！请稍等！")
+                loop_result().loop_api_flow_repay_result(loanApplyNo)
+
+            with allure.step("还款成功断言"):
                 pass
-            # 第二次绑卡需要更新申请号以及时间，从新赋值
-            time.sleep(2)
-            bk_jq_need_encry_data["certificationApplyNo"], bk_jq_need_encry_data[
-                "agreementTime"] = get_api_bk_id(), get_time_stand_api()
-            loop_result().loop_api_flow_bk_result(bk_jq_need_encry_data, channel_code)
-
-    with allure.step("借款试算"):
-        # 借款试算数据
-        # 加密借款试算数据
-        # 发起借款试算请求
-        # 解密试算返回结果
-        pass
-
-    with allure.step("借款申请"):
-        # 借款申请数据
-        jk_sq_need_encry_data = {"loanTime": apply_time, "productCode": product_code, "repayMethod": "01",
-                                 "loanPurpose": "05", "partnerCreditNo": partner_creditNo, "term": reqPeriods,
-                                 "loanAmt": loan_amt, "loanApplyNo": loanApplyNo, "userId": user_id,
-                                 "agreementTime": apply_time,
-                                 "bankCardInfo": {"bankCode": "0003", "idCardNo": id_no, "userMobile": mobile_no,
-                                                  "userName": user_name, "bankCardNo": bank_card_no},
-                                 "linkmanInfo": {"relationshipA": "10", "nameA": "毋琳子", "phoneA": "15161455378",
-                                                 "relationshipB": "60", "nameB": "花娥茜", "phoneB": "15982209185"},
-                                 "geoInfo": {"latitude": "43.57687931900941", "longitude": "112.55172012515888"}}
-        # 加密借款申请数据
-        jk_sq_encry_data = api.api_param_encry(jk_sq_need_encry_data, channel_code)
-        # 发起借款申请请求
-        jk_sq_resp = api.test_apply_loan(jk_sq_encry_data)
-        # 解密借款申请返回结果
-        jk_sq_decry_data = api.api_param_decry(jk_sq_resp)
-        logging.info(f"借款返回数据结果为：======={jk_sq_decry_data}")
-
-    with allure.step("轮询执行JOB借款成功"):
-        # 借款查询数据
-        loan_query_need_encry_data = {
-            "userId": user_id,
-            "loanApplyNo": loanApplyNo
-        }
-        # 发起轮询，并且执行借款过程中需要的JOB
-        jk_success_resp = loop_result().loop_api_flow_loan_result(loan_query_need_encry_data, loanApplyNo, channel_code)
-        logging.info(f"借款成功返回的查询参数是：{jk_success_resp}")
-
-    with allure.step("修改api还款相关表"):
-        # 修改api还款计划表以便于D0批扣还款
-        time.sleep(1)
-        db.update_api_flow_zx_loan_plan_info_d0(loanApplyNo, "1")
-        db.update_api_flow_zx_loan_note_info_d0(loanApplyNo)
-        logging.info(f"修改api还款计划表、借据信息表成功")
-
-    with allure.step("修改批发还款相关表"):
-        # 修改批发路由还款计划表以便于D0批扣还款
-        db.update_api_core_fr_api_repayment_plan_d0(loanApplyNo, "1")
-        db.update_api_core_fr_api_order_info_d0(loanApplyNo)
-        logging.info(f"修改批发还款计划表、API订单表成功")
-
-    with allure.step("轮询执行D0批扣还款成功"):
-        # 执行api侧D0批扣任务
-        time.sleep(1)
-        execute_xxl_job().funds_batch_d0_repay_apply(funds_code)
-        logging.info(f"执行D0批扣任务成功！请稍等！")
-        loop_result().loop_api_flow_repay_result(loanApplyNo, 'D0batch')
-
-    with allure.step("还款成功断言"):
-        pass
-
-    with allure.step("生成测试结果"):
-        # 生成测试结果
-        test_result = {
-            "userId": user_id,
-            "loanApplyNo": loanApplyNo,
-            "fundsCode": funds_code,
-            "loanAmount": loan_amt,
-            "loanDate": datetime.datetime.now().strftime("%Y-%m-%d"),
-            "phoneNumber": mobile_no,
-            "userName": user_name,
-            "idCard": id_no,
-            "bankCard": bank_card_no,
-            "loanPeriod": reqPeriods
-        }
-        print(f"TEST_RESULT:{json.dumps(test_result, ensure_ascii=False)}")
 
 
 # API全流程-哈密众邦主动还款成功
@@ -758,9 +830,11 @@ def test_zb_due_repay_success_api_flow(get_channel, get_loan_perid):
     if resp is not False:
         with allure.step("绑卡申请"):
             # 请求鉴权数据
-            bk_jq_need_encry_data = {"userId": user_id, "certificationApplyNo": certificationApplyNo, "bankCode": "0003",
+            bk_jq_need_encry_data = {"userId": user_id, "certificationApplyNo": certificationApplyNo,
+                                     "bankCode": "0003",
                                      "idCardNo": id_no, "userMobile": mobile_no, "userName": user_name,
-                                     "bankCardNo": bank_card_no, "registerMobile": mobile_no, "agreementTime": apply_time}
+                                     "bankCardNo": bank_card_no, "registerMobile": mobile_no,
+                                     "agreementTime": apply_time}
             # 绑卡轮询，并且绑卡两次
         with allure.step("第一次绑卡"):
             if channel_code in channel_codes:
@@ -812,7 +886,8 @@ def test_zb_due_repay_success_api_flow(get_channel, get_loan_perid):
                 "loanApplyNo": loanApplyNo
             }
             # 发起轮询，并且执行借款过程中需要的JOB
-            jk_success_resp = loop_result().loop_api_flow_loan_result(loan_query_need_encry_data, loanApplyNo, channel_code)
+            jk_success_resp = loop_result().loop_api_flow_loan_result(loan_query_need_encry_data, loanApplyNo,
+                                                                      channel_code)
             logging.info(f"借款成功返回的查询参数是：{jk_success_resp}")
 
         with allure.step("修改api还款相关表"):
@@ -912,4 +987,3 @@ def test_zb_due_repay_success_api_flow(get_channel, get_loan_perid):
             print(f"TEST_RESULT:{json.dumps(test_result, ensure_ascii=False)}")
     else:
         logging.info(f"该笔申请未授信通过，请重新尝试！")
-

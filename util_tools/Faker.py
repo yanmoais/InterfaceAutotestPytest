@@ -61,7 +61,7 @@ def get_dbht_no():
 
 # 获取随机合同编号
 def get_contract_no():
-    return str(str("31" + str(int(time.time() * 10000000))))
+    return str(str(str(int(time.time() * 1000000000))))
 
 
 # 获取随机申请流水号
@@ -365,7 +365,7 @@ if __name__ == '__main__':
     # dict_list.append(lists)
     # print(dict_list)
     id_no, birthday = get_zx_user_id_no(year_s=1991, year_e=1999)
-    ccb = get_baofu_ccb_num()
+    ccb = get_baofu_ccb_num(rule=('0'))
     phone = read_risk_phone()
     # print(id_no, birthday)
     # loan, repay = tyh_h5_loan_repay("TYH_202411041730710546726", "ZL173071054678","JMX1730710546789")
